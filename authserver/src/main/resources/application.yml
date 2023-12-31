@@ -1,0 +1,19 @@
+server:
+  host: 192.168.0.14
+  port: 1001
+
+spring:
+  application:
+    name: resources-service
+    security:
+      jwt:
+        secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+        expiration: 86400000 # a day
+        refresh-token:
+          expiration: 604800000 # 7 days
+  data:
+    mongodb:
+      host: localhost
+      username: user
+      database: resources
+      port: 27010

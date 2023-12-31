@@ -1,5 +1,7 @@
 package com.islandempires.resourcesservice.controller;
 
+import com.islandempires.resourcesservice.dto.initial.IslandInitialResourceDTO;
+import com.islandempires.resourcesservice.dto.request.IsResourcesEnoughControl;
 import com.islandempires.resourcesservice.model.IslandResource;
 import com.islandempires.resourcesservice.service.IslandResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +28,24 @@ public class IslandResourceController {
         return this.islandResourceService.get(islandid);
     }
 
+    @GetMapping("/isResourcesEnoughControl/{islandid}")
+    public Mono<Boolean> isResourcesEnoughControl(@PathVariable String islandid, @RequestBody IsResourcesEnoughControl isResourcesEnoughControl) {
+        return islandResourceService.isResourcesEnoughControl(islandid, isResourcesEnoughControl);
+    }
+
     @PostMapping("/")
-    public Mono<IslandResource> save(@RequestBody IslandResource islandResource) {
-        return this.islandResourceService.save(islandResource);
+    public Mono<IslandResource> prepareIslandResource(@RequestBody IslandInitialResourceDTO initialIslandResourceDTO) {
+        return islandResourceService.prepareIslandInitialResource(initialIslandResourceDTO);
     }
 
     @PutMapping("/")
     public Mono<IslandResource> update(@RequestBody IslandResource islandResource) {
-        return this.islandResourceService.update(islandResource);
+        return islandResourceService.updateIslandResource(islandResource);
     }
 
+    @PostMapping("/test")
+    public Flux<IslandResource> addTest() {
+        return islandResourceService.addTest();
+    }
 
 }

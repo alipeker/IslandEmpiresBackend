@@ -1,0 +1,26 @@
+server:
+  host: 192.168.0.14
+  port: 9000
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: microservice1
+          uri: http://192.168.0.14:2000
+          predicates:
+            - Path=/resource/**
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://192.168.0.14:1000/eureka/
+
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

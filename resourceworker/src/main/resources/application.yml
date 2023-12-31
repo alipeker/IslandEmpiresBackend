@@ -1,0 +1,20 @@
+server:
+  host: 192.168.0.14
+  port: 6001
+
+spring:
+  application:
+    name: resourceworker
+  data:
+    mongodb:
+      host: 192.168.0.14
+      username: user
+      database: resources
+      port: 27017
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://192.168.0.14:1000/eureka/
