@@ -1,15 +1,20 @@
 package com.islandempires.resourcesservice.dto.request;
 
 import com.islandempires.resourcesservice.dto.PopulationDTO;
-import com.islandempires.resourcesservice.dto.RawMaterialsDTO;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class IsResourcesEnoughControl {
-    private RawMaterialsDTO rawMaterialsDTO;
+public class LootingResourcesRequestDTO implements Serializable {
+    @NotNull
+    private Integer lootingSize;
+
+    @NotNull
     private PopulationDTO populationDTO;
 }

@@ -11,14 +11,21 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class FoodDTO implements Serializable {
+public class RawMaterialsHourlyProductionDTO implements Serializable {
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
-    private Integer meat;
+    private Integer woodHourlyProduction;
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
-    private Integer fish;
+    private Integer ironHourlyProduction;
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
-    private Integer wheat;
+    private Integer clayHourlyProduction;
+    @PositiveOrZero(message = "Value must be a positive or zero number")
+    @NotNull
+    private Integer goldHourlyProduction;
+
+    @PositiveOrZero(message = "Value must be a positive or zero number")
+    @NotNull
+    private Integer rawMaterialStorageSize;
 }

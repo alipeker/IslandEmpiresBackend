@@ -1,8 +1,6 @@
 package com.islandempires.resourcesservice.model;
 
-import com.islandempires.resourcesservice.dto.PopulationDTO;
-import com.islandempires.resourcesservice.dto.RawMaterialsDTO;
-import com.islandempires.resourcesservice.dto.request.IsResourcesEnoughControl;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,60 +14,82 @@ import java.io.Serializable;
 public class IslandResource implements Serializable {
 
     @Id
-    private String islandid;
+    @NotBlank
+    private String islandId;
 
     /*
     * Raw materials
     */
+    @NotBlank
     private Double wood;
-    private Integer hourlyWoodProduction;
+    @NotBlank
+    private Integer woodHourlyProduction;
 
+    @NotBlank
     private Double iron;
-    private Integer hourlyIronProduction;
+    @NotBlank
+    private Integer ironHourlyProduction;
 
+    @NotBlank
     private Double clay;
-    private Integer hourlyClayProduction;
+    @NotBlank
+    private Integer clayHourlyProduction;
 
+    @NotBlank
     private Double gold;
-    private Integer hourlyGoldProduction;
 
+    @NotBlank
     private Integer rawMaterialStorageSize;
 
 
     /*
      * Food
     */
-    private Double meat;
-    private Integer hourlyMeatProduction;
+    @NotBlank
+    private Double meatFoodCoefficient;
+    @NotBlank
+    private Integer meatHourlyProduction;
 
-    private Double fish;
-    private Integer hourlyFishProduction;
+    @NotBlank
+    private Double fishFoodCoefficient;
+    @NotBlank
+    private Integer fishHourlyProduction;
 
-    private Double wheat;
-    private Integer hourlyWheatProduction;
-
-    private Integer foodStorageSize;
+    @NotBlank
+    private Double wheatFoodCoefficient;
+    @NotBlank
+    private Integer wheatHourlyProduction;
 
 
     /*
      * Population
     */
-    private Double population;
-    private Integer hourlyPopulationGrowth;
+    @NotBlank
+    private Integer population;
+    @NotBlank
+    private Integer temporaryPopulation;
+    /*
+    * meatFoodCoefficient
+    * fishHourlyProduction
+    * wheatHourlyProduction
+    * (1 * 1 + 2 * 1 + 3 * 1)
+    * 6
+    * */
+    @NotBlank
     private Integer populationLimit;
 
+    /*
+     * population + temporaryPopulation <= populationLimit
+     * => happinessScore = additionalHappinessScore + 1
+     * not
+     * => happinessScore = additionalHappinessScore + populationLimit / (population + temporaryPopulation)
+     * */
+    @NotBlank
+    private Double happinessScore;
+    @NotBlank
+    private Double additionalHappinessScore;
+
+    @NotBlank
     private long lastCalculatedTimestamp;
-
-
-    public Boolean isResourcesEnoughControl(IsResourcesEnoughControl isResourcesEnoughControl) {
-        RawMaterialsDTO rawMaterialsDTO = isResourcesEnoughControl.getRawMaterialsDTO();
-        PopulationDTO populationDTO = isResourcesEnoughControl.getPopulationDTO();
-        return  getWood() != null && rawMaterialsDTO.getWood() != null && getWood() >= rawMaterialsDTO.getWood() &&
-                getClay() != null && rawMaterialsDTO.getClay() != null && getClay() >= rawMaterialsDTO.getClay() &&
-                getIron() != null && rawMaterialsDTO.getIron() != null && getIron() >= rawMaterialsDTO.getIron() &&
-                getGold() != null && rawMaterialsDTO.getGold() != null && getGold() >= rawMaterialsDTO.getGold() &&
-                getPopulation() != null && populationDTO.getPopulation() != null && getPopulation() >= populationDTO.getPopulation()
-                ? true: false;
-    }
 
 }
