@@ -14,9 +14,9 @@ import java.io.Serializable;
 @Data
 public class ResourceAllocationRequestDTO implements Serializable {
     @NotNull
-    private RawMaterialsDTO rawMaterialsDTO;
+    private RawMaterialsDTO rawMaterials;
 
     @NotNull
-    private PopulationDTO populationDTO;
+    private PopulationDTO population;
 
 }

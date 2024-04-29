@@ -56,8 +56,25 @@ public enum ExceptionE {
         public String toString() {
             return "Insufficient resources error!";
         }
-    }
-    ;
+    },
+    ENUM_NOT_FOUND {
+        Integer status = HttpStatus.NOT_ACCEPTABLE.value();
+        HttpStatus httpStatus = HttpStatus.NOT_ACCEPTABLE;
+
+        @Override
+        public HttpStatus getHttpStatus() {
+            return httpStatus;
+        }
+
+        @Override
+        public Integer getStatus() {
+            return this.status;
+        }
+
+        public String toString() {
+            return httpStatus.toString();
+        }
+    };
 
     abstract public Integer getStatus();
 

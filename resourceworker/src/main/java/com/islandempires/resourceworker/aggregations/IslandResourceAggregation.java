@@ -35,6 +35,7 @@ public class IslandResourceAggregation {
     public void deduplicateToTargetCollection() {
         AggregationOperation project1 = Aggregation.project()
                 .and("_id").as("_id")
+                .and("islandId").as("islandId")
                 .and("wood").as("wood")
                 .and("woodHourlyProduction").as("woodHourlyProduction")
                 .and("iron").as("iron")
@@ -56,6 +57,7 @@ public class IslandResourceAggregation {
                 .and("additionalHappinessScore").as("additionalHappinessScore")
                 .and("happinessScoreMinimumValue").as("happinessScoreMinimumValue")
                 .and("happinessScoreMaximumValue").as("happinessScoreMaximumValue")
+                .and("createdDate").as("createdDate")
                 .and(ArithmeticOperators.Subtract.valueOf(new Date().getTime()).subtract("lastCalculatedTimestamp")).as("elapsedTime");
 
         AggregationOperation project2 = Aggregation.project()
@@ -95,7 +97,9 @@ public class IslandResourceAggregation {
                 .and("wheatHourlyProduction").as("wheatHourlyProduction")
                 .and("population").as("population")
                 .and("temporaryPopulation").as("temporaryPopulation")
-                .and("populationLimit").as("populationLimit")
+                .and(ArithmeticOperators.Add.valueOf(ArithmeticOperators.Multiply.valueOf("meatFoodCoefficient").multiplyBy("meatHourlyProduction"))
+                        .add(ArithmeticOperators.Multiply.valueOf("fishFoodCoefficient").multiplyBy("fishHourlyProduction"))
+                        .add(ArithmeticOperators.Multiply.valueOf("wheatFoodCoefficient").multiplyBy("wheatHourlyProduction"))).as("populationLimit")
                 .and(ConditionalOperators.Cond.newBuilder()
                         .when(ComparisonOperators.Gte.valueOf(ArithmeticOperators.Add.valueOf("populationLimit"))
                                 .greaterThanEqualTo(ArithmeticOperators.Add.valueOf("population").add("temporaryPopulation")))

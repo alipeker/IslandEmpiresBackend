@@ -1,19 +1,25 @@
 package com.islandempires.resourcesservice.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @Document("IslandResource")
 @NoArgsConstructor
 @AllArgsConstructor
 public class IslandResource implements Serializable {
-
     @Id
+    @NotBlank
+    private String id;
+
     @NotBlank
     private String islandId;
 
@@ -47,6 +53,7 @@ public class IslandResource implements Serializable {
     */
     @NotBlank
     private Double meatFoodCoefficient;
+
     @NotBlank
     private Integer meatHourlyProduction;
 
@@ -57,10 +64,11 @@ public class IslandResource implements Serializable {
 
     @NotBlank
     private Double wheatFoodCoefficient;
+
     @NotBlank
     private Integer wheatHourlyProduction;
 
-
+ 
     /*
      * Population
     */
@@ -68,6 +76,7 @@ public class IslandResource implements Serializable {
     private Integer population;
     @NotBlank
     private Integer temporaryPopulation;
+
     /*
     * meatFoodCoefficient
     * fishHourlyProduction
@@ -84,6 +93,7 @@ public class IslandResource implements Serializable {
      * not
      * => happinessScore = additionalHappinessScore + populationLimit / (population + temporaryPopulation)
      * */
+
     @NotBlank
     private Double happinessScore;
     @NotBlank
@@ -91,5 +101,9 @@ public class IslandResource implements Serializable {
 
     @NotBlank
     private long lastCalculatedTimestamp;
+
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+    private LocalDateTime createdDate;
 
 }

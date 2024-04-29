@@ -1,0 +1,13 @@
+server:
+  host: 192.168.0.14
+  port: 2002
+
+spring:
+  application:
+    name: game-service
+  data:
+    mongodb:
+      host: 192.168.0.14
+      username: user
+      database: gameserver
+      port: 27012

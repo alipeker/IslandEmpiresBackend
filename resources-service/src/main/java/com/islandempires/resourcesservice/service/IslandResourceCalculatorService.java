@@ -18,8 +18,8 @@ import java.util.*;
 public class IslandResourceCalculatorService {
 
     public Boolean checkResourceAllocation(IslandResourceDTO islandResourceDTO, ResourceAllocationRequestDTO resourceAllocationRequestDTO) {
-        RawMaterialsDTO resourceAllocationRequestRawMaterialsDTO = resourceAllocationRequestDTO.getRawMaterialsDTO();
-        PopulationDTO resourceAllocationRequestPopulationDTO = resourceAllocationRequestDTO.getPopulationDTO();
+        RawMaterialsDTO resourceAllocationRequestRawMaterialsDTO = resourceAllocationRequestDTO.getRawMaterials();
+        PopulationDTO resourceAllocationRequestPopulationDTO = resourceAllocationRequestDTO.getPopulation();
         return  islandResourceDTO.getWood() >= resourceAllocationRequestRawMaterialsDTO.getWood() &&
                 islandResourceDTO.getClay() >= resourceAllocationRequestRawMaterialsDTO.getClay() &&
                 islandResourceDTO.getIron() >= resourceAllocationRequestRawMaterialsDTO.getIron() &&
@@ -39,8 +39,8 @@ public class IslandResourceCalculatorService {
         if(!checkResourceAllocation(islandResourceDTO, resourceAllocationRequestDTO)) {
             throw new CustomRunTimeException(ExceptionE.INSUFFICIENT_RESOURCES);
         }
-        RawMaterialsDTO rawMaterialsDTO = resourceAllocationRequestDTO.getRawMaterialsDTO();
-        PopulationDTO populationDTO = resourceAllocationRequestDTO.getPopulationDTO();
+        RawMaterialsDTO rawMaterialsDTO = resourceAllocationRequestDTO.getRawMaterials();
+        PopulationDTO populationDTO = resourceAllocationRequestDTO.getPopulation();
 
         Integer wood = rawMaterialsDTO.getWood();
         Integer iron = rawMaterialsDTO.getIron();
@@ -147,9 +147,9 @@ public class IslandResourceCalculatorService {
         island1ResourcesDTO.setClay(island1ResourcesDTO.getClay() + (island2TradingRawMaterials.getClay() - island1TradingRawMaterials.getClay()));
 
 
-        island2ResourcesDTO.setWood(island2ResourcesDTO.getWood() + (island1TradingRawMaterials.getWood() - island2ResourcesDTO.getWood()));
-        island2ResourcesDTO.setIron(island2ResourcesDTO.getIron() + (island1TradingRawMaterials.getIron() - island2ResourcesDTO.getIron()));
-        island2ResourcesDTO.setClay(island2ResourcesDTO.getClay() + (island1TradingRawMaterials.getClay() - island2ResourcesDTO.getClay()));
+        island2ResourcesDTO.setWood(island2ResourcesDTO.getWood() + (island1TradingRawMaterials.getWood() - island2TradingRawMaterials.getWood()));
+        island2ResourcesDTO.setIron(island2ResourcesDTO.getIron() + (island1TradingRawMaterials.getIron() - island2TradingRawMaterials.getIron()));
+        island2ResourcesDTO.setClay(island2ResourcesDTO.getClay() + (island1TradingRawMaterials.getClay() - island2TradingRawMaterials.getClay()));
 
 
         Map<MutualTradingEnum,IslandResourceDTO> senderAndReceiverIslandResourcesDTO = new HashMap<>();

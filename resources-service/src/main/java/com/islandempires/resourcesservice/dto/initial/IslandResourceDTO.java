@@ -11,8 +11,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 public class IslandResourceDTO implements Serializable {
-    @Size(min = 1, message = "islandId must be not empty")
-    @NotNull
+    private String id;
+
     private String islandId;
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
@@ -47,24 +47,24 @@ public class IslandResourceDTO implements Serializable {
 
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
-    @NotBlank
+    @NotNull
     private Double meatFoodCoefficient;
     @PositiveOrZero(message = "Value must be a positive or zero number")
-    @NotBlank
+    @NotNull
     private Integer meatHourlyProduction;
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
-    @NotBlank
+    @NotNull
     private Double fishFoodCoefficient;
     @PositiveOrZero(message = "Value must be a positive or zero number")
-    @NotBlank
+    @NotNull
     private Integer fishHourlyProduction;
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
-    @NotBlank
+    @NotNull
     private Double wheatFoodCoefficient;
     @PositiveOrZero(message = "Value must be a positive or zero number")
-    @NotBlank
+    @NotNull
     private Integer wheatHourlyProduction;
 
 
@@ -72,15 +72,15 @@ public class IslandResourceDTO implements Serializable {
     @NotNull
     private Integer population;
 
-    @PositiveOrZero(message = "Value must be a positive or zero number")
-    @NotNull
     private Integer populationLimit;
 
-    @Positive(message = "Value must be a positive or zero number")
-    @NotBlank
+    @PositiveOrZero(message = "Value must be a positive or zero number")
+    @NotNull
+    private Integer temporaryPopulation;
+
     private Double happinessScore;
     @PositiveOrZero(message = "Value must be a positive or zero number")
-    @NotBlank
+    @NotNull
     private Double additionalHappinessScore;
 
 }
