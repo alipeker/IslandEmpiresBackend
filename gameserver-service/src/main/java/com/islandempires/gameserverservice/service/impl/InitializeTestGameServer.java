@@ -4,6 +4,7 @@ import com.islandempires.gameserverservice.model.GameServer;
 import com.islandempires.gameserverservice.model.IslandResource;
 import com.islandempires.gameserverservice.model.building.*;
 import com.islandempires.gameserverservice.model.buildinglevelspec.AcademiaLevel;
+import com.islandempires.gameserverservice.model.buildinglevelspec.HouseLevel;
 import org.springframework.stereotype.Service;
 
 
@@ -20,11 +21,12 @@ public class InitializeTestGameServer {
                 3.0, 0, 2.0, 0, 7, 7,
                 0, 1.0, 1.0);
 
-        Academia academia = new Academia();
+        Houses houses = new Houses();
 
         for(int i = 1; i <= 20; i++) {
-            AcademiaLevel academiaLevel = new AcademiaLevel();
-            academiaLevel.setLevel(i);
+            HouseLevel houseLevel = new HouseLevel();
+            houseLevel.setLevel(i);
+            houseLevel.setPopulationGrowth(Long.valueOf(i*10));
         }
 
     }

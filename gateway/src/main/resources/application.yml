@@ -5,13 +5,13 @@ server:
 spring:
   application:
     name: api-gateway
-  cloud:
-    gateway:
-      routes:
-        - id: resource-service
-          uri: http://192.168.0.14:2000
-          predicates:
-            - Path=/resource/**
+  main:
+    allow-bean-definition-overriding: true
+
+gateway:
+  auth: http://192.168.0.14:1000
+  resource: http://192.168.0.14:2000
+
 
 eureka:
   client:
@@ -24,3 +24,6 @@ eureka:
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
+
+
+auth-service-url: http://192.168.0.14:1000

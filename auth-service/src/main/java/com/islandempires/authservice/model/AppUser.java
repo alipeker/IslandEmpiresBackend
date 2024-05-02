@@ -14,7 +14,7 @@ public class AppUser {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private Integer id;
+  private Long id;
 
   @Size(min = 4, max = 255, message = "Minimum username length: 4 characters")
   @Column(unique = true, nullable = false)
@@ -27,6 +27,6 @@ public class AppUser {
   private String password;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  List<AppUserRole> appUserRoles;
+  List<String> appUserRoles;
 
 }

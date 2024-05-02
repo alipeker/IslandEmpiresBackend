@@ -31,10 +31,10 @@ public class JwtTokenProvider {
    * THIS IS NOT A SECURE PRACTICE! For simplicity, we are storing a static key here. Ideally, in a
    * microservices environment, this key would be kept on a config-server.
    */
-  @Value("${security.jwt.token.secret-key:secret-key}")
+  @Value("${app.jwtSecret")
   private String secretKey;
 
-  @Value("${security.jwt.token.expire-length:3600000}")
+  @Value("${app.jwtExpirationMs}")
   private long validityInMilliseconds = 360000000; // 1h
 
   @Autowired
@@ -45,10 +45,10 @@ public class JwtTokenProvider {
     secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
   }
 
-  public String createToken(String username, List<AppUserRole> appUserRoles) {
+  public String createToken(String username, List<String> appUserRoles) {
 
     Claims claims = Jwts.claims().setSubject(username);
-    claims.put("auth", appUserRoles.stream().map(s -> new SimpleGrantedAuthority(s.getAuthority())).filter(Objects::nonNull).collect(Collectors.toList()));
+    claims.put("auth", appUserRoles.stream().map(s -> new SimpleGrantedAuthority(s)).filter(Objects::nonNull).collect(Collectors.toList()));
 
     Date now = new Date();
     Date validity = new Date(now.getTime() + validityInMilliseconds);
@@ -65,6 +65,7 @@ public class JwtTokenProvider {
     UserDetails userDetails = myUserDetails.loadUserByUsername(getUsername(token));
     return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
   }
+
 
   public String getUsername(String token) {
     try {

@@ -3,6 +3,7 @@ package com.islandempires.authservice.controller;
 import com.islandempires.authservice.dto.UserDataDTO;
 import com.islandempires.authservice.dto.UserResponseDTO;
 import com.islandempires.authservice.model.AppUser;
+import com.islandempires.authservice.security.JwtResponse;
 import com.islandempires.authservice.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +13,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("auth")
 public class UserController {
 
   private final UserService userService;
   private final ModelMapper modelMapper;
 
   @PostMapping("/signin")
-  public String login(@RequestParam String username, @RequestParam String password) {
+  public JwtResponse login(@RequestParam String username, @RequestParam String password) {
     return userService.signin(username, password);
   }
 

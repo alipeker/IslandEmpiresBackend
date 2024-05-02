@@ -23,6 +23,8 @@ public class IslandResource implements Serializable {
     @NotBlank
     private String islandId;
 
+    private Long userId;
+
     /*
     * Raw materials
     */

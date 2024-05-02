@@ -55,7 +55,7 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
     }
 
     @Override
-    public Mono<IslandResourceDTO> initializeIslandResource(IslandResourceDTO islandResourceDTO) {
+    public Mono<IslandResourceDTO> initializeIslandResource(IslandResourceDTO islandResourceDTO, Long userid) {
         if(islandResourceDTO.getIslandId() != null) {
             islandResourceRepository.findById(islandResourceDTO.getIslandId()).doOnNext(result -> {
                 if (result != null) {
@@ -67,6 +67,7 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
         IslandResource islandResource = modelMapper.map(islandResourceDTO, IslandResource.class);
         islandResource.setLastCalculatedTimestamp(System.currentTimeMillis());
         islandResource.setCreatedDate(LocalDateTime.now());
+        islandResource.setUserId(userid);
 
         return islandResourceRepository.save(islandResource).map(savedIslandResource -> modelMapper.map(savedIslandResource, IslandResourceDTO.class));
     }

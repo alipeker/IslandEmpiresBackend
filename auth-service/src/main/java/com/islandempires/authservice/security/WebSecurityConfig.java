@@ -12,9 +12,11 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -25,19 +27,30 @@ public class WebSecurityConfig {
   @Autowired
   private UserRepository userRepository;
 
-  private final JwtTokenProvider jwtTokenProvider;
+  @Autowired
+  private AuthEntryPointJwt unauthorizedHandler;
+
 
   @Bean
-  SecurityFilterChain web(HttpSecurity http) throws Exception {
-    http.csrf().disable()
-            // ...
-            .authorizeHttpRequests(authorize -> authorize
-                    .requestMatchers("/static/**", "/**", "/s", "/h2-console/**/**").permitAll()
-                    .anyRequest().permitAll()
-            );
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.cors().and().csrf().disable()
+            .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+            .authorizeRequests()
+            .requestMatchers("/auth/signin").permitAll()
+            .requestMatchers("/auth/signup").permitAll()
+            .anyRequest().authenticated();
+
+    http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
+
+  @Bean
+  public AuthTokenFilter authenticationJwtTokenFilter() {
+    return new AuthTokenFilter();
+  }
+
 
   @Bean
   public AuthenticationProvider authenticationProvider() {

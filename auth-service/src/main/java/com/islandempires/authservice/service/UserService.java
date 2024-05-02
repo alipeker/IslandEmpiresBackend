@@ -4,28 +4,30 @@ import com.islandempires.authservice.exception.CustomException;
 import com.islandempires.authservice.exception.ExceptionE;
 import com.islandempires.authservice.model.AppUser;
 import com.islandempires.authservice.repository.UserRepository;
+import com.islandempires.authservice.security.JwtResponse;
 import com.islandempires.authservice.security.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements CommandLineRunner {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-    private final AuthenticationManager authenticationManager;
+    private final AuthService authService;
 
 
     public UserDetailsService userDetailsService() {
@@ -37,10 +39,9 @@ public class UserService {
         };
     }
 
-    public String signin(String username, String password) {
+    public JwtResponse signin(String username, String password) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            return jwtTokenProvider.createToken(username, userRepository.findByUsername(username).getAppUserRoles());
+            return authService.authenticateUser(username, password);
         } catch (AuthenticationException e) {
             throw new CustomException(ExceptionE.BAD_CREDENTIALS);
         }
@@ -74,6 +75,20 @@ public class UserService {
 
     public String refresh(String username) {
         return jwtTokenProvider.createToken(username, userRepository.findByUsername(username).getAppUserRoles());
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        /*
+        AppUser appUser = new AppUser();
+        appUser.setEmail("admin@gmail.com");
+        appUser.setUsername("admin");
+        appUser.setPassword("admin");
+        List<String> userRole = new ArrayList<>();
+        userRole.add("1");
+        appUser.setAppUserRoles(userRole);
+
+        this.signup(appUser);*/
     }
 
 }

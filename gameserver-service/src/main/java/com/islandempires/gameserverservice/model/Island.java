@@ -15,12 +15,6 @@ public class Island implements Serializable {
     @Id
     private String id;
 
-    @NonNull
-    private String islandId;
-
-    @NonNull
-    private String gameServerID;
-
-    private long timestamp;
+    private Long userId;
 
 }

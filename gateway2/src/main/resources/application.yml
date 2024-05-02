@@ -12,6 +12,18 @@ spring:
           uri: http://192.168.0.14:2000
           predicates:
             - Path=/resource/**
+        - id: auth-service
+          uri: http://192.168.0.14:1001
+          predicates:
+            - Path=/auth/**
+        - id: game-service
+          uri: http://192.168.0.14:2002
+          predicates:
+            - Path=/gameservice/**
+        - id: island-service
+          uri: http://192.168.0.14:3000
+          predicates:
+            - Path=/island/**
 
 eureka:
   client:

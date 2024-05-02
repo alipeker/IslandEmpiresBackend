@@ -5,10 +5,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Document
 @Data
@@ -17,6 +20,9 @@ import java.util.Date;
 public class GameServer implements Serializable {
     @Id
     private String id;
+
+    @DBRef
+    private List<Island> islands = new ArrayList<>();
 
     private String serverName;
 

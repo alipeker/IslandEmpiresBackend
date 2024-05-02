@@ -1,6 +1,7 @@
 package com.islandempires.gameserverservice.controller;
 
 import com.islandempires.gameserverservice.dto.GameServerDTO;
+import com.islandempires.gameserverservice.dto.IslandDTO;
 import com.islandempires.gameserverservice.model.GameServer;
 import com.islandempires.gameserverservice.model.Island;
 import com.islandempires.gameserverservice.repository.GameServerRepository;
@@ -30,8 +31,8 @@ public class GameServerController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/prepareIsland/{islandId}")
-    public Mono<Island> prepareIslandForServer(@PathVariable String serverId) {
-        return gameServerWriteService.prepareIslandForServer(serverId);
+    @PatchMapping("/initializeIsland")
+    public Mono<IslandDTO> initializeIsland(@RequestParam("serverId") String serverId, @RequestHeader("userid") Long userid) {
+        return gameServerWriteService.initializeIsland(serverId, userid);
     }
 }

@@ -13,7 +13,7 @@ public interface IslandResourceInteractionService {
 
     Mono<Boolean> validateResourceAllocationForIsland(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO);
 
-    Mono<IslandResourceDTO> initializeIslandResource(IslandResourceDTO initialIslandResorceDTO);
+    Mono<IslandResourceDTO> initializeIslandResource(IslandResourceDTO initialIslandResorceDTO, Long userid);
 
     Mono<IslandResourceDTO> assignResources(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO);
 

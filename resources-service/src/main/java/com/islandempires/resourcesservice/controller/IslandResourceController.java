@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -49,9 +50,10 @@ public class IslandResourceController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/")
-    public Mono<IslandResourceDTO> initializeIslandResource(@Valid @RequestBody IslandResourceDTO initialIslandResourceDTO) {
-        return islandResourceInteractionService.initializeIslandResource(initialIslandResourceDTO);
+    @PostMapping(value= "/")
+    public Mono<IslandResourceDTO> initializeIslandResource(@Valid @RequestBody IslandResourceDTO initialIslandResourceDTO,
+                                                            @RequestHeader("userid") Long userid) {
+        return islandResourceInteractionService.initializeIslandResource(initialIslandResourceDTO, userid);
     }
 
     @ResponseStatus(HttpStatus.OK)

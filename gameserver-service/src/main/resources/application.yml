@@ -11,3 +11,7 @@ spring:
       username: user
       database: gameserver
       port: 27012
+
+urls:
+  island: 192.168.0.14:3000
+  island-resource: 192.168.0.14:2000

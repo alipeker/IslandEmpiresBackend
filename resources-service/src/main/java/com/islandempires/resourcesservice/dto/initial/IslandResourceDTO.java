@@ -15,6 +15,8 @@ public class IslandResourceDTO implements Serializable {
 
     private String islandId;
 
+    private Long userId;
+
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
     private Integer wood;
