@@ -1,24 +1,26 @@
 package com.islandempires.buildingservice.model;
 
+import com.islandempires.buildingservice.model.buildingtype.BaseStructures;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.io.Serializable;
-import java.math.BigInteger;
 
-@Data
+import java.io.Serializable;
+import java.util.List;
+
 @Document("IslandBuilding")
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class IslandBuilding implements Serializable {
     @Id
-    private BigInteger islandid;
-    private Integer buildingId;
-    private Long iron;
-    private Long clay;
-    private Long gold;
-    private Long timestamp;
-}
+    @NotBlank
+    private String id;
 
+    private String islandId;
+
+    private List<BaseStructures> allBuildingList;
+}

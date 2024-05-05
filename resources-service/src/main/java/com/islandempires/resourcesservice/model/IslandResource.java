@@ -6,6 +6,7 @@ import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ public class IslandResource implements Serializable {
     private String id;
 
     @NotBlank
+    @Indexed(unique = true)
     private String islandId;
 
     private Long userId;

@@ -1,0 +1,28 @@
+server:
+  host: 192.168.0.14
+  port: 4000
+
+spring:
+  application:
+    name: building-service
+  data:
+    mongodb:
+      host: 192.168.0.14
+      username: user
+      database: building
+      port: 27400
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: island-building-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      island-delete-topic: island-delete-topic
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://192.168.0.14:1000/eureka/

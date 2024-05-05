@@ -37,8 +37,8 @@ public class WebSecurityConfig {
             .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
             .authorizeRequests()
-            .requestMatchers("/auth/signin").permitAll()
             .requestMatchers("/auth/signup").permitAll()
+            .requestMatchers("/auth/signin").permitAll()
             .anyRequest().authenticated();
 
     http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

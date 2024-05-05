@@ -12,6 +12,8 @@ import java.util.HashMap;
 public abstract class BaseStructures implements Serializable {
     private LocalDateTime createdAt;
 
+    private int initialLvl = 0;
+
     private HashMap<IslandBuildingEnum, Integer> upgradeConditions;
 
     protected abstract IslandBuildingEnum getBuildName();

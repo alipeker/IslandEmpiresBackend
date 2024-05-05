@@ -55,6 +55,14 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
     }
 
     @Override
+    public Mono<Void> delete(String islandId) {
+        return islandResourceRepository.deleteByIslandId(islandId)
+                .doOnError(error -> {
+                    throw new CustomRunTimeException(ExceptionE.NOT_FOUND);
+                });
+    }
+
+    @Override
     public Mono<IslandResourceDTO> initializeIslandResource(IslandResourceDTO islandResourceDTO, Long userid) {
         if(islandResourceDTO.getIslandId() != null) {
             islandResourceRepository.findById(islandResourceDTO.getIslandId()).doOnNext(result -> {

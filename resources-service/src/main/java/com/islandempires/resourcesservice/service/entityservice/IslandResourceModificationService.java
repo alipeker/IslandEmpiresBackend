@@ -8,4 +8,6 @@ public interface IslandResourceModificationService {
     Mono<IslandResourceDTO> updateIslandResourceField(String islandId, IslandResourceEnum islandResourceEnum, Number newValue);
 
     Mono<IslandResourceDTO> increaseOrDecreaseIslandResourceField(String islandId, IslandResourceEnum islandResourceEnum, Number value);
+
+    Mono<Void> delete(String islandId);
 }

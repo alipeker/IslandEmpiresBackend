@@ -18,5 +18,7 @@ public enum IslandBuildingEnum {
     MILL,
     EMBASSY,
     WATCH_TOWER,
-    DEFENCE_TOWER
+    DEFENCE_TOWER,
+    WAREHOUSE,
+    FOOD_WAREHOUSE
 }

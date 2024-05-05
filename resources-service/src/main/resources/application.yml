@@ -11,6 +11,15 @@ spring:
       username: user
       database: resources
       port: 27017
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: island-resources-id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      island-delete-topic: island-delete-topic
+
 
 eureka:
   client:

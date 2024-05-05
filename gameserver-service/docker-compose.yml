@@ -1,0 +1,47 @@
+version: '3'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeper
+    ports:
+      - "2181:2181"
+    networks:
+      - kafka-net
+
+  kafka1:
+    image: wurstmeister/kafka:2.12-2.4.0
+    container_name: "kafka1"
+    ports:
+      - "9091:9092"
+      - "8081:8081"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: 192.168.0.14
+      KAFKA_ADVERTISED_PORT: 9091
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LOG_DIRS: /kafka/logs
+      KAFKA_BROKER_ID: 1
+      KAFKA_offsets_topic_replication_factor: 3
+      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=192.168.0.14 -Dcom.sun.management.jmxremote.rmi.port=8081"
+      JMX_PORT: 8081
+      KAFKA_MESSAGE_MAX_BYTES: 2010000
+      KAFKA_LOG_RETENTION_MS: 30
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - kafka-net
+
+  kafka-manager:
+    image: sheepkiller/kafka-manager
+    container_name: kafka-manager
+    ports:
+      - "9002:9000"
+    environment:
+      ZK_HOSTS: "192.168.0.14:2181"
+    depends_on:
+      - zookeeper
+    networks:
+      - kafka-net
+
+networks:
+  kafka-net:

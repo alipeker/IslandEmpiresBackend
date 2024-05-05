@@ -28,7 +28,7 @@ public class IslandController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/{userid}")
+    @PostMapping("/")
     public Mono<IslandDTO> create(@RequestHeader("userid") Long userid) {
         return islandModificationService.create(userid);
     }
@@ -47,7 +47,7 @@ public class IslandController {
 
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/{islandId}")
-    public Mono<Boolean> delete(@RequestParam String islandId) {
+    public Mono<Void> delete(@RequestParam String islandId) {
         return islandModificationService.delete(islandId);
     }
 

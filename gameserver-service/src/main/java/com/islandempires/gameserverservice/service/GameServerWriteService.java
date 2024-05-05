@@ -1,9 +1,9 @@
 package com.islandempires.gameserverservice.service;
 
 import com.islandempires.gameserverservice.dto.GameServerDTO;
-import com.islandempires.gameserverservice.dto.IslandDTO;
+import com.islandempires.gameserverservice.dto.island.IslandDTO;
 import com.islandempires.gameserverservice.model.GameServer;
-import com.islandempires.gameserverservice.model.Island;
+import com.islandempires.gameserverservice.model.IslandOutboxEventRecord;
 import reactor.core.publisher.Mono;
 
 public interface GameServerWriteService {

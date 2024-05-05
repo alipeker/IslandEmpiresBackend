@@ -33,11 +33,12 @@ public class IslandQueryServiceImpl implements IslandQueryService, IslandModific
     @Override
     public Mono<IslandDTO> create(Long userId) {
         IslandDTO islandDTO = new IslandDTO();
-        islandDTO.setName("My Island");
+        islandDTO.setName("test");
         islandDTO.setUserId(userId);
         islandDTO.setX(new Random().nextInt(100) + 1);
         islandDTO.setY(new Random().nextInt(100) + 1);
-        return islandRepository.save(modelMapper.map(islandDTO, Island.class))
+        Island recorededIsland = modelMapper.map(islandDTO, Island.class);
+        return islandRepository.save(recorededIsland)
                 .map(island -> modelMapper.map(island, IslandDTO.class));
     }
 
@@ -67,7 +68,10 @@ public class IslandQueryServiceImpl implements IslandQueryService, IslandModific
     }
 
     @Override
-    public Mono<Boolean> delete(String islandId) {
-        return islandRepository.deleteById(islandId).map(island -> {return true;});
+    public Mono<Void> delete(String islandId) {
+        return islandRepository.deleteById(islandId)
+                .doOnError(error -> {
+                    throw new CustomRunTimeException(ExceptionE.NOT_FOUND);
+                });
     }
 }

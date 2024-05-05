@@ -10,5 +10,5 @@ public interface IslandModificationService {
 
     Mono<IslandDTO> updateOwner(Long userId, String islandId);
 
-    Mono<Boolean> delete(String islandId);
+    Mono<Void> delete(String islandId);
 }

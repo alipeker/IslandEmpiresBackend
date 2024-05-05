@@ -11,7 +11,22 @@ spring:
       username: user
       database: gameserver
       port: 27012
+  kafka:
+    consumer:
+      island-delete-topic-status: island-delete-topic-status
+      group-id: group-id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      bootstrap-servers: localhost:9092
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      island-delete-topic: island-delete-topic
+
 
 urls:
   island: 192.168.0.14:3000
   island-resource: 192.168.0.14:2000
+  island-building: 192.168.0.14:4000
+

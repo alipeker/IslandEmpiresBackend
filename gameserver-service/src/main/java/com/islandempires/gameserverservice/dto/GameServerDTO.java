@@ -15,24 +15,7 @@ public class GameServerDTO {
 
     private IslandResource islandResource;
 
-    private Academia academia;
-    private Barrack barrack;
-    private BrickWorks brickWorks;
-    private CannonCamp cannonCamp;
-    private ClayMine clayMine;
-    private DairyFarm dairyFarm;
-    private DefenceTower defenceTower;
-    private Embassy embassy;
-    private Fisher fisher;
-    private Foundry foundry;
-    private Gunsmith gunsmith;
-    private Houses houses;
-    private IronMine ironMine;
-    private IslandHeadquarter islandHeadquarter;
-    private Mill mill;
-    private RiffleBarrack riffleBarrack;
-    private TimberCamp timberCamp;
-    private WatchTower watchTower;
+    private AllBuildings allBuildings;
 
     private long timestamp;
 
