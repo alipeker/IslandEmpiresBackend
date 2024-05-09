@@ -1,12 +1,7 @@
 package com.islandempires.authservice.security;
 
-import com.islandempires.authservice.model.AppUserRole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data

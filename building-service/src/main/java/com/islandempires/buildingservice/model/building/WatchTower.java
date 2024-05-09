@@ -1,23 +1,27 @@
 package com.islandempires.buildingservice.model.building;
 
 import com.islandempires.buildingservice.enums.IslandBuildingEnum;
+import com.islandempires.buildingservice.model.buildinglevelspec.BuildingLevel;
 import com.islandempires.buildingservice.model.buildinglevelspec.WatchTowerLevel;
 import com.islandempires.buildingservice.model.buildingtype.MilitaryStructures;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 public class WatchTower extends MilitaryStructures implements Serializable {
     private List<WatchTowerLevel> watchTowerLevelList;
 
+    protected WatchTower() {
+        this.islandBuildingEnum = IslandBuildingEnum.WATCH_TOWER;
+    }
+
     @Override
-    protected IslandBuildingEnum getBuildName() {
-        return IslandBuildingEnum.WATCH_TOWER;
+    public List<BuildingLevel> getBuildingLevelList() {
+        return watchTowerLevelList.stream().map(BuildingLevel.class::cast).collect(Collectors.toList());
     }
 }

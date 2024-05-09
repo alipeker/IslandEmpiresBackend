@@ -7,12 +7,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import reactor.core.publisher.Mono;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(value = "island-building", url = "${urls.island-building}")
 @Component
 public interface IslandBuildingServiceClient {
     @PostMapping(value = "/building/{islandId}")
-    IslandBuildingDTO initializeIslandBuildings(@PathVariable String islandId, @RequestBody AllBuildings allBuildings);
+    IslandBuildingDTO initializeIslandBuildings(@PathVariable String islandId, @RequestBody AllBuildings allBuildingList,
+                                                @RequestHeader("userid") Long userid);
 
 }

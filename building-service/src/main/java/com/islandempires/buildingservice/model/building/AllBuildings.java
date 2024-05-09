@@ -13,7 +13,8 @@ public class AllBuildings {
     private BrickWorks brickWorks;
     private CannonCamp cannonCamp;
     private ClayMine clayMine;
-    private DairyFarm dairyFarm;
+    private DairyFarm dairyFarm1;
+    private DairyFarm dairyFarm2;
     private DefenceTower defenceTower;
     private Embassy embassy;
     private Fisher fisher;

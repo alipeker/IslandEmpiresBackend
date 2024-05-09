@@ -1,11 +1,13 @@
 package com.islandempires.gameserverservice.kafka;
 
+import com.islandempires.gameserverservice.exception.CustomRunTimeException;
+import com.islandempires.gameserverservice.exception.ExceptionE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.CompletableFuture;
 
 @Service
 public class KafkaOutboxProducerService {
@@ -16,9 +18,11 @@ public class KafkaOutboxProducerService {
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
-    public CompletableFuture<Void> sendDeleteIslandMessage(String message) {
-        return CompletableFuture.runAsync(() -> {
-            this.kafkaTemplate.send(islandTopicName, message);
-        });
+    public SendResult<String, String> sendDeleteIslandMessage(String message) {
+        try {
+            return this.kafkaTemplate.send(islandTopicName, message).get();
+        } catch (Exception e) {
+            throw new CustomRunTimeException(ExceptionE.UNEXPECTED_ERROR);
+        }
     }
 }

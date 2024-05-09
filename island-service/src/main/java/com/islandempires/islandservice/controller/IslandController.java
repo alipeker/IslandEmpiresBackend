@@ -22,9 +22,15 @@ public class IslandController {
     private IslandModificationService islandModificationService;
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping("test")
+    public Mono<String> test() {
+        return Mono.just("a");
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{islandid}")
-    public Mono<IslandDTO> get(@PathVariable String islandid) {
-        return islandQueryService.get(islandid);
+    public Mono<IslandDTO> get(@PathVariable String islandid, @RequestHeader("userid") Long userid) {
+        return islandQueryService.get(islandid, userid);
     }
 
     @ResponseStatus(HttpStatus.OK)

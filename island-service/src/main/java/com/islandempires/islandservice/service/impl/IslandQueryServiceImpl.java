@@ -24,10 +24,15 @@ public class IslandQueryServiceImpl implements IslandQueryService, IslandModific
     private ModelMapper modelMapper;
 
     @Override
-    public Mono<IslandDTO> get(String islandId) {
+    public Mono<IslandDTO> get(String islandId, Long userid) {
         return islandRepository.findById(islandId)
                 .switchIfEmpty(Mono.error(new CustomRunTimeException(ExceptionE.NOT_FOUND)))
-                .map(island -> modelMapper.map(island, IslandDTO.class));
+                .map(island -> {
+                    if(island.getUserId() != null && island.getUserId() != userid) {
+                       new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
+                    }
+                    return modelMapper.map(island, IslandDTO.class);
+                });
     }
 
     @Override
@@ -48,7 +53,7 @@ public class IslandQueryServiceImpl implements IslandQueryService, IslandModific
                 .switchIfEmpty(Mono.error(new CustomRunTimeException(ExceptionE.NOT_FOUND)))
                 .map(island -> {
                     if(island.getUserId() != null && island.getUserId() != userId) {
-                        throw new CustomRunTimeException(ExceptionE.NOT_FOUND);
+                        throw new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
                     }
                     island.setName(newName);
                     return island;

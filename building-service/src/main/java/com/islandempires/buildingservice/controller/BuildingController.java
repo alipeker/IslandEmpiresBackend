@@ -1,16 +1,17 @@
 package com.islandempires.buildingservice.controller;
 
-import com.islandempires.buildingservice.dto.AllBuildingsDTO;
+import com.islandempires.buildingservice.enums.IslandBuildingEnum;
 import com.islandempires.buildingservice.model.IslandBuilding;
 import com.islandempires.buildingservice.model.building.AllBuildings;
+import com.islandempires.buildingservice.model.buildingtype.BaseStructures;
 import com.islandempires.buildingservice.service.BuildingService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 
 @RestController
@@ -25,10 +26,16 @@ public class BuildingController {
 
 
   @PostMapping("/{islandId}")
-  public Mono<IslandBuilding> initializeIslandBuildings(@PathVariable String islandId, @RequestBody AllBuildings allBuildings) {
-    return buildingService.initializeIslandBuildings(islandId, allBuildings);
+  public Mono<IslandBuilding> initializeIslandBuildings(@PathVariable String islandId, @RequestBody AllBuildings allBuildings,
+                                                        @RequestHeader("userid") Long userid) {
+    return buildingService.initializeIslandBuildings(islandId, allBuildings, userid);
   }
 
+  @PostMapping("/increaselvl/{islandId}")
+  public Mono<Void> increaseIslandBuildingLvl(@PathVariable String islandId, @RequestBody IslandBuildingEnum islandBuildingEnum,
+                                                        @RequestHeader("userid") Long userid) {
+    return buildingService.increaseIslandBuildingLvl(islandId, islandBuildingEnum, userid);
+  }
 
   /*
   @GetMapping(value = "/me")

@@ -18,12 +18,10 @@ import java.util.*;
 public class IslandResourceCalculatorService {
 
     public Boolean checkResourceAllocation(IslandResourceDTO islandResourceDTO, ResourceAllocationRequestDTO resourceAllocationRequestDTO) {
-        RawMaterialsDTO resourceAllocationRequestRawMaterialsDTO = resourceAllocationRequestDTO.getRawMaterials();
-        PopulationDTO resourceAllocationRequestPopulationDTO = resourceAllocationRequestDTO.getPopulation();
-        return  islandResourceDTO.getWood() >= resourceAllocationRequestRawMaterialsDTO.getWood() &&
-                islandResourceDTO.getClay() >= resourceAllocationRequestRawMaterialsDTO.getClay() &&
-                islandResourceDTO.getIron() >= resourceAllocationRequestRawMaterialsDTO.getIron() &&
-                islandResourceDTO.getPopulationLimit() >= islandResourceDTO.getPopulation() + resourceAllocationRequestPopulationDTO.getPopulation()
+        return  islandResourceDTO.getWood() >= resourceAllocationRequestDTO.getWood() &&
+                islandResourceDTO.getClay() >= resourceAllocationRequestDTO.getClay() &&
+                islandResourceDTO.getIron() >= resourceAllocationRequestDTO.getIron() &&
+                islandResourceDTO.getPopulationLimit() >= islandResourceDTO.getPopulation() + resourceAllocationRequestDTO.getPopulation()
                 ? true: false;
     }
 
@@ -39,13 +37,11 @@ public class IslandResourceCalculatorService {
         if(!checkResourceAllocation(islandResourceDTO, resourceAllocationRequestDTO)) {
             throw new CustomRunTimeException(ExceptionE.INSUFFICIENT_RESOURCES);
         }
-        RawMaterialsDTO rawMaterialsDTO = resourceAllocationRequestDTO.getRawMaterials();
-        PopulationDTO populationDTO = resourceAllocationRequestDTO.getPopulation();
 
-        Integer wood = rawMaterialsDTO.getWood();
-        Integer iron = rawMaterialsDTO.getIron();
-        Integer clay = rawMaterialsDTO.getClay();
-        Integer population = populationDTO.getPopulation();
+        Integer wood = resourceAllocationRequestDTO.getWood();
+        Integer iron = resourceAllocationRequestDTO.getIron();
+        Integer clay = resourceAllocationRequestDTO.getClay();
+        Integer population = resourceAllocationRequestDTO.getPopulation();
 
         islandResourceDTO.setWood(islandResourceDTO.getWood() - wood);
         islandResourceDTO.setIron(islandResourceDTO.getIron() - iron);

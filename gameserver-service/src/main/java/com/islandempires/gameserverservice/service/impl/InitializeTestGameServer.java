@@ -15,13 +15,14 @@ public class InitializeTestGameServer {
 
         gameServerDTO.setServerName("server");
 
+        /*
         Houses houses = new Houses();
 
         for(int i = 1; i <= 20; i++) {
             HouseLevel houseLevel = new HouseLevel();
             houseLevel.setLevel(i);
             houseLevel.setPopulationGrowth(Long.valueOf(i*10));
-        }
+        }*/
 
     }
 

@@ -21,13 +21,14 @@ public class IslandOutboxEventCronJob {
 
     private ModelMapper modelMapper;
 
+
     @Scheduled(fixedRateString ="30000")
     public void islandOutboxEventCronJob() {
         islandOutboxEventRepository.findAll()
                 .flatMap(islandOutboxEvent -> {
                     if(islandOutboxEvent.getOutboxEventType().equals(OutboxEventType.DELETE)) {
                         return Mono.just(kafkaOutboxProducerService.sendDeleteIslandMessage(islandOutboxEvent.getIslandId()))
-                                        .then(islandOutboxEventRepository.delete(islandOutboxEvent));
+                                .then(islandOutboxEventRepository.delete(islandOutboxEvent));
                     }
                     return Mono.empty();
                 })
