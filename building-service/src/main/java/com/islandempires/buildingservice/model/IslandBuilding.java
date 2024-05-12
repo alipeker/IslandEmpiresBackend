@@ -18,6 +18,8 @@ public class IslandBuilding implements Serializable {
     @Id
     private String id;
 
+    private Long userId;
+
     private List<BaseStructures> allBuildingList;
 
     public void setAllBuildings(List<BaseStructures> allBuildings) {

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @Component
 public interface IslandBuildingServiceClient {
     @PostMapping(value = "/building/{islandId}")
-    IslandBuildingDTO initializeIslandBuildings(@PathVariable String islandId, @RequestBody AllBuildings allBuildingList,
-                                                @RequestHeader("userid") Long userid);
+    IslandBuildingDTO initializeIslandBuildings(@PathVariable String islandId, @RequestBody AllBuildings allBuildingList);
 
 }

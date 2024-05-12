@@ -13,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 @FeignClient(value = "island", url = "${urls.island}")
 public interface IslandServiceClient {
     @PostMapping(value = "/island/")
-    IslandDTO create(@RequestHeader("userid") Long userid);
+    IslandDTO create();
 
     @DeleteMapping(value = "/island/{islandId}")
     IslandDTO rollBackIslandCreate(@RequestParam String islandId);

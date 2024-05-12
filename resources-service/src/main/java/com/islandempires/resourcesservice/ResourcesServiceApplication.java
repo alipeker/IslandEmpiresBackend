@@ -9,6 +9,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
 @EnableAutoConfiguration
@@ -27,5 +28,9 @@ public class ResourcesServiceApplication {
 		return new ModelMapper();
 	}
 
+	@Bean
+	public WebClient.Builder islandResourceWebClientBuilder() {
+		return WebClient.builder();
+	}
 
 }

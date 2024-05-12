@@ -3,6 +3,7 @@ package com.islandempires.gameserverservice.outbox;
 import com.islandempires.gameserverservice.enums.OutboxEventType;
 import com.islandempires.gameserverservice.kafka.KafkaOutboxProducerService;
 import com.islandempires.gameserverservice.model.IslandOutboxEventRecord;
+import com.islandempires.gameserverservice.repository.GameServerIslandsRepository;
 import com.islandempires.gameserverservice.repository.IslandOutboxEventRecordRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -19,15 +20,18 @@ public class IslandOutboxEventCronJob {
 
     private final KafkaOutboxProducerService kafkaOutboxProducerService;
 
+    private final GameServerIslandsRepository gameServerIslandsRepository;
+
     private ModelMapper modelMapper;
 
 
-    @Scheduled(fixedRateString ="30000")
+    @Scheduled(fixedRateString ="300000")
     public void islandOutboxEventCronJob() {
         islandOutboxEventRepository.findAll()
                 .flatMap(islandOutboxEvent -> {
                     if(islandOutboxEvent.getOutboxEventType().equals(OutboxEventType.DELETE)) {
                         return Mono.just(kafkaOutboxProducerService.sendDeleteIslandMessage(islandOutboxEvent.getIslandId()))
+                                .then(gameServerIslandsRepository.deleteByIslandId(islandOutboxEvent.getIslandId()))
                                 .then(islandOutboxEventRepository.delete(islandOutboxEvent));
                     }
                     return Mono.empty();

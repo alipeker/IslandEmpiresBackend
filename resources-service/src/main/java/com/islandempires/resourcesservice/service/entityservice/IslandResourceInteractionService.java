@@ -11,11 +11,11 @@ import reactor.util.function.Tuple2;
 
 public interface IslandResourceInteractionService {
 
-    Mono<Boolean> validateResourceAllocationForIsland(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO);
+    Mono<Boolean> validateResourceAllocationForIsland(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO, Long userId);
 
     Mono<IslandResourceDTO> initializeIslandResource(IslandResourceDTO initialIslandResorceDTO, Long userid);
 
-    Mono<IslandResourceDTO> assignResources(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO);
+    Mono<IslandResourceDTO> assignResources(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO, Long userId);
 
     Mono<Tuple2<IslandResource, IslandResource>> looting(String plunderedIslandId, String raidingIslandId, LootingResourcesRequestDTO lootingResourcesRequestDTO);
 

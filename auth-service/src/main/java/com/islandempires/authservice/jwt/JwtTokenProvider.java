@@ -1,8 +1,9 @@
-package com.islandempires.authservice.security;
+package com.islandempires.authservice.jwt;
 
 import com.islandempires.authservice.exception.CustomException;
 import com.islandempires.authservice.exception.ExceptionE;
 import com.islandempires.authservice.model.AppUserRole;
+import com.islandempires.authservice.security.MyUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -78,6 +79,13 @@ public class JwtTokenProvider {
 
   public String resolveToken(HttpServletRequest req) {
     String bearerToken = req.getHeader("Authorization");
+    if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+      return bearerToken.substring(7);
+    }
+    return null;
+  }
+
+  public String resolveToken(String bearerToken) {
     if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
       return bearerToken.substring(7);
     }

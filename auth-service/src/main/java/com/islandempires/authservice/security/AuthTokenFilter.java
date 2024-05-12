@@ -2,6 +2,8 @@ package com.islandempires.authservice.security;
 
 import com.islandempires.authservice.exception.CustomException;
 import com.islandempires.authservice.exception.ExceptionE;
+import com.islandempires.authservice.jwt.JWTDbTokenService;
+import com.islandempires.authservice.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +26,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private MyUserDetails userDetailsService;
 
+    @Autowired
+    private JWTDbTokenService jwtDbTokenService;
 
     private HttpServletResponse prepareJwtException(HttpServletResponse response) throws IOException {
         CustomException errorResponse = new CustomException(ExceptionE.TOKEN_EXPIRED);
@@ -42,7 +46,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         try {
             String jwt = parseJwt(request);
 
-            if (jwt != null && jwtTokenProvider.validateToken(jwt)) {
+            if (jwt != null && jwtDbTokenService.isJWTDbTokenActive(jwt)) {
                 String username = jwtTokenProvider.getUsername(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
@@ -51,6 +55,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                jwtDbTokenService.updateTokenUpdatedDate(jwt);
             } else {
                 if(jwt != null && !jwtTokenProvider.validateToken(jwt) && !request.getServletPath().equals("/auth/signin")
                         && !request.getServletPath().equals("/auth/signup")) {

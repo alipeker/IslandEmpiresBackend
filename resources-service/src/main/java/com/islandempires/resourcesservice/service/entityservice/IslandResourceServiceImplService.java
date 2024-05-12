@@ -48,10 +48,15 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
     }
 
     @Override
-    public Mono<IslandResourceDTO> get(String islandId) {
+    public Mono<IslandResourceDTO> get(String islandId, Long userId) {
         return this.islandResourceRepository.findById(islandId)
                 .switchIfEmpty(Mono.error(new CustomRunTimeException(ExceptionE.NOT_FOUND)))
-                .map(islandResource -> modelMapper.map(islandResource, IslandResourceDTO.class));
+                .map(islandResource -> {
+                    if(userId != islandResource.getUserId()) {
+                        throw new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
+                    }
+                    return modelMapper.map(islandResource, IslandResourceDTO.class);
+                });
     }
 
     @Override
@@ -81,18 +86,24 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
     }
 
     @Override
-    public Mono<Boolean> validateResourceAllocationForIsland(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO){
+    public Mono<Boolean> validateResourceAllocationForIsland(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO, Long userId){
         return islandResourceRepository.findById(islandId)
                 .map(islandResource -> {
+                    if(userId != islandResource.getUserId()) {
+                        throw new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
+                    }
                     return islandResourceCalculatorService.checkResourceAllocation(modelMapper.map(islandResource, IslandResourceDTO.class),
                             resourceAllocationRequestDTO);
                 }).switchIfEmpty(Mono.error(new CustomRunTimeException(ExceptionE.NOT_FOUND)));
     }
 
     @Override
-    public Mono<IslandResourceDTO> assignResources(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO){
+    public Mono<IslandResourceDTO> assignResources(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO, Long userId){
         return islandResourceRepository.findById(islandId)
                 .map(islandResource -> {
+                    if(islandResource.getUserId() != userId) {
+                        throw new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
+                    }
                     return modelMapper.map(
                             islandResourceCalculatorService.calculateResourceAllocation(
                                     modelMapper.map(islandResource, IslandResourceDTO.class),

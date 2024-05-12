@@ -1,25 +1,16 @@
 package com.islandempires.resourceworker.aggregations;
 
-import com.islandempires.resourceworker.mongodb.IslandResource;
-import com.islandempires.resourceworker.repository.IslandResourceRepository;
-import com.mongodb.BasicDBObject;
-import com.mongodb.client.MongoClients;
-import org.bson.BsonDocument;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
 
 @Component
 public class IslandResourceAggregation {
@@ -28,8 +19,6 @@ public class IslandResourceAggregation {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    @Autowired
-    private IslandResourceRepository islandResourceRepository;
 
     @Scheduled(fixedRate = 5000)
     public void deduplicateToTargetCollection() {

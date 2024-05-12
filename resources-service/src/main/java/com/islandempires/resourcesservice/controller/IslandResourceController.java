@@ -1,5 +1,6 @@
 package com.islandempires.resourcesservice.controller;
 
+import com.islandempires.resourcesservice.filter.client.WhoAmIClient;
 import com.islandempires.resourcesservice.dto.initial.IslandResourceDTO;
 import com.islandempires.resourcesservice.dto.request.*;
 import com.islandempires.resourcesservice.model.IslandResource;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.result.method.annotation.RequestMappingHandlerMapping;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -31,6 +31,9 @@ public class IslandResourceController {
     @Autowired
     private IslandResourceModificationService islandResourceModificationService;
 
+    @Autowired
+    private WhoAmIClient whoAmIClient;
+
     @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<IslandResourceDTO> streamResources() {
         return islandResourceQueryService.getAll();
@@ -38,29 +41,32 @@ public class IslandResourceController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{islandid}")
-    public Mono<IslandResourceDTO> get(@PathVariable String islandid) {
-        return islandResourceQueryService.get(islandid);
+    public Mono<IslandResourceDTO> get(@PathVariable String islandid, @RequestAttribute("userId") Long userId) {
+        return islandResourceQueryService.get(islandid, userId);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/checkResourceAllocation/{islandId}")
     public Mono<Boolean> checkResourceAllocation(@Size(min = 1, message = "Id must be not empty") @PathVariable String islandId,
-                                                 @Valid @RequestBody ResourceAllocationRequestDTO resourceAllocationRequestDTO) {
-        return islandResourceInteractionService.validateResourceAllocationForIsland(islandId, resourceAllocationRequestDTO);
+                                                 @Valid @RequestBody ResourceAllocationRequestDTO resourceAllocationRequestDTO,
+                                                 @RequestAttribute("userId") Long userId) {
+        return islandResourceInteractionService.validateResourceAllocationForIsland(islandId, resourceAllocationRequestDTO, userId);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping(value= "/")
     public Mono<IslandResourceDTO> initializeIslandResource(@Valid @RequestBody IslandResourceDTO initialIslandResourceDTO,
-                                                            @RequestHeader("userid") Long userid) {
+                                                            @RequestAttribute("userId") Long userid) {
         return islandResourceInteractionService.initializeIslandResource(initialIslandResourceDTO, userid);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/assignResources/{islandId}")
+    @PostMapping("/assignResources/{islandId}")
     public Mono<IslandResourceDTO> assignResources(@Size(min = 1, message = "Id must be not empty") @PathVariable String islandId,
-                                                @Valid @RequestBody ResourceAllocationRequestDTO resourceAllocationRequestDTO) {
-        return islandResourceInteractionService.assignResources(islandId, resourceAllocationRequestDTO);
+                                                @Valid @RequestBody ResourceAllocationRequestDTO resourceAllocationRequestDTO,
+                                                   @RequestAttribute("userId") Long userId) {
+
+        return islandResourceInteractionService.assignResources(islandId, resourceAllocationRequestDTO, userId);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -104,4 +110,9 @@ public class IslandResourceController {
         return islandResourceInteractionService.addTest();
     }
 
+
+    @PostMapping("/test2")
+    public Mono<Long> increaseIslandBuildingLvl(@RequestAttribute("userId") Long userId) {
+        return Mono.just(userId);
+    }
 }

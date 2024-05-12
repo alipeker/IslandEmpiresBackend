@@ -28,5 +28,6 @@ eureka:
       defaultZone: http://192.168.0.14:1000/eureka/
 
 urls:
-  island: 192.168.0.14:3000
-  island-resource: 192.168.0.14:2000
+  gateway: http://192.168.0.14:9000
+
+

@@ -31,8 +31,21 @@ public class GameServerController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/initializeIsland")
-    public Mono<GameServerIslands> initializeIsland(@RequestParam("serverId") String serverId, @RequestHeader("userid") Long userid) {
-        return gameServerWriteService.initializeIsland(serverId, userid);
+    @PostMapping("/initializeIsland")
+    public Mono<GameServerIslands> initializeIsland(@RequestParam("serverId") String serverId, @RequestAttribute("userId") Long userid,
+                                                    @RequestHeader("Authorization") String jwtToken) {
+        return gameServerWriteService.initializeIsland(serverId, userid, jwtToken);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/test1")
+    public Mono<String> initializeIsland4() {
+        return Mono.just("a");
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/test2")
+    public String initializeIsland3() {
+        return "a";
     }
 }

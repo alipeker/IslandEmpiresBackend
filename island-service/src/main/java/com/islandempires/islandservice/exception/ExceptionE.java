@@ -92,7 +92,7 @@ public enum ExceptionE {
         public String toString() {
             return "This island is not yours!";
         }
-    },;
+    };
 
     abstract public Integer getStatus();
 

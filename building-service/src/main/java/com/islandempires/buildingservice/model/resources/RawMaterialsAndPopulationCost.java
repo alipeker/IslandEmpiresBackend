@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RawMaterialsAndPopulationCost {
 
-    private Integer wood;
+    private int wood;
 
-    private Integer clay;
+    private int clay;
 
-    private Integer iron;
+    private int iron;
 
-    private Integer population;
+    private int population;
 
 }

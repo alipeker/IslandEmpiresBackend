@@ -8,5 +8,5 @@ import reactor.core.publisher.Mono;
 
 public interface IslandResourceQueryService {
     Flux<IslandResourceDTO> getAll();
-    Mono<IslandResourceDTO> get(String islandId);
+    Mono<IslandResourceDTO> get(String islandId, Long userId);
 }

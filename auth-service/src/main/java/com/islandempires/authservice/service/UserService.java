@@ -2,22 +2,19 @@ package com.islandempires.authservice.service;
 
 import com.islandempires.authservice.exception.CustomException;
 import com.islandempires.authservice.exception.ExceptionE;
+import com.islandempires.authservice.jwt.JWTDbTokenService;
 import com.islandempires.authservice.model.AppUser;
 import com.islandempires.authservice.repository.UserRepository;
-import com.islandempires.authservice.security.JwtResponse;
-import com.islandempires.authservice.security.JwtTokenProvider;
+import com.islandempires.authservice.jwt.JwtResponse;
+import com.islandempires.authservice.jwt.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Service
@@ -28,6 +25,8 @@ public class UserService implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthService authService;
+
+    private final JWTDbTokenService jwtDbTokenService;
 
 
     public UserDetailsService userDetailsService() {
@@ -69,8 +68,12 @@ public class UserService implements CommandLineRunner {
         return appUser;
     }
 
-    public AppUser whoami(HttpServletRequest req) {
-        return userRepository.findByUsername(jwtTokenProvider.getUsername(jwtTokenProvider.resolveToken(req)));
+    public AppUser whoami(String jwtToken) {
+        return userRepository.findByUsername(jwtTokenProvider.getUsername(jwtToken));
+    }
+
+    public boolean isTokenValid(HttpServletRequest req) {
+        return jwtDbTokenService.isJWTDbTokenActive(jwtTokenProvider.resolveToken(req));
     }
 
     public String refresh(String username) {

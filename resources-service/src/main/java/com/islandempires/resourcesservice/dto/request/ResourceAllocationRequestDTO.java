@@ -15,18 +15,18 @@ public class ResourceAllocationRequestDTO implements Serializable {
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
-    private Integer wood;
+    private int wood;
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
-    private Integer clay;
+    private int clay;
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
-    private Integer iron;
+    private int iron;
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
-    private Integer population;
+    private int population;
 
 }

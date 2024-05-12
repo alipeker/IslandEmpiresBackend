@@ -1,4 +1,4 @@
-package com.islandempires.authservice.security;
+package com.islandempires.authservice.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

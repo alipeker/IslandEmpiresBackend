@@ -4,6 +4,7 @@ package com.islandempires.buildingservice.model.scheduled;
 import com.islandempires.buildingservice.enums.IslandBuildingEnum;
 import com.islandempires.buildingservice.model.buildinglevelspec.BuildingLevel;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 
 @Document("BuildingScheduledTask")
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class BuildingScheduledTask {
     @Id
@@ -28,9 +30,11 @@ public class BuildingScheduledTask {
 
     private Duration constructionDuration;
 
-    private Duration remainingTime;
+    private long remainingTime;
 
     private LocalDateTime startingDate;
+
+    private long lastCalculatedTimestamp;
 
     public BuildingScheduledTask(String islandId, IslandBuildingEnum islandBuildingEnum, BuildingLevel initialLvl, BuildingLevel nextLvl, Duration constructionDuration) {
         this.islandId = islandId;
@@ -39,5 +43,6 @@ public class BuildingScheduledTask {
         this.nextLvl = nextLvl;
         this.constructionDuration = constructionDuration;
         this.startingDate = LocalDateTime.now();
+        this.remainingTime = Duration.parse(constructionDuration.toString()).toMillis();
     }
 }

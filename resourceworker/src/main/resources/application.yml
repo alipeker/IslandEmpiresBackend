@@ -1,6 +1,6 @@
 server:
   host: 192.168.0.14
-  port: 6001
+  port: 3002
 
 spring:
   application:

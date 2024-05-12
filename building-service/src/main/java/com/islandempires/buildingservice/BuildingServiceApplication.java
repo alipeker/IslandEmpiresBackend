@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.stream.Collectors;
 
@@ -21,7 +22,6 @@ import java.util.stream.Collectors;
 @EnableWebFlux
 @EnableDiscoveryClient
 @EnableKafka
-@EnableFeignClients
 public class BuildingServiceApplication {
 
 	public static void main(String[] args) {
@@ -38,6 +38,11 @@ public class BuildingServiceApplication {
 	@ConditionalOnMissingBean
 	public HttpMessageConverters messageConverters(ObjectProvider<HttpMessageConverter<?>> converters) {
 		return new HttpMessageConverters(converters.orderedStream().collect(Collectors.toList()));
+	}
+
+	@Bean
+	public WebClient.Builder islandResourceWebClientBuilder() {
+		return WebClient.builder();
 	}
 
 }

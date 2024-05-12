@@ -26,6 +26,10 @@ spring:
           uri: http://192.168.0.14:3000
           predicates:
             - Path=/island/**
+        - id: building-service
+          uri: http://192.168.0.14:4000
+          predicates:
+            - Path=/building/**
 
 eureka:
   client:

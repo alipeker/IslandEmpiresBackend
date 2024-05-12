@@ -74,6 +74,24 @@ public enum ExceptionE {
         public String toString() {
             return httpStatus.toString();
         }
+    },
+    ISLAND_PRIVILEGES{
+        Integer status = 1001;
+        HttpStatus httpStatus = HttpStatus.NOT_ACCEPTABLE;
+
+        @Override
+        public HttpStatus getHttpStatus() {
+            return httpStatus;
+        }
+
+        @Override
+        public Integer getStatus() {
+            return this.status;
+        }
+
+        public String toString() {
+            return "This island is not yours!";
+        }
     };
 
     abstract public Integer getStatus();

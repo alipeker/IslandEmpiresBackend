@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
 @EnableWebFlux
@@ -16,7 +17,7 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"com.islandempires.islandservice.repository", "com.islandempires.islandservice.service",
 		"com.islandempires.islandservice.controller", "com.islandempires.islandservice.exception", "com.islandempires.islandservice.kafka",
-		"com.islandempires.islandservice.outbox"})
+		"com.islandempires.islandservice.outbox", "com.islandempires.islandservice.filter"})
 @EnableKafka
 public class IslandServiceApplication {
 
@@ -29,4 +30,8 @@ public class IslandServiceApplication {
 		return new ModelMapper();
 	}
 
+	@Bean
+	public WebClient.Builder islandResourceWebClientBuilder() {
+		return WebClient.builder();
+	}
 }

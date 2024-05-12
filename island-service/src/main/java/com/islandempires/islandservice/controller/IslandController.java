@@ -29,25 +29,25 @@ public class IslandController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{islandid}")
-    public Mono<IslandDTO> get(@PathVariable String islandid, @RequestHeader("userid") Long userid) {
+    public Mono<IslandDTO> get(@PathVariable String islandid, @RequestAttribute("userId") Long userid) {
         return islandQueryService.get(islandid, userid);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/")
-    public Mono<IslandDTO> create(@RequestHeader("userid") Long userid) {
+    public Mono<IslandDTO> create(@RequestAttribute("userId") Long userid) {
         return islandModificationService.create(userid);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/updateName")
-    public Mono<IslandDTO> updateName(@RequestBody UpdateIslandDTO updateIslandDTO, @RequestHeader("userid") Long userid) {
+    public Mono<IslandDTO> updateName(@RequestBody UpdateIslandDTO updateIslandDTO, @RequestAttribute("userId") Long userid) {
         return islandModificationService.updateName(userid, updateIslandDTO.getIslandID(), updateIslandDTO.getName());
     }
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/updateOwner")
-    public Mono<IslandDTO> updateOwner(@RequestBody UpdateOwnerDTO updateOwnerDTO, @RequestHeader("userid") Long userid) {
+    public Mono<IslandDTO> updateOwner(@RequestBody UpdateOwnerDTO updateOwnerDTO, @RequestAttribute("userId") Long userid) {
         return islandModificationService.updateOwner(updateOwnerDTO.getUserId(), updateOwnerDTO.getIslandID());
     }
 

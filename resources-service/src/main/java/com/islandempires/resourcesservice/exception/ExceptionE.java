@@ -21,6 +21,24 @@ public enum ExceptionE {
             return httpStatus.toString();
         }
     },
+    ISLAND_PRIVILEGES{
+        Integer status = 1001;
+        HttpStatus httpStatus = HttpStatus.NOT_ACCEPTABLE;
+
+        @Override
+        public HttpStatus getHttpStatus() {
+            return httpStatus;
+        }
+
+        @Override
+        public Integer getStatus() {
+            return this.status;
+        }
+
+        public String toString() {
+            return "This island is not yours!";
+        }
+    },
     ALREADY_EXIST {
         Integer status = HttpStatus.CONFLICT.value();
         HttpStatus httpStatus = HttpStatus.CONFLICT;
@@ -41,7 +59,7 @@ public enum ExceptionE {
     },
     INSUFFICIENT_RESOURCES{
         Integer status = 1001;
-        HttpStatus httpStatus = HttpStatus.NOT_ACCEPTABLE;
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 
         @Override
         public HttpStatus getHttpStatus() {

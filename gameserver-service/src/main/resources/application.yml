@@ -29,4 +29,5 @@ urls:
   island: 192.168.0.14:3000
   island-resource: 192.168.0.14:2000
   island-building: 192.168.0.14:4000
+  gateway: http://192.168.0.14:9000
 

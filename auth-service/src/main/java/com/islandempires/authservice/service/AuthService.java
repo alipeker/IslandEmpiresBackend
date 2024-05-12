@@ -2,11 +2,11 @@ package com.islandempires.authservice.service;
 
 import com.islandempires.authservice.exception.CustomException;
 import com.islandempires.authservice.exception.ExceptionE;
+import com.islandempires.authservice.jwt.JWTDbTokenService;
 import com.islandempires.authservice.model.AppUser;
-import com.islandempires.authservice.model.AppUserRole;
 import com.islandempires.authservice.repository.UserRepository;
-import com.islandempires.authservice.security.JwtResponse;
-import com.islandempires.authservice.security.JwtTokenProvider;
+import com.islandempires.authservice.jwt.JwtResponse;
+import com.islandempires.authservice.jwt.JwtTokenProvider;
 import com.islandempires.authservice.security.MyUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +31,9 @@ public class AuthService {
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
+    private JWTDbTokenService jwtDbTokenService;
+
+    @Autowired
     private UserRepository userRepository;
 
     public JwtResponse authenticateUser(String userName, String password) {
@@ -46,6 +49,7 @@ public class AuthService {
         if(user == null) {
             new CustomException(ExceptionE.USER_NOT_FOUND);
         }
+        jwtDbTokenService.recordToken(jwt, user.getId());
         return new JwtResponse(jwt,
                 "Bearer",
                 user.getId(),
@@ -53,5 +57,6 @@ public class AuthService {
                 user.getUsername(),
                 user.getEmail());
     }
+
 
 }
