@@ -6,6 +6,7 @@ import com.islandempires.buildingservice.exception.ExceptionE;
 import com.islandempires.buildingservice.model.IslandBuilding;
 import com.islandempires.buildingservice.model.building.AllBuildings;
 import com.islandempires.buildingservice.model.buildinglevelspec.BuildingLevel;
+import com.islandempires.buildingservice.model.buildinglevelspec.TimberCampLevel;
 import com.islandempires.buildingservice.model.buildingtype.BaseStructures;
 import com.islandempires.buildingservice.model.scheduled.BuildingScheduledTask;
 import com.islandempires.buildingservice.repository.BuildingScheduledTaskRepository;
@@ -13,6 +14,7 @@ import com.islandempires.buildingservice.repository.IslandBuildingRepository;
 import com.islandempires.buildingservice.service.client.IslandResourceWebClientNew;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -30,6 +32,15 @@ public class BuildingService {
 
     private final IslandResourceWebClientNew islandResourceWebClientNew;
 
+    public Mono<IslandBuilding> get(String islandId, Long userid) {
+        return islandBuildingRepository.findById(islandId)
+                .flatMap(islandBuilding -> {
+                    if(islandBuilding.getUserId() != userid) {
+                        throw new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
+                    }
+                    return Mono.just(islandBuilding);
+                });
+    }
 
     public Mono<IslandBuilding> initializeIslandBuildings(String islandId, AllBuildings allBuildings, Long userid) {
         return islandBuildingRepository.findById(islandId)
@@ -67,13 +78,12 @@ public class BuildingService {
         }
 
         if(baseStructures == null || baseStructures.getBuildingLevelList() == null
-                || baseStructures.getBuildingLevelList().size() > 0 || initialLvl == baseStructures.getBuildingLevelList().size()) {
-            Mono.error(new Throwable());
+                || baseStructures.getBuildingLevelList().size() == 0 || initialLvl == (baseStructures.getBuildingLevelList().size() - 1)) {
+            throw new CustomRunTimeException(ExceptionE.INSUFFICIENT_RESOURCES);
         }
 
-        BuildingLevel initialLevel = 0 < initialLvl ?
-                baseStructures.getBuildingLevelList().get(initialLvl - 1)
-                : null;
+        BuildingLevel initialLevel = (0 < initialLvl) ? baseStructures.getBuildingLevelList().get(initialLvl - 1)
+                                                    : null;
 
         BuildingLevel nextLevel = baseStructures.getBuildingLevelList().get(initialLvl);
 
@@ -82,13 +92,14 @@ public class BuildingService {
 
         buildingScheduledTask.setLastCalculatedTimestamp(System.currentTimeMillis());
 
-        return islandResourceWebClientNew.assignResources(islandId, nextLevel.getRawMaterialsAndPopulationCost(), token)
-                .onErrorResume(throwable -> {
-                    return Mono.error(throwable);
-                })
-                .then(buildingScheduledTaskRepository.save(buildingScheduledTask))
-                .then(Mono.empty());
 
+        /*
+        return islandResourceWebClientNew.assignResources(islandId, nextLevel.getRawMaterialsAndPopulationCost(), token)
+                .onErrorResume(throwable -> Mono.error(throwable))
+                .then(buildingScheduledTaskRepository.save(buildingScheduledTask))
+                .then(Mono.empty());*/
+
+        return buildingScheduledTaskRepository.save(buildingScheduledTask).then();
     }
 
     public List<BaseStructures> addAllBuildingToList(AllBuildings allBuildings) {

@@ -5,15 +5,47 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14f8c816-6e8f-41e5-8159-142c20b0f3e1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/gateaway/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/eurekaserver/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/kafka/IslandResourceDeserializer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/kafka/IslandResourceSerializer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/kafka/KafkaConsumer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/kafka/KafkaProducerConfig.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/service/IslandResourceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/service/IslandResourceService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/resources/application.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/dto/AuthanticateRequestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/kafka/KafkaIslandRequestProducerService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/java/com/islandempires/websocketservice/config/WebSocketConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/java/com/islandempires/websocketservice/controller/ChatController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/java/com/islandempires/websocketservice/model/ChatMessage.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/java/com/islandempires/websocketservice/model/IslandResource.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/java/com/islandempires/websocketservice/repository/IslandResourceRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/jwt/JWTDbToken.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/jwt/JWTDbTokenRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/jwt/JWTDbTokenService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/jwt/JwtTokenProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/jwt/JwtTokenProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/security/AuthTokenFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/security/AuthTokenFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/controller/BuildingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/controller/BuildingController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/service/BuildingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/service/BuildingService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/building-service/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/GameserverServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/GameserverServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/filter/FilterConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/filter/FilterConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/filter/WebClientConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/filter/WebClientConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/service/client/GateWayClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/service/client/GateWayClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/service/impl/GameServerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/service/impl/GameServerServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway2/src/main/java/com/islandempires/gateway/GlobalResponseFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway2/src/main/java/com/islandempires/gateway/GlobalResponseFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/controller/IslandController.java" beforeDir="false" afterPath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/controller/IslandController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/service/IslandQueryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/service/IslandQueryService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/service/impl/IslandQueryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/service/impl/IslandQueryServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/island-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/island-service/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/ResourcesServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/ResourcesServiceApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/dto/initial/IslandResourceDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/dto/initial/IslandResourceDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/exception/ExceptionE.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/exception/ExceptionE.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/filter/FilterConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/filter/FilterConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/model/IslandResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/model/IslandResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/repository/IslandResourceRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/repository/IslandResourceRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/service/entityservice/IslandResourceServiceImplService.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/service/entityservice/IslandResourceServiceImplService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resourceworker/src/main/java/com/islandempires/resourceworker/aggregations/IslandResourceAggregation.java" beforeDir="false" afterPath="$PROJECT_DIR$/resourceworker/src/main/java/com/islandempires/resourceworker/aggregations/IslandResourceAggregation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,19 +89,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "jdk.selected.JAVA_MODULE": "17",
-    "last_opened_file_path": "/Users/alipeker/Desktop/IslandEmpiresBackend",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.21034482",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;jdk.selected.JAVA_MODULE&quot;: &quot;17&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/alipeker/Desktop/my/IslandEmpiresBackend&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.21034482&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="island-empires-microservices" />

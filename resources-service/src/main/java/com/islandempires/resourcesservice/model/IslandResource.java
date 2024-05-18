@@ -19,10 +19,6 @@ import java.time.LocalDateTime;
 public class IslandResource implements Serializable {
     @Id
     @NotBlank
-    private String id;
-
-    @NotBlank
-    @Indexed(unique = true)
     private String islandId;
 
     private Long userId;

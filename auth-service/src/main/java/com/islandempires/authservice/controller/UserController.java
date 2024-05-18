@@ -1,12 +1,9 @@
 package com.islandempires.authservice.controller;
 
 import com.islandempires.authservice.dto.UserDataDTO;
-import com.islandempires.authservice.dto.UserResponseDTO;
-import com.islandempires.authservice.jwt.JWTDbTokenService;
 import com.islandempires.authservice.model.AppUser;
 import com.islandempires.authservice.jwt.JwtResponse;
 import com.islandempires.authservice.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
   private final UserService userService;
-  private final JWTDbTokenService jwtDbTokenService;
   private final ModelMapper modelMapper;
 
   @PostMapping("/signin")
@@ -27,29 +23,19 @@ public class UserController {
     return userService.signin(username, password);
   }
 
-  @PostMapping("/s")
-  public String login(HttpServletRequest req) {
-    return "a";
-  }
-
   @PostMapping("/signup")
   public String signup(@RequestBody UserDataDTO user) {
     return userService.signup(modelMapper.map(user, AppUser.class));
   }
 
-  public String delete(@PathVariable String username) {
-    userService.delete(username);
-    return username;
-  }
-
   @GetMapping(value = "/me")
   public Long whoami(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwtToken) {
-    return jwtDbTokenService.getJWTDbTokenUserId(jwtToken);
+    return userService.whoami(jwtToken);
   }
 
   @GetMapping(value = "/isTokenValid")
-  public boolean isTokenValid(HttpServletRequest req) {
-    return userService.isTokenValid(req);
+  public boolean isTokenValid(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwtToken) {
+    return userService.isTokenValid(jwtToken);
   }
 
 

@@ -25,6 +25,7 @@ public class IslandResourceAggregation {
         AggregationOperation project1 = Aggregation.project()
                 .and("_id").as("_id")
                 .and("islandId").as("islandId")
+                .and("userId").as("userId")
                 .and("wood").as("wood")
                 .and("woodHourlyProduction").as("woodHourlyProduction")
                 .and("iron").as("iron")
@@ -52,6 +53,8 @@ public class IslandResourceAggregation {
         AggregationOperation project2 = Aggregation.project()
                 .and("_id").as("_id")
                 .and("_class").as("_class")
+                .and("islandId").as("islandId")
+                .and("userId").as("userId")
                 .and(ConditionalOperators.Cond.newBuilder()
                         .when(ComparisonOperators.Gt.valueOf(ArithmeticOperators.Add.valueOf("wood").add(ArithmeticOperators.Add.valueOf(ArithmeticOperators
                         .valueOf(ArithmeticOperators.Divide.valueOf("elapsedTime").divideBy(60000))

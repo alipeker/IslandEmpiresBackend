@@ -4,6 +4,7 @@ package com.islandempires.islandservice.service.impl;
 import com.islandempires.islandservice.dto.IslandDTO;
 import com.islandempires.islandservice.exception.CustomRunTimeException;
 import com.islandempires.islandservice.exception.ExceptionE;
+import com.islandempires.islandservice.kafka.KafkaIslandRequestProducerService;
 import com.islandempires.islandservice.model.Island;
 import com.islandempires.islandservice.repository.IslandRepository;
 import com.islandempires.islandservice.service.IslandModificationService;
@@ -11,6 +12,7 @@ import com.islandempires.islandservice.service.IslandQueryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Random;
@@ -23,6 +25,9 @@ public class IslandQueryServiceImpl implements IslandQueryService, IslandModific
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private KafkaIslandRequestProducerService kafkaIslandRequestProducerService;
+
     @Override
     public Mono<IslandDTO> get(String islandId, Long userid) {
         return islandRepository.findById(islandId)
@@ -32,6 +37,33 @@ public class IslandQueryServiceImpl implements IslandQueryService, IslandModific
                        new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
                     }
                     return modelMapper.map(island, IslandDTO.class);
+                });
+    }
+
+    @Override
+    public Flux<Island> getAll() {
+        return islandRepository.findAll().take(40);
+    }
+
+    @Override
+    public Mono<IslandDTO> getIsland(String islandId, Long userid) {
+        kafkaIslandRequestProducerService.sendGetIslandRequestMessage(islandId);
+        return islandRepository.findById(islandId)
+                .switchIfEmpty(Mono.error(new CustomRunTimeException(ExceptionE.NOT_FOUND)))
+                .map(island -> {
+                    if(island.getUserId() != null && island.getUserId() != userid) {
+                        new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
+                    }
+                    return modelMapper.map(island, IslandDTO.class);
+                });
+    }
+
+    @Override
+    public Mono<Boolean> isUserIslandOwner(String islandId, Long userid) {
+        return islandRepository.findById(islandId)
+                .switchIfEmpty(Mono.error(new CustomRunTimeException(ExceptionE.NOT_FOUND)))
+                .map(island -> {
+                    return island.getUserId() != null && userid != null && island.getUserId() == userid;
                 });
     }
 

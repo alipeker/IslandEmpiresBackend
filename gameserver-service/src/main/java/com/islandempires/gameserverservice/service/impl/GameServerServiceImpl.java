@@ -99,40 +99,42 @@ public class GameServerServiceImpl implements GameServerWriteService, GameServer
         }
     }
 
+    /*
     @Override
     public Mono<GameServerIslands> initializeIsland(String serverId, Long userId, String jwtToken) {
-        return gateWayClient.initializeIsland(jwtToken)
-                .flatMap(islandDTO -> {
-                    if (islandDTO == null || islandDTO.getId() == null) {
-                        throw new CustomRunTimeException(ExceptionE.UNEXPECTED_ERROR);
-                    }
-                    return gameServerRepository.findById(serverId)
-                            .flatMap(gameServer -> {
-                                IslandResource islandResource = gameServer.getIslandResource();
-                                islandResource.setIslandId(islandDTO.getId());
+        GameServerIslands gameServerIslands = new GameServerIslands();
+        gameServerIslands.setIslandId("s");
+        gameServerIslands.setServerId("6641508811318644f6e0985f");
+        gameServerIslands.setUserId(userId);
+        gameServerIslands.setCreatedDate(LocalDateTime.now());
+        return gameServerIslandsRepository.save(gameServerIslands);
+    }*/
 
-                                Mono<IslandBuildingDTO> islandBuildingDTOMono =
-                                        gateWayClient.initializeIslandBuildings(islandDTO.getId(), gameServer.getAllBuildings(), jwtToken)
-                                        .onErrorResume(e -> {
-                                            return islandOutboxEntityService.saveDeleteIslandEvent(islandDTO.getId()).then(Mono.error(e));
-                                        });
 
-                                Mono<IslandResourceDTO> islandResourceDTOMono =
-                                        gateWayClient.initializeIslandResource(modelMapper.map(islandResource, IslandResourceDTO.class), jwtToken)
-                                        .onErrorResume(e -> {
-                                            return islandOutboxEntityService.saveDeleteIslandEvent(islandDTO.getId()).then(Mono.error(e));
-                                        });
+    @Override
+    public Mono<GameServerIslands> initializeIsland(String serverId, Long userId, String jwtToken) {
+        IslandDTO islandDTO = gateWayClient.initializeIsland2(jwtToken);
+        if (islandDTO == null || islandDTO.getId() == null) {
+            throw new CustomRunTimeException(ExceptionE.UNEXPECTED_ERROR);
+        }
+        return gameServerRepository.findById(serverId)
+                .flatMap(gameServer -> {
+                    IslandResource islandResource = gameServer.getIslandResource();
+                    islandResource.setIslandId(islandDTO.getId());
 
-                                return Mono.zip(islandBuildingDTOMono, islandResourceDTOMono)
-                                .flatMap(tuple -> {
-                                    GameServerIslands gameServerIslands = new GameServerIslands();
-                                    gameServerIslands.setIslandId(islandDTO.getId());
-                                    gameServerIslands.setServerId(gameServer.getId());
-                                    gameServerIslands.setUserId(userId);
-                                    gameServerIslands.setCreatedDate(LocalDateTime.now());
-                                    return gameServerIslandsRepository.save(gameServerIslands);
-                                }).onErrorResume(e -> Mono.error(e));
-                            });
+                    IslandBuildingDTO islandBuildingDTOMono =
+                            gateWayClient.initializeIslandBuildings2(islandDTO.getId(), gameServer.getAllBuildings(), jwtToken);
+
+
+                    IslandResourceDTO islandResourceDTOMono =
+                            gateWayClient.initializeIslandResource2(modelMapper.map(islandResource, IslandResourceDTO.class), jwtToken);
+
+                    GameServerIslands gameServerIslands = new GameServerIslands();
+                    gameServerIslands.setIslandId(islandDTO.getId());
+                    gameServerIslands.setServerId(gameServer.getId());
+                    gameServerIslands.setUserId(userId);
+                    gameServerIslands.setCreatedDate(LocalDateTime.now());
+                    return gameServerIslandsRepository.save(gameServerIslands);
                 });
     }
 

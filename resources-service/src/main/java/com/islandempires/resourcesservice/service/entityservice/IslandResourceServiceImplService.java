@@ -61,7 +61,7 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
 
     @Override
     public Mono<Void> delete(String islandId) {
-        return islandResourceRepository.deleteByIslandId(islandId)
+        return islandResourceRepository.deleteById(islandId)
                 .doOnError(error -> {
                     throw new CustomRunTimeException(ExceptionE.NOT_FOUND);
                 });
@@ -74,6 +74,8 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
                 if (result != null) {
                     throw new CustomRunTimeException(ExceptionE.ALREADY_EXIST);
                 }});
+        } else {
+            throw new CustomRunTimeException(ExceptionE.NOT_FOUND);
         }
 
         islandResourceDTO = islandMetricsCalculatorService.calculateIslandResourceFields(islandResourceDTO);
@@ -241,7 +243,6 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
 
         for(int i=0; i<10000; i++) {
             IslandResource island1 = new IslandResource();
-            island1.setId("testresource".concat(i+""));
             island1.setIslandId("test".concat(i+""));
             island1.setWood(Double.valueOf(random.nextInt(200)));
             island1.setIron(Double.valueOf(random.nextInt(200)));

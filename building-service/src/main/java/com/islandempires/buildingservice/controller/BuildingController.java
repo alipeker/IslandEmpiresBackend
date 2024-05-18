@@ -17,35 +17,39 @@ import reactor.core.publisher.Mono;
 @RequestMapping("building")
 public class BuildingController {
 
-  @Autowired
-  private final BuildingService buildingService;
+    @Autowired
+    private final BuildingService buildingService;
 
-  private final ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
-  private final IslandResourceWebClientNew islandResourceWebClientNew;
+    private final IslandResourceWebClientNew islandResourceWebClientNew;
 
+    @GetMapping("/{islandId}")
+    public Mono<IslandBuilding> get(@PathVariable String islandId, @RequestAttribute("userId") Long userid) {
+      return buildingService.get(islandId, userid);
+    }
 
-  @PostMapping("/{islandId}")
-  public Mono<IslandBuilding> initializeIslandBuildings(@PathVariable String islandId, @RequestBody AllBuildings allBuildings, @RequestAttribute("userId") Long userid) {
-    return buildingService.initializeIslandBuildings(islandId, allBuildings, userid);
-  }
+    @PostMapping("/{islandId}")
+    public Mono<IslandBuilding> initializeIslandBuildings(@PathVariable String islandId, @RequestBody AllBuildings allBuildings, @RequestAttribute("userId") Long userid) {
+      return buildingService.initializeIslandBuildings(islandId, allBuildings, userid);
+    }
 
-  @PostMapping("/increaselvl/{islandId}")
-  public Mono<Void> increaseIslandBuildingLvl(@PathVariable String islandId, @RequestBody IslandBuildingEnum islandBuildingEnum,
-                                              @RequestHeader("Authorization") String authorization, @RequestAttribute("userId") Long userid) {
-    return buildingService.increaseIslandBuildingLvl(islandId, islandBuildingEnum, authorization, userid);
-  }
+    @PatchMapping("/increaselvl/{islandId}")
+    public Mono<Void> increaseIslandBuildingLvl(@PathVariable String islandId, @RequestBody IslandBuildingEnum islandBuildingEnum,
+                                                @RequestHeader("Authorization") String authorization, @RequestAttribute("userId") Long userid) {
+      return buildingService.increaseIslandBuildingLvl(islandId, islandBuildingEnum, authorization, userid);
+    }
 
-  @PostMapping("/test")
-  public Mono<Long> increaseIslandBuildingLvl(@RequestHeader("Authorization") String authorization) {
-    return islandResourceWebClientNew.whoami(authorization);
-  }
+    @PostMapping("/test")
+    public Mono<Long> increaseIslandBuildingLvl(@RequestHeader("Authorization") String authorization) {
+      return islandResourceWebClientNew.whoami(authorization);
+    }
 
-  /*
-  @GetMapping(value = "/me")
-  public UserResponseDTO whoami(HttpServletRequest req) {
-    return modelMapper.map(userService.whoami(req), UserResponseDTO.class);
-  }
-*/
+    /*
+    @GetMapping(value = "/me")
+    public UserResponseDTO whoami(HttpServletRequest req) {
+      return modelMapper.map(userService.whoami(req), UserResponseDTO.class);
+    }
+  */
 
 }

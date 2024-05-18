@@ -1,6 +1,10 @@
 server:
   host: 192.168.0.14
   port: 4000
+  tomcat:
+    max-connections: 2000
+    max-threads: 100
+  connection-timeout: 60000
 
 spring:
   application:

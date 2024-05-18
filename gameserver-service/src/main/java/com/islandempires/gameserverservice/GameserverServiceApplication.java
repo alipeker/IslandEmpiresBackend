@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactivefeign.spring.config.EnableReactiveFeignClients;
@@ -53,6 +54,12 @@ public class GameserverServiceApplication {
 	public HttpMessageConverters messageConverters(ObjectProvider<HttpMessageConverter<?>> converters) {
 		return new HttpMessageConverters(converters.orderedStream().collect(Collectors.toList()));
 	}
+
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
+
 
 	@Scheduled(fixedRateString ="10000")
 	public void scheduleFixedRateTask() {

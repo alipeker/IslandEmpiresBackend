@@ -2,7 +2,6 @@ package com.islandempires.authservice.service;
 
 import com.islandempires.authservice.exception.CustomException;
 import com.islandempires.authservice.exception.ExceptionE;
-import com.islandempires.authservice.jwt.JWTDbTokenService;
 import com.islandempires.authservice.model.AppUser;
 import com.islandempires.authservice.repository.UserRepository;
 import com.islandempires.authservice.jwt.JwtResponse;
@@ -26,8 +25,6 @@ public class UserService implements CommandLineRunner {
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthService authService;
 
-    private final JWTDbTokenService jwtDbTokenService;
-
 
     public UserDetailsService userDetailsService() {
         return new UserDetailsService() {
@@ -50,7 +47,7 @@ public class UserService implements CommandLineRunner {
         if (!userRepository.existsByUsername(appUser.getUsername())) {
             appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
             userRepository.save(appUser);
-            return jwtTokenProvider.createToken(appUser.getUsername(), appUser.getAppUserRoles());
+            return jwtTokenProvider.createToken(appUser.getUsername(), appUser.getId(), appUser.getAppUserRoles());
         } else {
             throw new CustomException(ExceptionE.BAD_USERNAME);
         }
@@ -68,17 +65,14 @@ public class UserService implements CommandLineRunner {
         return appUser;
     }
 
-    public AppUser whoami(String jwtToken) {
-        return userRepository.findByUsername(jwtTokenProvider.getUsername(jwtToken));
+    public Long whoami(String jwtToken) {
+        return jwtTokenProvider.getUserId(jwtTokenProvider.resolveToken(jwtToken));
     }
 
-    public boolean isTokenValid(HttpServletRequest req) {
-        return jwtDbTokenService.isJWTDbTokenActive(jwtTokenProvider.resolveToken(req));
+    public boolean isTokenValid(String jwtToken) {
+        return jwtTokenProvider.validateToken(jwtTokenProvider.resolveToken(jwtToken));
     }
 
-    public String refresh(String username) {
-        return jwtTokenProvider.createToken(username, userRepository.findByUsername(username).getAppUserRoles());
-    }
 
     @Override
     public void run(String... args) throws Exception {

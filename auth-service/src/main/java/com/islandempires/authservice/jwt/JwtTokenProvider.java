@@ -19,10 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -46,11 +43,10 @@ public class JwtTokenProvider {
     secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
   }
 
-  public String createToken(String username, List<String> appUserRoles) {
-
+  public String createToken(String username, Long userId, List<String> appUserRoles) {
     Claims claims = Jwts.claims().setSubject(username);
     claims.put("auth", appUserRoles.stream().map(s -> new SimpleGrantedAuthority(s)).filter(Objects::nonNull).collect(Collectors.toList()));
-
+    claims.put("userId", userId.toString());
     Date now = new Date();
     Date validity = new Date(now.getTime() + validityInMilliseconds);
 
@@ -62,17 +58,39 @@ public class JwtTokenProvider {
         .compact();
   }
 
+
   public Authentication getAuthentication(String token) {
-    UserDetails userDetails = myUserDetails.loadUserByUsername(getUsername(token));
-    return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    String username = getUsername(token);
+
+    List<SimpleGrantedAuthority> roles = extractRoles(token);
+
+    return new UsernamePasswordAuthenticationToken(
+            username, null, roles);
   }
 
+  private List<SimpleGrantedAuthority> extractRoles(String token) {
+    Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+    List<Object> rolesHashMapArray = claims.get("auth", List.class);
+    if(0 == rolesHashMapArray.size()) {
+      return new ArrayList<>();
+    }
+    try {
+      LinkedHashMap<String, String> linkedHashMap = (LinkedHashMap<String, String>) rolesHashMapArray.get(0);
+      return linkedHashMap
+              .values()
+              .stream()
+              .map(Object::toString)
+              .map(SimpleGrantedAuthority::new)
+              .collect(Collectors.toList());
+    } catch (Exception e) {
+      return new ArrayList<>();
+    }
+  }
 
   public String getUsername(String token) {
     try {
       return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     } catch (Exception ex) {
-      // JwtException yakalandığında fırlatılacak istisna
       throw new CustomException(ExceptionE.TOKEN_EXPIRED);
     }
   }
@@ -96,6 +114,15 @@ public class JwtTokenProvider {
     try {
       Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
       return true;
+    } catch (JwtException | IllegalArgumentException e) {
+      throw new CustomException(ExceptionE.TOKEN_EXPIRED);
+    }
+  }
+
+  public Long getUserId(String token) {
+    try {
+      Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+      return Long.parseLong(claims.get("userId", String.class));
     } catch (JwtException | IllegalArgumentException e) {
       throw new CustomException(ExceptionE.TOKEN_EXPIRED);
     }

@@ -8,5 +8,5 @@ import reactor.core.publisher.Mono;
 
 @Repository
 public interface IslandResourceRepository extends ReactiveCrudRepository<IslandResource, String> {
-    Mono<Void> deleteByIslandId(String islandId);
+
 }

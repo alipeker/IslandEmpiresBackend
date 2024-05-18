@@ -32,7 +32,7 @@ public class BuildingScheduledTask {
 
     private long remainingTime;
 
-    private LocalDateTime startingDate;
+    private long startingDateTimestamp;
 
     private long lastCalculatedTimestamp;
 
@@ -42,7 +42,7 @@ public class BuildingScheduledTask {
         this.initialLvl = initialLvl;
         this.nextLvl = nextLvl;
         this.constructionDuration = constructionDuration;
-        this.startingDate = LocalDateTime.now();
+        this.startingDateTimestamp = System.currentTimeMillis();
         this.remainingTime = Duration.parse(constructionDuration.toString()).toMillis();
     }
 }

@@ -11,8 +11,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 public class IslandResourceDTO implements Serializable {
-    private String id;
-
     private String islandId;
 
     private Long userId;

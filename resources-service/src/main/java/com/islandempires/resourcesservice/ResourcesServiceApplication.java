@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -33,4 +34,8 @@ public class ResourcesServiceApplication {
 		return WebClient.builder();
 	}
 
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
 }

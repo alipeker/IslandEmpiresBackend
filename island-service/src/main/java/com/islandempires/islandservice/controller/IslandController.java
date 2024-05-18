@@ -3,11 +3,13 @@ package com.islandempires.islandservice.controller;
 import com.islandempires.islandservice.dto.IslandDTO;
 import com.islandempires.islandservice.dto.UpdateIslandDTO;
 import com.islandempires.islandservice.dto.UpdateOwnerDTO;
+import com.islandempires.islandservice.model.Island;
 import com.islandempires.islandservice.service.IslandModificationService;
 import com.islandempires.islandservice.service.IslandQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
@@ -28,9 +30,27 @@ public class IslandController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/isUserIslandOwner/{islandid}")
+    public Mono<Boolean> isUserIslandOwner(@PathVariable String islandid, @RequestAttribute("userId") Long userid) {
+        return islandQueryService.isUserIslandOwner(islandid, userid);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{islandid}")
     public Mono<IslandDTO> get(@PathVariable String islandid, @RequestAttribute("userId") Long userid) {
         return islandQueryService.get(islandid, userid);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/getAll")
+    public Flux<Island> getAll() {
+        return islandQueryService.getAll();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/getIsland/{islandid}")
+    public Mono<IslandDTO> getIsland(@PathVariable String islandid, @RequestAttribute("userId") Long userid) {
+        return islandQueryService.getIsland(islandid, userid);
     }
 
     @ResponseStatus(HttpStatus.OK)

@@ -4,7 +4,8 @@ import com.islandempires.resourcesservice.filter.client.WhoAmIClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.WebFilter;
 import reactor.core.publisher.Mono;
 
@@ -24,8 +25,8 @@ public class FilterConfig {
                     return Mono.just(userId);
                 }).then(chain.filter(exchange));
             } else {
-                // JWT token bulunamadıysa isteği reddet
-                exchange.getResponse().setStatusCode(HttpStatus.NOT_ACCEPTABLE);
+
+                exchange.getResponse().setStatusCode(HttpStatus.NOT_FOUND);
                 return Mono.empty();
             }
         };

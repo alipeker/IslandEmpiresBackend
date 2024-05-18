@@ -14,7 +14,7 @@ public class FilterConfig {
     @Autowired
     private WhoAmIClient whoAmIClient;
 
-    /*
+
     @Bean
     public WebFilter jwtWebFilter() {
         return (exchange, chain) -> {
@@ -30,5 +30,5 @@ public class FilterConfig {
                 return Mono.empty();
             }
         };
-    }*/
+    }
 }

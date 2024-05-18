@@ -3,6 +3,8 @@ server:
   port: 2001
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: resourceworker
   data:
@@ -18,3 +20,21 @@ eureka:
     fetchRegistry: true
     serviceUrl:
       defaultZone: http://192.168.0.14:1000/eureka/
+
+debezium:
+  connector:
+    name: building-connector
+    connectorClass: io.debezium.connector.mongodb.MongoDbConnector
+    mongodb:
+      host: mongodb://192.168.0.14:27400
+      user: user
+      database: building
+  database:
+    whitelist:
+      - "building"
+    collection:
+      whitelist:
+        - "building.BuildingScheduledTaskDone"
+      excludeFieldList: ~
+  kafka:
+    topicPrefix: "mytopic"

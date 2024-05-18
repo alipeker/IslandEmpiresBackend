@@ -38,7 +38,7 @@ public class GameServerController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/test1")
+    @GetMapping("/getServiceBuildingSpecs")
     public Mono<String> initializeIsland4() {
         return Mono.just("a");
     }

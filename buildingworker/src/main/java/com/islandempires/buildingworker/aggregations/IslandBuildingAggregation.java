@@ -1,10 +1,16 @@
 package com.islandempires.buildingworker.aggregations;
 
+import com.mongodb.client.model.Filters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Field;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,53 +25,63 @@ public class IslandBuildingAggregation {
     private MongoTemplate mongoTemplate;
 
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 2000)
     public void deduplicateToTargetCollection() {
         AggregationOperation project1 = Aggregation.project()
                 .and("_id").as("_id")
-                .and("_class").as("_class")
                 .and("islandId").as("islandId")
                 .and("islandBuildingEnum").as("islandBuildingEnum")
                 .and("initialLvl").as("initialLvl")
                 .and("nextLvl").as("nextLvl")
                 .and("constructionDuration").as("constructionDuration")
                 .and("remainingTime").as("remainingTime")
-                .and("startingDate").as("startingDate")
-                .and("0").as("test")
-                .and(ArithmeticOperators.Subtract.valueOf(new Date().getTime()).subtract("lastCalculatedTimestamp")).as("elapsedTime");
+                .and("startingDateTimestamp").as("startingDateTimestamp")
+                .and("lastCalculatedTimestamp").as("lastCalculatedTimestamp")
+                .and("_class").as("_class");
+
 
         AggregationOperation project2 = Aggregation.project()
                 .and("_id").as("_id")
-                .and("_class").as("_class")
                 .and("islandId").as("islandId")
                 .and("islandBuildingEnum").as("islandBuildingEnum")
                 .and("initialLvl").as("initialLvl")
                 .and("nextLvl").as("nextLvl")
                 .and("constructionDuration").as("constructionDuration")
-                .and("elapsedTime").as("elapsedTime")
                 .and("remainingTime").as("remainingTime")
+                .and("startingDateTimestamp").as("startingDateTimestamp")
+                .and("_class").as("_class")
                 .and(ConditionalOperators.Cond.newBuilder().when(
-                                ComparisonOperators.Lte.valueOf(ArithmeticOperators.Subtract.valueOf("$remainingTime").subtract("$elapsedTime"))
-                                        .lessThanEqualToValue("0"))
-                                .then(ArithmeticOperators.Subtract.valueOf("$remainingTime").subtract("$elapsedTime"))
-                                .otherwise(0)
-                ).as("remainingTime");
+                                ComparisonOperators.Lte.valueOf(ArithmeticOperators.Subtract.valueOf(new Date().getTime()).subtract("$remainingTime"))
+                                        .lessThanEqualTo("$startingDateTimestamp"))
+                        .then(0)
+                        .otherwise(1)
+                ).as("done");
 
         AggregationOperation project3 = Aggregation
                 .addFields()
                 .addField("lastCalculatedTimestamp").withValue(new Date().getTime()).build();
 
-        AggregationOperation project4 = Aggregation.out("BuildingScheduledTask");
+        AggregationOperation matchStage = Aggregation.match(
+                Criteria.where("done").is(1)
+        );
+
+        AggregationOperation project4 = Aggregation.merge().into(MergeOperation.MergeOperationTarget.collection("BuildingScheduledTaskDone")).build();
 
         List<AggregationOperation> pipeline = new ArrayList<>();
         pipeline.add(project1);
         pipeline.add(project2);
         pipeline.add(project3);
+        pipeline.add(matchStage);
         pipeline.add(project4);
 
-        // Run the aggregation pipeline
-        mongoTemplate.aggregate(newAggregation(pipeline), "BuildingScheduledTask", Object.class);
+        List<Object> buildingScheduledList = mongoTemplate.aggregate(newAggregation(pipeline), "BuildingScheduledTask", Object.class).getMappedResults();
+
+        buildingScheduledList.forEach(buildingScheduled -> {
+            mongoTemplate.remove(buildingScheduled, "BuildingScheduledTask");
+        });
+
     }
+
 
 
 }

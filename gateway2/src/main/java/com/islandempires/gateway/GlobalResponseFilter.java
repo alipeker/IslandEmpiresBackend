@@ -28,6 +28,7 @@ public class GlobalResponseFilter implements GlobalFilter, Ordered {
                 if(!isTokenValid(headers.get("Authorization").get(0))) {
                     throw new UnauthorizedException("User is not authorized to access this resource.");
                 }
+                // game session tracking
             }
         } catch (Exception E) {
             throw new UnauthorizedException("User is not authorized to access this resource.");

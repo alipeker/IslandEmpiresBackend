@@ -1,0 +1,31 @@
+server:
+  host: 192.168.0.14
+  port: 6001
+
+spring:
+  application:
+    name: session-service
+  data:
+    mongodb:
+      host: 192.168.0.14
+      username: user
+      database: session
+      port: 27600
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: session-tracking-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      island-request-topic: island-request-topic
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://192.168.0.14:1000/eureka/
+
+urls:
+  gateway: http://192.168.0.14:9000

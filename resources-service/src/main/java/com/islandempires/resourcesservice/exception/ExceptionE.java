@@ -59,7 +59,7 @@ public enum ExceptionE {
     },
     INSUFFICIENT_RESOURCES{
         Integer status = 1001;
-        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        HttpStatus httpStatus = HttpStatus.NOT_ACCEPTABLE;
 
         @Override
         public HttpStatus getHttpStatus() {

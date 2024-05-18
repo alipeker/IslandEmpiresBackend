@@ -11,6 +11,12 @@ spring:
       username: user
       database: resources
       port: 27017
+    data:
+      mongodb:
+        connection-pool:
+          max-size: 1000
+          min-size: 20
+          max-wait-time: 5000
   kafka:
     consumer:
       bootstrap-servers: localhost:9092
@@ -19,7 +25,6 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       island-delete-topic: island-delete-topic
-
 
 eureka:
   client:
@@ -30,3 +35,4 @@ eureka:
 
 urls:
   gateway: http://192.168.0.14:9000
+
