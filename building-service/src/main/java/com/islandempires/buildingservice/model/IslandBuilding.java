@@ -1,6 +1,7 @@
 package com.islandempires.buildingservice.model;
 
-import com.islandempires.buildingservice.model.buildingtype.BaseStructures;
+import com.islandempires.buildingservice.model.building.AllBuildings;
+import com.islandempires.buildingservice.model.building.BaseStructures;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,9 +21,6 @@ public class IslandBuilding implements Serializable {
 
     private Long userId;
 
-    private List<BaseStructures> allBuildingList;
+    private AllBuildings allBuildingList;
 
-    public void setAllBuildings(List<BaseStructures> allBuildings) {
-        this.allBuildingList = allBuildings;
-    }
 }

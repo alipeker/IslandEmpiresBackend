@@ -42,9 +42,9 @@ public class GateWayClient {
                 .doOnError(e -> Mono.error(e));
     }
 
-    public Mono<IslandResourceDTO> initializeIslandResource(IslandResourceDTO initialIslandResourceDTO, String jwtToken) {
+    public Mono<IslandResourceDTO> initializeIslandResource(String islandId, IslandResourceDTO initialIslandResourceDTO, String jwtToken) {
         return gatewayWebClient.post()
-                .uri("/resource/")
+                .uri("/resource/{islandId}", islandId)
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .bodyValue(initialIslandResourceDTO)
                 .retrieve()

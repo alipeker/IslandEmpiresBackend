@@ -1,10 +1,7 @@
 package com.islandempires.gameserverservice;
 
-import com.islandempires.gameserverservice.kafka.KafkaOutboxProducerService;;
-import com.islandempires.gameserverservice.outbox.IslandOutboxEntityService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -13,12 +10,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.config.EnableWebFlux;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactivefeign.spring.config.EnableReactiveFeignClients;
 
 import java.util.stream.Collectors;
@@ -30,13 +31,10 @@ import java.util.stream.Collectors;
 @EnableWebFlux
 @EnableReactiveFeignClients
 @EnableScheduling
+@EnableRedisRepositories
+@EnableReactiveMongoRepositories(basePackages = "com.islandempires.gameserverservice.repository",
+includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION))
 public class GameserverServiceApplication {
-
-	@Autowired
-	private KafkaOutboxProducerService kafkaOutboxProducerService;
-
-	@Autowired
-	private IslandOutboxEntityService islandOutboxEntityService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(GameserverServiceApplication.class, args);
@@ -61,12 +59,14 @@ public class GameserverServiceApplication {
 	}
 
 
-	@Scheduled(fixedRateString ="10000")
-	public void scheduleFixedRateTask() {
-		/*
-		CompletableFuture<Void> future =  this.kafkaOutboxProducerService.sendDeleteIslandMessage("ss");
-		future.join();*/
-		//islandOutboxEntityService.saveDeleteIslandEvent("6632d9abb1f71125540f2123").block();
+
+	@Bean
+	public RedisConnectionFactory redisConnectionFactory() {
+		// Configure LettuceConnectionFactory with the appropriate settings
+		LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory("localhost", 6380);
+		// You can set other properties like password, timeout, etc. if needed
+		return lettuceConnectionFactory;
 	}
+
 
 }

@@ -2,7 +2,6 @@ package com.islandempires.buildingservice.model.scheduled;
 
 
 import com.islandempires.buildingservice.enums.IslandBuildingEnum;
-import com.islandempires.buildingservice.model.buildinglevelspec.BuildingLevel;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -24,9 +23,10 @@ public class BuildingScheduledTask {
 
     private IslandBuildingEnum islandBuildingEnum;
 
-    private BuildingLevel initialLvl;
 
-    private BuildingLevel nextLvl;
+    private int initialLvl;
+
+    private int nextLvl;
 
     private Duration constructionDuration;
 
@@ -36,7 +36,7 @@ public class BuildingScheduledTask {
 
     private long lastCalculatedTimestamp;
 
-    public BuildingScheduledTask(String islandId, IslandBuildingEnum islandBuildingEnum, BuildingLevel initialLvl, BuildingLevel nextLvl, Duration constructionDuration) {
+    public BuildingScheduledTask(String islandId, IslandBuildingEnum islandBuildingEnum, int initialLvl, int nextLvl, Duration constructionDuration) {
         this.islandId = islandId;
         this.islandBuildingEnum = islandBuildingEnum;
         this.initialLvl = initialLvl;

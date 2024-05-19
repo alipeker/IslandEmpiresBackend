@@ -54,10 +54,10 @@ public class IslandResourceController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping(value= "/")
-    public Mono<IslandResourceDTO> initializeIslandResource(@Valid @RequestBody IslandResourceDTO initialIslandResourceDTO,
+    @PostMapping(value= "/{islandId}")
+    public Mono<IslandResourceDTO> initializeIslandResource(@PathVariable String islandId, @Valid @RequestBody IslandResourceDTO initialIslandResourceDTO,
                                                             @RequestAttribute("userId") Long userid) {
-        return islandResourceInteractionService.initializeIslandResource(initialIslandResourceDTO, userid);
+        return islandResourceInteractionService.initializeIslandResource(islandId, initialIslandResourceDTO, userid);
     }
 
     @ResponseStatus(HttpStatus.OK)

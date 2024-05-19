@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +70,18 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
     }
 
     @Override
-    public Mono<IslandResourceDTO> initializeIslandResource(IslandResourceDTO islandResourceDTO, Long userid) {
+    public Mono<IslandResourceDTO> initializeIslandResource(String islandId, IslandResourceDTO islandResourceDTO, Long userid) {
+        return islandResourceRepository.findById(islandId).switchIfEmpty(Mono.defer(() -> {
+            IslandResource islandResource = modelMapper.map(islandResourceDTO, IslandResource.class);
+            islandResource.setLastCalculatedTimestamp(System.currentTimeMillis());
+            islandResource.setCreatedDate(Instant.now().atZone(ZoneId.systemDefault()).toLocalDateTime());
+            islandResource.setUserId(userid);
+            return islandResourceRepository.save(islandResource);
+        })).flatMap(savedIslandResource -> Mono.just(modelMapper.map(savedIslandResource, IslandResourceDTO.class)));
+
+
+
+        /*
         if(islandResourceDTO.getIslandId() != null) {
             islandResourceRepository.findById(islandResourceDTO.getIslandId()).doOnNext(result -> {
                 if (result != null) {
@@ -84,7 +97,7 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
         islandResource.setCreatedDate(LocalDateTime.now());
         islandResource.setUserId(userid);
 
-        return islandResourceRepository.save(islandResource).map(savedIslandResource -> modelMapper.map(savedIslandResource, IslandResourceDTO.class));
+        return islandResourceRepository.save(islandResource).map(savedIslandResource -> modelMapper.map(savedIslandResource, IslandResourceDTO.class));*/
     }
 
     @Override

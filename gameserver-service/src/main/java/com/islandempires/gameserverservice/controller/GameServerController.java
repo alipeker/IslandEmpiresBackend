@@ -1,12 +1,11 @@
 package com.islandempires.gameserverservice.controller;
 
 import com.islandempires.gameserverservice.dto.GameServerDTO;
-import com.islandempires.gameserverservice.dto.island.IslandDTO;
+import com.islandempires.gameserverservice.dto.initial.InitialGameServerPropertiesDTO;
 import com.islandempires.gameserverservice.model.GameServer;
 import com.islandempires.gameserverservice.model.GameServerIslands;
-import com.islandempires.gameserverservice.model.IslandOutboxEventRecord;
+import com.islandempires.gameserverservice.service.GameServerReadService;
 import com.islandempires.gameserverservice.service.GameServerWriteService;
-import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +19,9 @@ public class GameServerController {
 
     @Autowired
     private GameServerWriteService gameServerWriteService;
+
+    @Autowired
+    private GameServerReadService gameServerReadService;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -44,8 +46,20 @@ public class GameServerController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/test2")
-    public String initializeIsland3() {
-        return "a";
+    @GetMapping("/getGameServerInfo/{serverId}")
+    public GameServer getGameServerInfo(@PathVariable String serverId) {
+        return gameServerReadService.getGameServerInfo(serverId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/getGameServerInitialProperties/{serverId}")
+    public InitialGameServerPropertiesDTO getGameServerInitialProperties(@PathVariable String serverId) {
+        return gameServerReadService.getGameServerInitialProperties(serverId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/testali/{serverId}")
+    public InitialGameServerPropertiesDTO testali(@PathVariable String serverId) {
+        return gameServerReadService.getGameServerInitialProperties(serverId);
     }
 }

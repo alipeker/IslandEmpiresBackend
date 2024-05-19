@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RawMaterialsAndPopulationCost {
+public class RawMaterialsAndPopulationCost implements Serializable {
 
     private Integer wood;
 

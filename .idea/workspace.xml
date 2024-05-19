@@ -5,47 +5,79 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="14f8c816-6e8f-41e5-8159-142c20b0f3e1" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/dto/AuthanticateRequestDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/kafka/KafkaIslandRequestProducerService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/java/com/islandempires/websocketservice/config/WebSocketConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/java/com/islandempires/websocketservice/controller/ChatController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/java/com/islandempires/websocketservice/model/ChatMessage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/java/com/islandempires/websocketservice/model/IslandResource.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/java/com/islandempires/websocketservice/repository/IslandResourceRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web-socket-service/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/BaseStructures.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/jwt/JWTDbToken.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/jwt/JWTDbTokenRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/jwt/JWTDbTokenService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/jwt/JwtTokenProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/jwt/JwtTokenProvider.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/security/AuthTokenFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/security/AuthTokenFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/auth-service/src/main/java/com/islandempires/authservice/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/controller/BuildingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/controller/BuildingController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/dto/AllBuildingsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/dto/AllBuildingsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/IslandBuilding.java" beforeDir="false" afterPath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/IslandBuilding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/Academia.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/AllBuildings.java" beforeDir="false" afterPath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/AllBuildings.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/Barrack.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/BrickWorks.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/CannonCamp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/ClayMine.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/DairyFarm.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/DefenceTower.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/Embassy.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/Fisher.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/FoodWareHouse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/Foundry.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/Gunsmith.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/Houses.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/IronMine.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/IslandHeadquarter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/Mill.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/RiffleBarrack.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/TimberCamp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/WareHouse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/building/WatchTower.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/AcademiaLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/BarrackLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/BricksWorksLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/BuildingLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/CannonCampLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/ClayMineLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/DairyFarmLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/DefenceTowerLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/EmbassyLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/FisherLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/FoodWareHouseLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/FoundryLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/GunsmithLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/HouseLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/IronMineLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/IslandHeadquarterLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/MillLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/RiffleBarrackLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/TimberCampLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/WareHouseLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildinglevelspec/WatchTowerLevel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildingtype/BaseStructures.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildingtype/BasicStructures.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildingtype/FoodProductionStructures.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildingtype/MilitaryStructures.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildingtype/ProductionStructures.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildingtype/RawMaterialProductionStructures.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/buildingtype/TradeStructures.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/scheduled/BuildingScheduledTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/model/scheduled/BuildingScheduledTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/repository/BaseStructuresRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/repository/BaseStructuresRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/service/BuildingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/building-service/src/main/java/com/islandempires/buildingservice/service/BuildingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/building-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/building-service/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/GameserverServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/GameserverServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/filter/FilterConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/filter/FilterConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/filter/WebClientConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/filter/WebClientConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/service/client/GateWayClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/service/client/GateWayClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/service/impl/GameServerServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/java/com/islandempires/gameserverservice/service/impl/GameServerServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gameserver-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/gameserver-service/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway2/src/main/java/com/islandempires/gateway/GlobalResponseFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway2/src/main/java/com/islandempires/gateway/GlobalResponseFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/controller/IslandController.java" beforeDir="false" afterPath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/controller/IslandController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/service/IslandQueryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/service/IslandQueryService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/service/impl/IslandQueryServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/island-service/src/main/java/com/islandempires/islandservice/service/impl/IslandQueryServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/island-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/island-service/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/ResourcesServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/ResourcesServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/dto/initial/IslandResourceDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/dto/initial/IslandResourceDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/exception/ExceptionE.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/exception/ExceptionE.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/filter/FilterConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/filter/FilterConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/model/IslandResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/model/IslandResource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/repository/IslandResourceRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/repository/IslandResourceRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/service/entityservice/IslandResourceServiceImplService.java" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/java/com/islandempires/resourcesservice/service/entityservice/IslandResourceServiceImplService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources-service/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/resources-service/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resourceworker/src/main/java/com/islandempires/resourceworker/aggregations/IslandResourceAggregation.java" beforeDir="false" afterPath="$PROJECT_DIR$/resourceworker/src/main/java/com/islandempires/resourceworker/aggregations/IslandResourceAggregation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/build.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/settings.gradle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/src/main/java/com/islandempires/gameserverservice/GameserverServiceApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/src/main/java/com/islandempires/gameserverservice/model/GamerServer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/src/main/java/com/islandempires/gameserverservice/model/Island.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/src/main/resources/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gamese-service/src/test/java/com/islandempires/gameserverservice/GameserverServiceApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gameserver-service/docker-compose.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gameserver-service/zookeeper/data/myid" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/gameserver-service/zookeeper/logs/version-2/log.1" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

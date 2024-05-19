@@ -1,61 +1,70 @@
-package com.islandempires.gameserverservice.dto.island;
+package com.islandempires.islandservice.dto.initial;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Data
-public class IslandResourceDTO implements Serializable {
-    private static final long serialVersionUID = 2562090437133615330L;
-
-    private Integer wood;
-
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+public class InitialIslandResource implements Serializable {
+    private String islandId;
+    @NotBlank
+    private Double wood;
+    @NotBlank
     private Integer woodHourlyProduction;
 
-
-    private Integer iron;
-
+    @NotBlank
+    private Double iron;
+    @NotBlank
     private Integer ironHourlyProduction;
 
-
-    private Integer clay;
-
+    @NotBlank
+    private Double clay;
+    @NotBlank
     private Integer clayHourlyProduction;
 
-    private Integer gold;
+    @NotBlank
+    private Double gold;
 
+    @NotBlank
     private Integer rawMaterialStorageSize;
 
-
+    @NotBlank
     private Double meatFoodCoefficient;
 
+    @NotBlank
     private Integer meatHourlyProduction;
 
-
+    @NotBlank
     private Double fishFoodCoefficient;
-
+    @NotBlank
     private Integer fishHourlyProduction;
 
+    @NotBlank
     private Double wheatFoodCoefficient;
 
+    @NotBlank
     private Integer wheatHourlyProduction;
 
 
+    @NotBlank
     private Integer population;
-
-    private Integer populationLimit;
-
-
+    @NotBlank
     private Integer temporaryPopulation;
 
-    private Double happinessScore;
+    @NotBlank
+    private Integer populationLimit;
 
+    @NotBlank
+    private Double happinessScore;
+    @NotBlank
     private Double additionalHappinessScore;
 
 }

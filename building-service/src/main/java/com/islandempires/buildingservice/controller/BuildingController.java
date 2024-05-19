@@ -1,5 +1,6 @@
 package com.islandempires.buildingservice.controller;
 
+import com.islandempires.buildingservice.dto.AllBuildingsDTO;
 import com.islandempires.buildingservice.enums.IslandBuildingEnum;
 import com.islandempires.buildingservice.model.IslandBuilding;
 import com.islandempires.buildingservice.model.building.AllBuildings;

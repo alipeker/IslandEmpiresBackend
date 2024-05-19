@@ -1,20 +1,16 @@
 package com.islandempires.buildingservice.service;
 
+import com.islandempires.buildingservice.dto.AllBuildingsDTO;
 import com.islandempires.buildingservice.enums.IslandBuildingEnum;
 import com.islandempires.buildingservice.exception.CustomRunTimeException;
 import com.islandempires.buildingservice.exception.ExceptionE;
 import com.islandempires.buildingservice.model.IslandBuilding;
 import com.islandempires.buildingservice.model.building.AllBuildings;
-import com.islandempires.buildingservice.model.buildinglevelspec.BuildingLevel;
-import com.islandempires.buildingservice.model.buildinglevelspec.TimberCampLevel;
-import com.islandempires.buildingservice.model.buildingtype.BaseStructures;
-import com.islandempires.buildingservice.model.scheduled.BuildingScheduledTask;
 import com.islandempires.buildingservice.repository.BuildingScheduledTaskRepository;
 import com.islandempires.buildingservice.repository.IslandBuildingRepository;
 import com.islandempires.buildingservice.service.client.IslandResourceWebClientNew;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -48,7 +44,7 @@ public class BuildingService {
                     IslandBuilding islandBuilding = new IslandBuilding();
                     islandBuilding.setId(islandId);
                     islandBuilding.setUserId(userid);
-                    islandBuilding.setAllBuildingList(addAllBuildingToList(allBuildings));
+                    islandBuilding.setAllBuildingList(allBuildings);
                     return islandBuildingRepository.save(islandBuilding);
                 }))
                 .flatMap(islandBuilding -> {
@@ -57,6 +53,7 @@ public class BuildingService {
     }
 
     public Mono<Void> increaseIslandBuildingLvl(String islandId, IslandBuildingEnum islandBuildingEnum, String token, Long userid) {
+        /*
         IslandBuilding islandBuilding = this.islandBuildingRepository.findById(islandId).share().block();
 
         if(islandBuilding.getUserId() != userid) {
@@ -99,9 +96,10 @@ public class BuildingService {
                 .then(buildingScheduledTaskRepository.save(buildingScheduledTask))
                 .then(Mono.empty());*/
 
-        return buildingScheduledTaskRepository.save(buildingScheduledTask).then();
+        return Mono.empty();
     }
 
+    /*
     public List<BaseStructures> addAllBuildingToList(AllBuildings allBuildings) {
         if(allBuildings == null) {
             return null;
@@ -133,7 +131,7 @@ public class BuildingService {
         allBuildingList.add(allBuildings.getFoodWareHouse2());
         return allBuildingList;
     }
-
+*/
 
 
     public Mono<Void> delete(String islandId) {

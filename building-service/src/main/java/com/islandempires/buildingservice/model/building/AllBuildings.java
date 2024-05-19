@@ -8,32 +8,30 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AllBuildings {
-    private Academia academia;
-    private Barrack barrack;
-    private BrickWorks brickWorks;
-    private CannonCamp cannonCamp;
-    private ClayMine clayMine;
-    private DairyFarm dairyFarm1;
-    private DairyFarm dairyFarm2;
-    private DefenceTower defenceTower;
-    private Embassy embassy;
-    private Fisher fisher;
-    private Foundry foundry;
-    private Gunsmith gunsmith;
-    private Houses houses;
-    private IronMine ironMine;
-    private IslandHeadquarter islandHeadquarter;
-    private Mill mill1;
-    private Mill mill2;
-    private RiffleBarrack riffleBarrack;
-    private TimberCamp timberCamp1;
-    private TimberCamp timberCamp2;
-    private WatchTower watchTower;
+    private BaseStructures academia;
+    private BaseStructures barrack;
+    private BaseStructures brickWorks;
+    private BaseStructures cannonCamp;
+    private BaseStructures clayMine;
+    private BaseStructures dairyFarm;
+    private BaseStructures defenceTower;
+    private BaseStructures embassy;
+    private BaseStructures fisher;
+    private BaseStructures foundry;
+    private BaseStructures gunsmith;
+    private BaseStructures houses;
+    private BaseStructures ironMine;
+    private BaseStructures islandHeadquarter;
+    private BaseStructures mill1;
+    private BaseStructures mill2;
+    private BaseStructures riffleBarrack;
+    private BaseStructures timberCamp1;
+    private BaseStructures timberCamp2;
+    private BaseStructures watchTower;
 
-    private WareHouse wareHouse;
+    private BaseStructures wareHouse;
 
-    private FoodWareHouse foodWareHouse1;
+    private BaseStructures foodWareHouse1;
 
-    private FoodWareHouse foodWareHouse2;
-
+    private BaseStructures foodWareHouse2;
 }
