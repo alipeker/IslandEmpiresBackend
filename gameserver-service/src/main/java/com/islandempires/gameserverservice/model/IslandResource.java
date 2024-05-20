@@ -15,6 +15,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class IslandResource implements Serializable {
     private String islandId;
+
     @NotBlank
     private Double wood;
     @NotBlank

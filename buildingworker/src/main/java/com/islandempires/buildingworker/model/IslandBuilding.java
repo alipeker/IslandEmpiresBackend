@@ -1,6 +1,6 @@
 package com.islandempires.buildingworker.model;
 
-import com.islandempires.buildingworker.model.buildingtype.BaseStructures;
+import com.islandempires.buildingworker.shared.buildingtype.BaseStructures;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;

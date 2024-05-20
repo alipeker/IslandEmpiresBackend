@@ -1,7 +1,7 @@
 package com.islandempires.buildingworker.model.strategy;
 
 import com.islandempires.buildingworker.enums.IslandBuildingEnum;
-import com.islandempires.buildingworker.model.building.TimberCamp;
+import com.islandempires.buildingworker.shared.building.TimberCamp;
 
 public class BuildingContext {
 
@@ -10,12 +10,13 @@ public class BuildingContext {
     public BuildingContext(BuildingStrategy strategy, IslandBuildingEnum islandBuildingEnum) {
         this.strategy = strategy;
 
+        /*
         switch (islandBuildingEnum) {
             case TIMBER_CAMP1:
                 this.strategy = (TimberCamp) this.strategy;
                 this.strategy.executeBuildingLogic();
                 break;
-        }
+        }*/
 
     }
 

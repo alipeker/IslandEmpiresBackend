@@ -10,6 +10,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 public class AllBuildings implements Serializable {
+    private String serverId;
     private Academia academia;
     private Barrack barrack;
     private BrickWorks brickWorks;

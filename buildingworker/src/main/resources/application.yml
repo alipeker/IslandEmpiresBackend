@@ -38,3 +38,7 @@ debezium:
       excludeFieldList: ~
   kafka:
     topicPrefix: "mytopic"
+
+
+urls:
+  gateway: http://192.168.0.14:9000

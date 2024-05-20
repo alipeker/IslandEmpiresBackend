@@ -1,16 +1,11 @@
 package com.islandempires.buildingworker.aggregations;
 
-import com.mongodb.client.model.Filters;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Field;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,8 +24,10 @@ public class IslandBuildingAggregation {
     public void deduplicateToTargetCollection() {
         AggregationOperation project1 = Aggregation.project()
                 .and("_id").as("_id")
+                .and("serverId").as("serverId")
                 .and("islandId").as("islandId")
                 .and("islandBuildingEnum").as("islandBuildingEnum")
+                .and("rawMaterialsAndPopulationCost").as("rawMaterialsAndPopulationCost")
                 .and("initialLvl").as("initialLvl")
                 .and("nextLvl").as("nextLvl")
                 .and("constructionDuration").as("constructionDuration")
@@ -42,8 +39,10 @@ public class IslandBuildingAggregation {
 
         AggregationOperation project2 = Aggregation.project()
                 .and("_id").as("_id")
+                .and("serverId").as("serverId")
                 .and("islandId").as("islandId")
                 .and("islandBuildingEnum").as("islandBuildingEnum")
+                .and("rawMaterialsAndPopulationCost").as("rawMaterialsAndPopulationCost")
                 .and("initialLvl").as("initialLvl")
                 .and("nextLvl").as("nextLvl")
                 .and("constructionDuration").as("constructionDuration")

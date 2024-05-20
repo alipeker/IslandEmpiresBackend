@@ -14,10 +14,15 @@ public class FilterConfig {
     @Autowired
     private WhoAmIClient whoAmIClient;
 
+    @Autowired
+    private UrlValidator urlValidator;
 
     @Bean
     public WebFilter jwtWebFilter() {
         return (exchange, chain) -> {
+            if(!urlValidator.isSecured.test(exchange.getRequest())) {
+                return chain.filter(exchange);
+            }
             String jwtToken = exchange.getRequest().getHeaders().getFirst("Authorization");
             if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
                 return whoAmIClient.whoami(jwtToken).flatMap(userId -> {

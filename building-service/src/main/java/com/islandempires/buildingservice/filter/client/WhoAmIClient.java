@@ -15,9 +15,8 @@ public class WhoAmIClient {
     private final WebClient islandResourceWebClient;
 
     @Autowired
-    public WhoAmIClient(@Qualifier("islandResourceWebClientBuilder") WebClient.Builder webClientBuilder,
+    public WhoAmIClient(@Qualifier("gatewayClient") WebClient.Builder webClientBuilder,
                         @Value("${urls.gateway}") String gatewayUrl) {
-        System.out.println(gatewayUrl);
         this.islandResourceWebClient = webClientBuilder
                                             .baseUrl(gatewayUrl)
                                             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();

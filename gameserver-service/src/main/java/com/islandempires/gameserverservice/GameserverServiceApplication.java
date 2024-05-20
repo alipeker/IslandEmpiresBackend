@@ -27,9 +27,7 @@ import java.util.stream.Collectors;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@EnableFeignClients
 @EnableWebFlux
-@EnableReactiveFeignClients
 @EnableScheduling
 @EnableRedisRepositories
 @EnableReactiveMongoRepositories(basePackages = "com.islandempires.gameserverservice.repository",
@@ -52,13 +50,6 @@ public class GameserverServiceApplication {
 	public HttpMessageConverters messageConverters(ObjectProvider<HttpMessageConverter<?>> converters) {
 		return new HttpMessageConverters(converters.orderedStream().collect(Collectors.toList()));
 	}
-
-	@Bean
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
-	}
-
-
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {

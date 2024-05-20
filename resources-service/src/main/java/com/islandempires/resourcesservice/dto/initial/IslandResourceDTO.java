@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.kafka.common.protocol.types.Field;
 
 import java.io.Serializable;
 
@@ -14,6 +15,8 @@ public class IslandResourceDTO implements Serializable {
     private String islandId;
 
     private Long userId;
+
+    private String serverId;
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull

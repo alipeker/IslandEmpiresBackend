@@ -21,7 +21,7 @@ spring:
       island-delete-topic: island-delete-topic
     producer:
       island-delete-topic-status: island-delete-topic-status
-      island-request-topic: island-request-topic
+      island-delete-topic: island-delete-topic
 
 eureka:
   client:

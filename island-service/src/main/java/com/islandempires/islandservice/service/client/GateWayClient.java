@@ -1,17 +1,12 @@
 package com.islandempires.islandservice.service.client;
 
-import com.islandempires.gameserverservice.dto.IslandBuildingDTO;
-import com.islandempires.gameserverservice.dto.island.IslandDTO;
-import com.islandempires.gameserverservice.dto.island.IslandResourceDTO;
-import com.islandempires.gameserverservice.model.building.AllBuildings;
 import com.islandempires.islandservice.dto.initial.InitialAllBuildingsDTO;
-import com.islandempires.islandservice.dto.initial.InitialIslandResource;
+import com.islandempires.islandservice.dto.initial.InitialIslandResourceDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -19,9 +14,6 @@ import reactor.core.publisher.Mono;
 public class GateWayClient {
 
     private final WebClient gatewayWebClient;
-
-    @Autowired
-    private RestTemplate restTemplate;
 
     @Value("${urls.gateway}")
     private String gatewayUrl;
@@ -34,9 +26,9 @@ public class GateWayClient {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
     }
 
-    public Mono<InitialAllBuildingsDTO> initializeIslandBuildings(String islandId, InitialAllBuildingsDTO allBuildingList, String jwtToken) {
+    public Mono<InitialAllBuildingsDTO> initializeIslandBuildings(String islandId, InitialAllBuildingsDTO allBuildingList, String jwtToken, String serverId) {
         return gatewayWebClient.post()
-                .uri("/building/{islandId}", islandId)
+                .uri("/building/{serverId}/{islandId}", serverId, islandId)
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .bodyValue(allBuildingList)
                 .retrieve()
@@ -44,13 +36,13 @@ public class GateWayClient {
                 .doOnError(e -> Mono.error(e));
     }
 
-    public Mono<InitialIslandResource> initializeIslandResource(String islandId, InitialIslandResource initialIslandResourceDTO, String jwtToken) {
+    public Mono<InitialIslandResourceDTO> initializeIslandResource(String islandId, InitialIslandResourceDTO initialIslandResourceDTO, String jwtToken, String serverId) {
         return gatewayWebClient.post()
-                .uri("/resource/{islandId}", islandId)
+                .uri("/resource/{serverId}/{islandId}", serverId, islandId)
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .bodyValue(initialIslandResourceDTO)
                 .retrieve()
-                .bodyToMono(InitialIslandResource.class)
+                .bodyToMono(InitialIslandResourceDTO.class)
                 .doOnError(e -> Mono.error(e));
     }
 

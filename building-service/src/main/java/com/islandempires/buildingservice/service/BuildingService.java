@@ -1,21 +1,27 @@
 package com.islandempires.buildingservice.service;
 
-import com.islandempires.buildingservice.dto.AllBuildingsDTO;
+import com.islandempires.buildingservice.dto.IslandResourceDTO;
 import com.islandempires.buildingservice.enums.IslandBuildingEnum;
 import com.islandempires.buildingservice.exception.CustomRunTimeException;
 import com.islandempires.buildingservice.exception.ExceptionE;
 import com.islandempires.buildingservice.model.IslandBuilding;
 import com.islandempires.buildingservice.model.building.AllBuildings;
+import com.islandempires.buildingservice.model.building.Building;
+import com.islandempires.buildingservice.model.scheduled.BuildingScheduledTask;
 import com.islandempires.buildingservice.repository.BuildingScheduledTaskRepository;
 import com.islandempires.buildingservice.repository.IslandBuildingRepository;
 import com.islandempires.buildingservice.service.client.IslandResourceWebClientNew;
+import com.islandempires.buildingservice.shared.buildingtype.BaseStructures;
+import com.islandempires.buildingservice.shared.resources.RawMaterialsAndPopulationCost;
+import com.islandempires.buildingservice.shared.service.ServerPropertiesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import static com.islandempires.buildingservice.util.FindInListWithField.findBuilding;
+import static com.islandempires.buildingservice.util.FindInListWithField.findBuildingProperties;
 
 
 @Service
@@ -28,6 +34,8 @@ public class BuildingService {
 
     private final IslandResourceWebClientNew islandResourceWebClientNew;
 
+    private final ServerPropertiesService serverPropertiesService;
+
     public Mono<IslandBuilding> get(String islandId, Long userid) {
         return islandBuildingRepository.findById(islandId)
                 .flatMap(islandBuilding -> {
@@ -38,13 +46,14 @@ public class BuildingService {
                 });
     }
 
-    public Mono<IslandBuilding> initializeIslandBuildings(String islandId, AllBuildings allBuildings, Long userid) {
+    public Mono<IslandBuilding> initializeIslandBuildings(String serverId, String islandId, AllBuildings allBuildings, Long userid) {
         return islandBuildingRepository.findById(islandId)
                 .switchIfEmpty(Mono.defer(() -> {
                     IslandBuilding islandBuilding = new IslandBuilding();
                     islandBuilding.setId(islandId);
                     islandBuilding.setUserId(userid);
-                    islandBuilding.setAllBuildingList(allBuildings);
+                    islandBuilding.setAllBuilding(allBuildings);
+                    islandBuilding.setServerId(serverId);
                     return islandBuildingRepository.save(islandBuilding);
                 }))
                 .flatMap(islandBuilding -> {
@@ -52,86 +61,44 @@ public class BuildingService {
                 });
     }
 
-    public Mono<Void> increaseIslandBuildingLvl(String islandId, IslandBuildingEnum islandBuildingEnum, String token, Long userid) {
-        /*
-        IslandBuilding islandBuilding = this.islandBuildingRepository.findById(islandId).share().block();
 
-        if(islandBuilding.getUserId() != userid) {
-            throw new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
-        }
-
-        BaseStructures baseStructures = islandBuilding.getAllBuildingList().stream()
-                .filter(structure -> structure != null && structure.getIslandBuildingEnum().equals(islandBuildingEnum))
-                .findFirst()
-                .orElseThrow(() -> new CustomRunTimeException(ExceptionE.NOT_FOUND));
-
-        int initialLvl = baseStructures.getInitialLvl();
-
-        Flux<BuildingScheduledTask> buildingScheduledTaskFlux = buildingScheduledTaskRepository.findByIslandBuildingEnumAndIslandId(islandBuildingEnum, islandId);
-        List<BuildingScheduledTask> buildingScheduledTaskList = buildingScheduledTaskFlux.share().collectList().share().block();
-
-        if(buildingScheduledTaskList.size() > 0) {
-            initialLvl = buildingScheduledTaskList.get(buildingScheduledTaskList.size() - 1).getNextLvl().getLevel();
-        }
-
-        if(baseStructures == null || baseStructures.getBuildingLevelList() == null
-                || baseStructures.getBuildingLevelList().size() == 0 || initialLvl == (baseStructures.getBuildingLevelList().size() - 1)) {
-            throw new CustomRunTimeException(ExceptionE.INSUFFICIENT_RESOURCES);
-        }
-
-        BuildingLevel initialLevel = (0 < initialLvl) ? baseStructures.getBuildingLevelList().get(initialLvl - 1)
-                                                    : null;
-
-        BuildingLevel nextLevel = baseStructures.getBuildingLevelList().get(initialLvl);
+    public Mono<IslandResourceDTO> increaseIslandBuildingLvl(String islandId, IslandBuildingEnum islandBuildingEnum, String token, Long userid) {
+        return this.islandBuildingRepository.findById(islandId).flatMap(islandBuilding -> {
+                    Building building = findBuilding(islandBuilding.getAllBuilding(), islandBuildingEnum);
+                    if(building != null) {
+                        return serverPropertiesService.get(islandBuilding.getServerId()).flatMap(allBuildingsServerProperties -> {
+                            BaseStructures buildingProperties = findBuildingProperties(allBuildingsServerProperties, islandBuildingEnum);
 
 
-        BuildingScheduledTask buildingScheduledTask = new BuildingScheduledTask(islandId, baseStructures.getIslandBuildingEnum(), initialLevel, nextLevel, nextLevel.getConstructionDuration());
+                            Flux<BuildingScheduledTask> buildingScheduledTaskFlux = buildingScheduledTaskRepository.findByIslandBuildingEnumAndIslandId(islandBuildingEnum, islandId);
 
-        buildingScheduledTask.setLastCalculatedTimestamp(System.currentTimeMillis());
+                            return buildingScheduledTaskFlux.collectList().flatMap(buildingScheduledTasks -> {
+                                if(buildingProperties == null || buildingProperties.getBuildingLevelList() == null
+                                        || buildingProperties.getBuildingLevelList().size() == 0
+                                        || buildingProperties.getBuildingLevelList().size() == (building.getLvl() + buildingScheduledTasks.size())) {
+                                    throw new CustomRunTimeException(ExceptionE.INSUFFICIENT_RESOURCES);
+                                }
+                                int initialLvl = (buildingScheduledTasks.size() > 0) ? building.getLvl() + buildingScheduledTasks.size() : building.getLvl();
+                                int nextLvl = initialLvl + 1;
+                                RawMaterialsAndPopulationCost rawMaterialsAndPopulationCost = buildingProperties.getBuildingLevelList().get(initialLvl).getRawMaterialsAndPopulationCost();
 
+                                BuildingScheduledTask buildingScheduledTask =
+                                        new BuildingScheduledTask(allBuildingsServerProperties.getServerId(), islandId, buildingProperties.getIslandBuildingEnum(), initialLvl, nextLvl,
+                                                buildingProperties.getBuildingLevelList().get(initialLvl).getConstructionDuration(), rawMaterialsAndPopulationCost);
 
-        /*
-        return islandResourceWebClientNew.assignResources(islandId, nextLevel.getRawMaterialsAndPopulationCost(), token)
-                .onErrorResume(throwable -> Mono.error(throwable))
-                .then(buildingScheduledTaskRepository.save(buildingScheduledTask))
-                .then(Mono.empty());*/
+                                buildingScheduledTask.setLastCalculatedTimestamp(System.currentTimeMillis());
 
-        return Mono.empty();
+                                return islandResourceWebClientNew.assignResources(islandId, rawMaterialsAndPopulationCost, token)
+                                        .flatMap(islandResourceDTO -> buildingScheduledTaskRepository.save(buildingScheduledTask)
+                                                .thenReturn(islandResourceDTO))
+                                        .onErrorResume(Mono::error);
+                            });
+                        });
+                    }
+                    return Mono.error(Throwable::new);
+                });
     }
 
-    /*
-    public List<BaseStructures> addAllBuildingToList(AllBuildings allBuildings) {
-        if(allBuildings == null) {
-            return null;
-        }
-        List<BaseStructures> allBuildingList = new ArrayList<>();
-        allBuildingList.add(allBuildings.getAcademia());
-        allBuildingList.add(allBuildings.getBarrack());
-        allBuildingList.add(allBuildings.getBrickWorks());
-        allBuildingList.add(allBuildings.getCannonCamp());
-        allBuildingList.add(allBuildings.getClayMine());
-        allBuildingList.add(allBuildings.getDairyFarm1());
-        allBuildingList.add(allBuildings.getDairyFarm2());
-        allBuildingList.add(allBuildings.getDefenceTower());
-        allBuildingList.add(allBuildings.getEmbassy());
-        allBuildingList.add(allBuildings.getFisher());
-        allBuildingList.add(allBuildings.getFoundry());
-        allBuildingList.add(allBuildings.getGunsmith());
-        allBuildingList.add(allBuildings.getHouses());
-        allBuildingList.add(allBuildings.getIronMine());
-        allBuildingList.add(allBuildings.getIslandHeadquarter());
-        allBuildingList.add(allBuildings.getMill1());
-        allBuildingList.add(allBuildings.getMill2());
-        allBuildingList.add(allBuildings.getRiffleBarrack());
-        allBuildingList.add(allBuildings.getTimberCamp1());
-        allBuildingList.add(allBuildings.getTimberCamp2());
-        allBuildingList.add(allBuildings.getWatchTower());
-        allBuildingList.add(allBuildings.getWareHouse());
-        allBuildingList.add(allBuildings.getFoodWareHouse1());
-        allBuildingList.add(allBuildings.getFoodWareHouse2());
-        return allBuildingList;
-    }
-*/
 
 
     public Mono<Void> delete(String islandId) {

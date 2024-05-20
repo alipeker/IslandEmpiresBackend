@@ -68,6 +68,15 @@ public class JwtTokenProvider {
             username, null, roles);
   }
 
+  public Authentication getAuthenticationForService() {
+    String username = "service";
+
+    List<SimpleGrantedAuthority> roles = new ArrayList<>();
+
+    return new UsernamePasswordAuthenticationToken(
+            username, null, roles);
+  }
+
   private List<SimpleGrantedAuthority> extractRoles(String token) {
     Claims claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     List<Object> rolesHashMapArray = claims.get("auth", List.class);

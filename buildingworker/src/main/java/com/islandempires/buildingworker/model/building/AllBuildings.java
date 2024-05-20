@@ -4,36 +4,42 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AllBuildings {
-    private Academia academia;
-    private Barrack barrack;
-    private BrickWorks brickWorks;
-    private CannonCamp cannonCamp;
-    private ClayMine clayMine;
-    private DairyFarm dairyFarm1;
-    private DairyFarm dairyFarm2;
-    private DefenceTower defenceTower;
-    private Embassy embassy;
-    private Fisher fisher;
-    private Foundry foundry;
-    private Gunsmith gunsmith;
-    private Houses houses;
-    private IronMine ironMine;
-    private IslandHeadquarter islandHeadquarter;
-    private Mill mill1;
-    private Mill mill2;
-    private RiffleBarrack riffleBarrack;
-    private TimberCamp timberCamp1;
-    private TimberCamp timberCamp2;
-    private WatchTower watchTower;
+public class AllBuildings implements Serializable {
+    private static final long serialVersionUID = -664873475179751101L;
 
-    private WareHouse wareHouse;
+    private Building academia;
+    private Building barrack;
+    private Building brickWorks;
+    private Building cannonCamp;
+    private Building clayMine;
+    private Building dairyFarm1;
+    private Building dairyFarm2;
+    private Building defenceTower;
+    private Building embassy;
+    private Building fisher;
+    private Building foundry;
+    private Building gunsmith;
+    private Building houses;
+    private Building ironMine;
+    private Building islandHeadquarter;
+    private Building mill1;
+    private Building mill2;
+    private Building riffleBarrack;
+    private Building timberCamp1;
+    private Building timberCamp2;
+    private Building watchTower;
 
-    private FoodWareHouse foodWareHouse1;
+    private Building wareHouse;
 
-    private FoodWareHouse foodWareHouse2;
+    private Building foodWareHouse1;
+
+    private Building foodWareHouse2;
+
 
 }
+

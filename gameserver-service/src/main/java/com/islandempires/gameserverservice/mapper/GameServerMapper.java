@@ -25,7 +25,7 @@ public class GameServerMapper {
         return new InitialGameServerPropertiesDTO(initialAllBuildingsDTO, islandResourceDTO);
     }
 
-    private InitialAllBuildingsDTO mapAllBuildingsToInitialAllBuildingsDTO(AllBuildings allBuildings) {
+    public InitialAllBuildingsDTO mapAllBuildingsToInitialAllBuildingsDTO(AllBuildings allBuildings) {
         InitialAllBuildingsDTO initialAllBuildingsDTO = new InitialAllBuildingsDTO();
         initialAllBuildingsDTO.setAcademia(mapIfNotNull(allBuildings.getAcademia()));
         initialAllBuildingsDTO.setBarrack(mapIfNotNull(allBuildings.getBarrack()));
@@ -63,7 +63,7 @@ public class GameServerMapper {
         return modelMapper.map(building, new TypeToken<InitialBuildingDTO>() {}.getType());
     }
 
-    private IslandResourceDTO mapIslandResourceToDTO(IslandResource islandResource) {
+    public IslandResourceDTO mapIslandResourceToDTO(IslandResource islandResource) {
         return modelMapper.map(islandResource, IslandResourceDTO.class);
     }
 }

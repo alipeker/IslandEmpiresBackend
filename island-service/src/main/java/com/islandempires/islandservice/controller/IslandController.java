@@ -3,6 +3,7 @@ package com.islandempires.islandservice.controller;
 import com.islandempires.islandservice.dto.IslandDTO;
 import com.islandempires.islandservice.dto.UpdateIslandDTO;
 import com.islandempires.islandservice.dto.UpdateOwnerDTO;
+import com.islandempires.islandservice.dto.initial.InitialGameServerPropertiesDTO;
 import com.islandempires.islandservice.model.Island;
 import com.islandempires.islandservice.service.IslandModificationService;
 import com.islandempires.islandservice.service.IslandQueryService;
@@ -54,9 +55,12 @@ public class IslandController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/")
-    public Mono<IslandDTO> create(@RequestAttribute("userId") Long userid) {
-        return islandModificationService.create(userid);
+    @PostMapping("/{serverId}")
+    public Mono<IslandDTO> create(@RequestAttribute("userId") Long userid,
+                                  @RequestBody InitialGameServerPropertiesDTO initialGameServerPropertiesDTO,
+                                  @RequestHeader("Authorization") String jwtToken,
+                                  @PathVariable String serverId) {
+        return islandModificationService.create(userid, initialGameServerPropertiesDTO, jwtToken, serverId);
     }
 
     @ResponseStatus(HttpStatus.OK)

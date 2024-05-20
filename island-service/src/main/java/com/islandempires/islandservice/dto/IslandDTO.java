@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 public class IslandDTO {
     private String id;
 
+    private String serverId;
+
     private String name;
 
     private Long userId;

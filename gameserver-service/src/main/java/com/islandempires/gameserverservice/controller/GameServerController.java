@@ -4,12 +4,14 @@ import com.islandempires.gameserverservice.dto.GameServerDTO;
 import com.islandempires.gameserverservice.dto.initial.InitialGameServerPropertiesDTO;
 import com.islandempires.gameserverservice.model.GameServer;
 import com.islandempires.gameserverservice.model.GameServerIslands;
+import com.islandempires.gameserverservice.model.building.AllBuildings;
 import com.islandempires.gameserverservice.service.GameServerReadService;
 import com.islandempires.gameserverservice.service.GameServerWriteService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @CrossOrigin
@@ -52,9 +54,21 @@ public class GameServerController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/getServerBuildingsInfo/{serverId}")
+    public Object getServerBuildingInfo(@PathVariable String serverId) {
+        return gameServerReadService.getServerBuildingInfo(serverId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/getGameServerInitialProperties/{serverId}")
     public InitialGameServerPropertiesDTO getGameServerInitialProperties(@PathVariable String serverId) {
         return gameServerReadService.getGameServerInitialProperties(serverId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/getGameServerBuildingProperties")
+    public Flux<AllBuildings> getGameServerBuildingProperties() {
+        return gameServerReadService.getGameServerBuildingProperties();
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -62,4 +76,5 @@ public class GameServerController {
     public InitialGameServerPropertiesDTO testali(@PathVariable String serverId) {
         return gameServerReadService.getGameServerInitialProperties(serverId);
     }
+
 }

@@ -17,7 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @EnableAutoConfiguration
 @ComponentScan(basePackages = {"com.islandempires.islandservice.repository", "com.islandempires.islandservice.service",
 		"com.islandempires.islandservice.controller", "com.islandempires.islandservice.exception", "com.islandempires.islandservice.kafka",
-		"com.islandempires.islandservice.outbox", "com.islandempires.islandservice.filter"})
+		"com.islandempires.islandservice.outbox", "com.islandempires.islandservice.filter", "com.islandempires.islandservice.config"})
 @EnableKafka
 public class IslandServiceApplication {
 

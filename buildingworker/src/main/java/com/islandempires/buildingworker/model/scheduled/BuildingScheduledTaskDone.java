@@ -2,13 +2,12 @@ package com.islandempires.buildingworker.model.scheduled;
 
 
 import com.islandempires.buildingworker.enums.IslandBuildingEnum;
-import com.islandempires.buildingworker.model.buildinglevelspec.BuildingLevel;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
-
+import com.islandempires.buildingworker.shared.resources.RawMaterialsAndPopulationCost;
 import java.time.Duration;
 
 @Document("BuildingScheduledTaskDone")
@@ -19,13 +18,17 @@ public class BuildingScheduledTaskDone {
     @Id
     private String id;
 
+    private String serverId;
+
     private String islandId;
 
     private IslandBuildingEnum islandBuildingEnum;
 
-    private BuildingLevel initialLvl;
+    private RawMaterialsAndPopulationCost rawMaterialsAndPopulationCost;
 
-    private BuildingLevel nextLvl;
+    private int initialLvl;
+
+    private int nextLvl;
 
     private Duration constructionDuration;
 
@@ -35,13 +38,4 @@ public class BuildingScheduledTaskDone {
 
     private long lastCalculatedTimestamp;
 
-    public BuildingScheduledTaskDone(String islandId, IslandBuildingEnum islandBuildingEnum, BuildingLevel initialLvl, BuildingLevel nextLvl, Duration constructionDuration) {
-        this.islandId = islandId;
-        this.islandBuildingEnum = islandBuildingEnum;
-        this.initialLvl = initialLvl;
-        this.nextLvl = nextLvl;
-        this.constructionDuration = constructionDuration;
-        this.startingDateTimestamp = System.currentTimeMillis();
-        this.remainingTime = Duration.parse(constructionDuration.toString()).toMillis();
-    }
 }

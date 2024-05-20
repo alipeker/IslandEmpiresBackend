@@ -1,7 +1,6 @@
 package com.islandempires.buildingservice.model;
 
 import com.islandempires.buildingservice.model.building.AllBuildings;
-import com.islandempires.buildingservice.model.building.BaseStructures;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Document("IslandBuilding")
 @NoArgsConstructor
@@ -21,6 +19,8 @@ public class IslandBuilding implements Serializable {
 
     private Long userId;
 
-    private AllBuildings allBuildingList;
+    private String serverId;
+
+    private AllBuildings allBuilding;
 
 }

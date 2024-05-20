@@ -1,6 +1,6 @@
 package com.islandempires.buildingservice.controller;
 
-import com.islandempires.buildingservice.dto.AllBuildingsDTO;
+import com.islandempires.buildingservice.dto.IslandResourceDTO;
 import com.islandempires.buildingservice.enums.IslandBuildingEnum;
 import com.islandempires.buildingservice.model.IslandBuilding;
 import com.islandempires.buildingservice.model.building.AllBuildings;
@@ -30,20 +30,16 @@ public class BuildingController {
       return buildingService.get(islandId, userid);
     }
 
-    @PostMapping("/{islandId}")
-    public Mono<IslandBuilding> initializeIslandBuildings(@PathVariable String islandId, @RequestBody AllBuildings allBuildings, @RequestAttribute("userId") Long userid) {
-      return buildingService.initializeIslandBuildings(islandId, allBuildings, userid);
+    @PostMapping("/{serverId}/{islandId}")
+    public Mono<IslandBuilding> initializeIslandBuildings(@PathVariable String serverId, @PathVariable String islandId,
+                                                          @RequestBody AllBuildings allBuildings, @RequestAttribute("userId") Long userid) {
+      return buildingService.initializeIslandBuildings(serverId, islandId, allBuildings, userid);
     }
 
     @PatchMapping("/increaselvl/{islandId}")
-    public Mono<Void> increaseIslandBuildingLvl(@PathVariable String islandId, @RequestBody IslandBuildingEnum islandBuildingEnum,
-                                                @RequestHeader("Authorization") String authorization, @RequestAttribute("userId") Long userid) {
+    public Mono<IslandResourceDTO> increaseIslandBuildingLvl(@PathVariable String islandId, @RequestBody IslandBuildingEnum islandBuildingEnum,
+                                                             @RequestHeader("Authorization") String authorization, @RequestAttribute("userId") Long userid) {
       return buildingService.increaseIslandBuildingLvl(islandId, islandBuildingEnum, authorization, userid);
-    }
-
-    @PostMapping("/test")
-    public Mono<Long> increaseIslandBuildingLvl(@RequestHeader("Authorization") String authorization) {
-      return islandResourceWebClientNew.whoami(authorization);
     }
 
     /*

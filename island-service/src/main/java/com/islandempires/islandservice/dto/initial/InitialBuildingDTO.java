@@ -1,6 +1,6 @@
 package com.islandempires.islandservice.dto.initial;
 
-import com.islandempires.gameserverservice.enums.IslandBuildingEnum;
+import com.islandempires.islandservice.enums.IslandBuildingEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

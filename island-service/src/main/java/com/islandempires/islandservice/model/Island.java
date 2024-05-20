@@ -18,6 +18,8 @@ public class Island implements Serializable {
     @NotBlank
     private String id;
 
+    private String serverId;
+
     private String name;
 
     private Long userId;

@@ -9,8 +9,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InitialAllBuildingsDTO implements Serializable {
-    private static final long serialVersionUID = -664873475179751101L;
+public class InitialAllBuildingsDTO {
 
     private InitialBuildingDTO academia;
     private InitialBuildingDTO barrack;
