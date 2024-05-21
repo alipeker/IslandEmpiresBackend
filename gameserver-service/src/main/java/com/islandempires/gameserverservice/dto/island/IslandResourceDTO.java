@@ -22,13 +22,14 @@ public class IslandResourceDTO implements Serializable {
     private Integer iron;
 
     private Integer ironHourlyProduction;
+    private Integer ironHourlyProductionMultiply = 0;
 
 
     private Integer clay;
 
     private Integer clayHourlyProduction;
+    private Integer clayHourlyProductionMultiply = 0;
 
-    private Integer gold;
 
     private Integer rawMaterialStorageSize;
 

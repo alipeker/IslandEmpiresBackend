@@ -25,14 +25,16 @@ public class IslandResource implements Serializable {
     private Double iron;
     @NotBlank
     private Integer ironHourlyProduction;
+    @NotBlank
+    private Integer ironHourlyProductionMultiply = 0;
 
     @NotBlank
     private Double clay;
     @NotBlank
     private Integer clayHourlyProduction;
-
     @NotBlank
-    private Double gold;
+    private Integer clayHourlyProductionMultiply = 0;
+
 
     @NotBlank
     private Integer rawMaterialStorageSize;

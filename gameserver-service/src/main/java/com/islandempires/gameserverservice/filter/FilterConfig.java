@@ -31,7 +31,7 @@ public class FilterConfig {
                 }).then(chain.filter(exchange));
             } else {
                 // JWT token bulunamadıysa isteği reddet
-                exchange.getResponse().setStatusCode(HttpStatus.NOT_ACCEPTABLE);
+                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return Mono.empty();
             }
         };

@@ -10,6 +10,7 @@ import com.islandempires.resourcesservice.enums.PlunderedRaidingEnum;
 import com.islandempires.resourcesservice.enums.RawMaterialEnum;
 import com.islandempires.resourcesservice.exception.CustomRunTimeException;
 import com.islandempires.resourcesservice.exception.ExceptionE;
+import com.islandempires.resourcesservice.model.IslandResource;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,7 +18,7 @@ import java.util.*;
 @Service
 public class IslandResourceCalculatorService {
 
-    public Boolean checkResourceAllocation(IslandResourceDTO islandResourceDTO, ResourceAllocationRequestDTO resourceAllocationRequestDTO) {
+    public Boolean checkResourceAllocation(IslandResource islandResourceDTO, ResourceAllocationRequestDTO resourceAllocationRequestDTO) {
         return  islandResourceDTO.getWood() >= resourceAllocationRequestDTO.getWood() &&
                 islandResourceDTO.getClay() >= resourceAllocationRequestDTO.getClay() &&
                 islandResourceDTO.getIron() >= resourceAllocationRequestDTO.getIron() &&
@@ -32,9 +33,9 @@ public class IslandResourceCalculatorService {
                 ? true: false;
     }
 
-    public IslandResourceDTO calculateResourceAllocation(IslandResourceDTO islandResourceDTO,
-                                                         ResourceAllocationRequestDTO resourceAllocationRequestDTO) {
-        if(!checkResourceAllocation(islandResourceDTO, resourceAllocationRequestDTO)) {
+    public IslandResource calculateResourceAllocation(IslandResource islandResource,
+                                                      ResourceAllocationRequestDTO resourceAllocationRequestDTO) {
+        if(!checkResourceAllocation(islandResource, resourceAllocationRequestDTO)) {
             throw new CustomRunTimeException(ExceptionE.INSUFFICIENT_RESOURCES);
         }
 
@@ -43,12 +44,12 @@ public class IslandResourceCalculatorService {
         Integer clay = resourceAllocationRequestDTO.getClay();
         Integer population = resourceAllocationRequestDTO.getPopulation();
 
-        islandResourceDTO.setWood(islandResourceDTO.getWood() - wood);
-        islandResourceDTO.setIron(islandResourceDTO.getIron() - iron);
-        islandResourceDTO.setClay(islandResourceDTO.getClay() - clay);
-        islandResourceDTO.setPopulation(islandResourceDTO.getPopulation() + population);
+        islandResource.setWood(islandResource.getWood() - wood);
+        islandResource.setIron(islandResource.getIron() - iron);
+        islandResource.setClay(islandResource.getClay() - clay);
+        islandResource.setPopulation(islandResource.getPopulation() + population);
 
-        return  islandResourceDTO;
+        return  islandResource;
     }
 
     public Map<RawMaterialEnum, Integer> randomLootingRawMaterials(Map<RawMaterialEnum, Integer> plunderedIslandRawMaterials, Map<RawMaterialEnum, Integer> calculatedLootingRawMaterialMap,

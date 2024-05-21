@@ -65,7 +65,7 @@ public class IslandResourceController {
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/assignResources/{islandId}")
     public Mono<IslandResourceDTO> assignResources(@Size(min = 1, message = "Id must be not empty") @PathVariable String islandId,
-                                                @Valid @RequestBody ResourceAllocationRequestDTO resourceAllocationRequestDTO,
+                                                 @RequestBody ResourceAllocationRequestDTO resourceAllocationRequestDTO,
                                                    @RequestAttribute("userId") Long userId) {
 
         return islandResourceInteractionService.assignResources(islandId, resourceAllocationRequestDTO, userId);

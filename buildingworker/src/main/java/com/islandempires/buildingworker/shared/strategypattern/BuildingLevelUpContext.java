@@ -1,19 +1,18 @@
 package com.islandempires.buildingworker.shared.strategypattern;
 
-import com.islandempires.buildingworker.model.strategy.BuildingStrategy;
 
 public class BuildingLevelUpContext {
-    private BuildingStrategy strategy;
+    private BuildingLevelUpStrategy strategy;
 
-    public BuildingLevelUpContext(BuildingStrategy strategy) {
+    public BuildingLevelUpContext(BuildingLevelUpStrategy strategy) {
         this.strategy = strategy;
     }
 
-    public void setStrategy(BuildingStrategy strategy) {
+    public void setStrategy(BuildingLevelUpStrategy strategy) {
         this.strategy = strategy;
     }
 
-    public void sendRequest() {
-        strategy.executeBuildingLogic();
+    public void sendRequest(int nextLvl, String islandId) {
+        strategy.islandBuildingLevelUpExecution(nextLvl, islandId);
     }
 }

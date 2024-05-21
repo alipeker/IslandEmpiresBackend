@@ -12,6 +12,7 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -42,11 +43,20 @@ public class ClayMine extends RawMaterialProductionStructures implements Seriali
 
             IncreaseOrDecreaseIslandResourceFieldDTO increaseOrDecreaseIslandResourceFieldDTO = new IncreaseOrDecreaseIslandResourceFieldDTO();
             increaseOrDecreaseIslandResourceFieldDTO.setIslandResourceEnum(IslandResourceEnum.CLAY_HOURLY_PRODUCTION);
-            increaseOrDecreaseIslandResourceFieldDTO.setValue(clayMineLevelList.get(nextLvl).getHourlyClayProduction());
+
+            int increaseOrDecreaseValue = (nextLvl > 1) ? clayMineLevelList.get(nextLvl - 1).getHourlyClayProduction() - clayMineLevelList.get(nextLvl - 2).getHourlyClayProduction() :
+                                                          clayMineLevelList.get(nextLvl - 1).getHourlyClayProduction();
+
+
+            increaseOrDecreaseIslandResourceFieldDTO.setValue(increaseOrDecreaseValue);
 
             HttpEntity<IncreaseOrDecreaseIslandResourceFieldDTO> requestEntity = new HttpEntity<>(increaseOrDecreaseIslandResourceFieldDTO, headers);
 
-            restTemplate.exchange(getGatewayUrl() + "/resource/updateIslandResourceField/" + islandId, HttpMethod.PATCH, requestEntity, Object.class);
+            try {
+                restTemplate.exchange(getGatewayUrl() + "/resource/increaseOrDecreaseIslandResourceField/" + islandId, HttpMethod.PATCH, requestEntity, Object.class);
+            } catch (Exception e) {
+                throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
 
         } finally {
             try {

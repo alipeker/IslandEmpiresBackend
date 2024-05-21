@@ -25,12 +25,14 @@ public class IslandResourceDTO implements Serializable {
     @NotNull
     private Integer woodHourlyProduction;
 
+
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
     private Integer iron;
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
     private Integer ironHourlyProduction;
+    private Integer ironHourlyProductionMultiply;
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
@@ -38,10 +40,8 @@ public class IslandResourceDTO implements Serializable {
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
     private Integer clayHourlyProduction;
+    private Integer clayHourlyProductionMultiply;
 
-    @PositiveOrZero(message = "Value must be a positive or zero number")
-    @NotNull
-    private Integer gold;
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull

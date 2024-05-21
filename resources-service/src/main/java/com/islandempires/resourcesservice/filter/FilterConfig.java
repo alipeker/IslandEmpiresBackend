@@ -26,7 +26,7 @@ public class FilterConfig {
                 }).then(chain.filter(exchange));
             } else {
 
-                exchange.getResponse().setStatusCode(HttpStatus.NOT_FOUND);
+                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return Mono.empty();
             }
         };

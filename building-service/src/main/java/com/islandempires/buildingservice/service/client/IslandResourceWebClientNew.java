@@ -29,7 +29,7 @@ public class IslandResourceWebClientNew {
                 .uri("/resource/assignResources/{islandId}", islandId)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
-                .body(BodyInserters.fromValue(resourceAllocationRequestDTO))
+                .bodyValue(resourceAllocationRequestDTO)
                 .retrieve()
                 .bodyToMono(IslandResourceDTO.class)
                 .doOnError(e -> Mono.error(e));

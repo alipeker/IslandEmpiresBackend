@@ -91,15 +91,22 @@ public class BuildingService {
                                 return islandResourceWebClientNew.assignResources(islandId, rawMaterialsAndPopulationCost, token)
                                         .flatMap(islandResourceDTO -> buildingScheduledTaskRepository.save(buildingScheduledTask)
                                                 .thenReturn(islandResourceDTO))
-                                        .onErrorResume(Mono::error);
+                                        .doOnError(e -> Mono.error(e));
                             });
                         });
                     }
                     return Mono.error(Throwable::new);
-                });
+                }).switchIfEmpty(Mono.error(Throwable::new));
     }
 
 
+    public Mono<Void> increaseIslandBuildingLvlDone(String islandId, IslandBuildingEnum islandBuildingEnum, int newLvl) {
+        return this.islandBuildingRepository.findById(islandId).flatMap(islandBuilding -> {
+            Building building = findBuilding(islandBuilding.getAllBuilding(), islandBuildingEnum);
+            building.setLvl(newLvl);
+            return this.islandBuildingRepository.save(islandBuilding);
+        }).switchIfEmpty(Mono.error(Throwable::new)).then();
+    }
 
     public Mono<Void> delete(String islandId) {
         return islandBuildingRepository.deleteById(islandId)

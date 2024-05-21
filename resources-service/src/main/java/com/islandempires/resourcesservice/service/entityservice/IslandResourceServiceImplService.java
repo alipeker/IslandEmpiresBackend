@@ -17,6 +17,7 @@ import org.modelmapper.ModelMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -109,12 +110,12 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
                     if(userId != islandResource.getUserId()) {
                         throw new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
                     }
-                    return islandResourceCalculatorService.checkResourceAllocation(modelMapper.map(islandResource, IslandResourceDTO.class),
-                            resourceAllocationRequestDTO);
+                    return islandResourceCalculatorService.checkResourceAllocation(islandResource, resourceAllocationRequestDTO);
                 }).switchIfEmpty(Mono.error(new CustomRunTimeException(ExceptionE.NOT_FOUND)));
     }
 
     @Override
+    @Transactional
     public Mono<IslandResourceDTO> assignResources(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO, Long userId){
         return islandResourceRepository.findById(islandId)
                 .map(islandResource -> {
@@ -123,10 +124,11 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
                     }
                     return modelMapper.map(
                             islandResourceCalculatorService.calculateResourceAllocation(
-                                    modelMapper.map(islandResource, IslandResourceDTO.class),
-                                    resourceAllocationRequestDTO), IslandResource.class);
+                                    islandResource,resourceAllocationRequestDTO),
+                                    IslandResource.class);
                 }).flatMap(islandResourceRepository::save).switchIfEmpty(Mono.error(new CustomRunTimeException(ExceptionE.NOT_FOUND)))
-                .map(islandResource -> modelMapper.map(islandResource, IslandResourceDTO.class));
+                .map(islandResource -> modelMapper.map(islandResource, IslandResourceDTO.class))
+                .doOnError(e -> Mono.error(e));
     }
 
     @Override
@@ -224,9 +226,25 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
     public Mono<IslandResourceDTO> increaseOrDecreaseIslandResourceField(String islandId, IslandResourceEnum islandResourceEnum, Number value) {
         return islandResourceRepository.findById(islandId).switchIfEmpty(Mono.error(new CustomRunTimeException(ExceptionE.NOT_FOUND))).map(islandResource -> {
             switch (islandResourceEnum) {
-                        case GOLD:
-                            Double totalGold = islandResource.getGold() + value.doubleValue();
-                            islandResource.setGold(totalGold < 0 ? 0 : totalGold);
+                        case WOOD_HOURLY_PRODUCTION:
+                            Integer totalWoodProduction = islandResource.getWoodHourlyProduction() + value.intValue();
+                            totalWoodProduction = totalWoodProduction < 0 ? 0 : totalWoodProduction;
+                            islandResource.setWoodHourlyProduction(totalWoodProduction);
+                            break;
+                        case IRON_HOURLY_PRODUCTION:
+                            Integer totalIronProduction = islandResource.getIronHourlyProduction() + value.intValue();
+                            totalIronProduction = totalIronProduction < 0 ? 0 : totalIronProduction;
+                            islandResource.setIronHourlyProduction(totalIronProduction);
+                            break;
+                        case CLAY_HOURLY_PRODUCTION:
+                            Integer totalClayProduction = islandResource.getClayHourlyProduction() + value.intValue();
+                            totalClayProduction = totalClayProduction < 0 ? 0 : totalClayProduction;
+                            islandResource.setClayHourlyProduction(totalClayProduction);
+                            break;
+                        case RAW_MATERIAL_STORAGE_SIZE:
+                            Integer totalRawMaterialStorageSize = islandResource.getRawMaterialStorageSize() + value.intValue();
+                            totalRawMaterialStorageSize = totalRawMaterialStorageSize < 0 ? 0 : totalRawMaterialStorageSize;
+                            islandResource.setRawMaterialStorageSize(totalRawMaterialStorageSize);
                             break;
                         case POPULATION:
                             Integer totalPopulation = islandResource.getPopulation() + value.intValue();
@@ -262,7 +280,6 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
             island1.setWood(Double.valueOf(random.nextInt(200)));
             island1.setIron(Double.valueOf(random.nextInt(200)));
             island1.setClay(Double.valueOf(random.nextInt(200)));
-            island1.setGold(Double.valueOf(random.nextInt(200)));
             island1.setRawMaterialStorageSize(random.nextInt(500 - 201) + 201);
             island1.setWoodHourlyProduction(random.nextInt(100 - 70) + 70);
             island1.setIronHourlyProduction(random.nextInt(100 - 60) + 60);

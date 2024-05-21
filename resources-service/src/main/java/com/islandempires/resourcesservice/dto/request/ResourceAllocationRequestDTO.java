@@ -26,7 +26,6 @@ public class ResourceAllocationRequestDTO implements Serializable {
     private int iron;
 
     @PositiveOrZero(message = "Value must be a positive or zero number")
-    @NotNull
     private int population;
 
 }

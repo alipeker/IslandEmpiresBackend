@@ -2,6 +2,8 @@ package com.islandempires.buildingservice.controller;
 
 import com.islandempires.buildingservice.dto.IslandResourceDTO;
 import com.islandempires.buildingservice.enums.IslandBuildingEnum;
+import com.islandempires.buildingservice.exception.CustomRunTimeException;
+import com.islandempires.buildingservice.exception.ExceptionE;
 import com.islandempires.buildingservice.model.IslandBuilding;
 import com.islandempires.buildingservice.model.building.AllBuildings;
 import com.islandempires.buildingservice.service.BuildingService;
@@ -40,6 +42,24 @@ public class BuildingController {
     public Mono<IslandResourceDTO> increaseIslandBuildingLvl(@PathVariable String islandId, @RequestBody IslandBuildingEnum islandBuildingEnum,
                                                              @RequestHeader("Authorization") String authorization, @RequestAttribute("userId") Long userid) {
       return buildingService.increaseIslandBuildingLvl(islandId, islandBuildingEnum, authorization, userid);
+    }
+
+    @PatchMapping("/increaseIslandBuildingLvlDone/{islandId}/{newLvl}")
+    public Mono<Void> increaseIslandBuildingLvlDone(@PathVariable String islandId, @PathVariable int newLvl, @RequestBody IslandBuildingEnum islandBuildingEnum,
+                                                             @RequestAttribute("userId") Long userid) {
+        if(userid == null || userid != 1) {
+            throw new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
+        }
+        return buildingService.increaseIslandBuildingLvlDone(islandId, islandBuildingEnum, newLvl);
+    }
+
+    @PatchMapping("/increaseIslandBuildingLvlDoneRollback/{islandId}/{newLvl}")
+    public Mono<Void> increaseIslandBuildingLvlDoneRollback(@PathVariable String islandId, @PathVariable int newLvl, @RequestBody IslandBuildingEnum islandBuildingEnum,
+                                                    @RequestAttribute("userId") Long userid) {
+        if(userid == null || userid != 1) {
+            throw new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
+        }
+        return buildingService.increaseIslandBuildingLvlDone(islandId, islandBuildingEnum, newLvl);
     }
 
     /*
