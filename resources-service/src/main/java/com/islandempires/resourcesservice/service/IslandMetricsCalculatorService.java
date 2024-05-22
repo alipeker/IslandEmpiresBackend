@@ -1,32 +1,33 @@
 package com.islandempires.resourcesservice.service;
 
 import com.islandempires.resourcesservice.dto.initial.IslandResourceDTO;
+import com.islandempires.resourcesservice.model.IslandResource;
 import org.springframework.stereotype.Service;
 
 @Service
 public class IslandMetricsCalculatorService {
 
-    public IslandResourceDTO calculateIslandResourceFields(IslandResourceDTO islandResourceDTO) {
-        islandResourceDTO = calculatePopulationLimit(islandResourceDTO);
-        islandResourceDTO = calculateHappinessScore(islandResourceDTO);
-        return islandResourceDTO;
+    public IslandResource calculateIslandResourceFields(IslandResource islandResource) {
+        islandResource = calculatePopulationLimit(islandResource);
+        islandResource = calculateHappinessScore(islandResource);
+        return islandResource;
     }
 
-    public IslandResourceDTO calculatePopulationLimit(IslandResourceDTO islandResourceDTO) {
-        islandResourceDTO.setPopulationLimit((int) (islandResourceDTO.getMeatHourlyProduction() * islandResourceDTO.getWheatFoodCoefficient()
-                + islandResourceDTO.getFishHourlyProduction() * islandResourceDTO.getFishFoodCoefficient()
-                + islandResourceDTO.getWheatHourlyProduction() * islandResourceDTO.getWheatFoodCoefficient()));
-        return islandResourceDTO;
+    public IslandResource calculatePopulationLimit(IslandResource islandResource) {
+        islandResource.setPopulationLimit((int) (islandResource.getMeatHourlyProduction() * islandResource.getWheatFoodCoefficient()
+                + islandResource.getFishHourlyProduction() * islandResource.getFishFoodCoefficient()
+                + islandResource.getWheatHourlyProduction() * islandResource.getWheatFoodCoefficient()));
+        return islandResource;
     }
 
-    public IslandResourceDTO calculateHappinessScore(IslandResourceDTO islandResourceDTO) {
-        double totalPopulation = islandResourceDTO.getPopulation() + islandResourceDTO.getTemporaryPopulation();
-        double populationLimit = islandResourceDTO.getPopulationLimit();
+    public IslandResource calculateHappinessScore(IslandResource islandResource) {
+        double totalPopulation = islandResource.getPopulation() + islandResource.getTemporaryPopulation();
+        double populationLimit = islandResource.getPopulationLimit();
         if(totalPopulation > populationLimit) {
-            islandResourceDTO.setHappinessScore(populationLimit / totalPopulation);
+            islandResource.setHappinessScore(populationLimit / totalPopulation);
         } else {
-            islandResourceDTO.setHappinessScore((double)(islandResourceDTO.getAdditionalHappinessScore() + 1));
+            islandResource.setHappinessScore((double)(islandResource.getAdditionalHappinessScore() + 1));
         }
-        return islandResourceDTO;
+        return islandResource;
     }
 }

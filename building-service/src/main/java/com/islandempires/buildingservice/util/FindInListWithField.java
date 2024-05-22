@@ -15,7 +15,7 @@ public class FindInListWithField {
             if (method.getName().startsWith("get")) {
                 try {
                     Building building = (Building) method.invoke(allBuildings);
-                    if(building != null && building.getIslandBuildingEnum().equals(islandBuildingEnum)) {
+                    if(building != null && building.getIslandBuildingEnum() != null && building.getIslandBuildingEnum().equals(islandBuildingEnum)) {
                         return building;
                     }
                 } catch (Exception e) {
@@ -32,7 +32,7 @@ public class FindInListWithField {
             if (method.getName().startsWith("get")) {
                 try {
                     BaseStructures building = (BaseStructures) method.invoke(allBuildings);
-                    if(building != null && building.getIslandBuildingEnum().equals(islandBuildingEnum)) {
+                    if(building != null && building.getIslandBuildingEnum() != null && building.getIslandBuildingEnum().equals(islandBuildingEnum)) {
                         return building;
                     }
                 } catch (Exception e) {

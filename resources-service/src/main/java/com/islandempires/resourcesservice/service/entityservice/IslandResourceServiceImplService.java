@@ -196,23 +196,19 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
                     break;
                 case MEAT_HOURLY_PRODUCTION:
                     islandResource.setMeatHourlyProduction(newValue.intValue());
-                    islandResource = modelMapper.map(islandMetricsCalculatorService.calculateIslandResourceFields(
-                            modelMapper.map(islandResource, IslandResourceDTO.class)), IslandResource.class);
+                    islandResource = islandMetricsCalculatorService.calculateIslandResourceFields(islandResource);
                     break;
                 case FISH_HOURLY_PRODUCTION:
                     islandResource.setFishHourlyProduction(newValue.intValue());
-                    islandResource = modelMapper.map(islandMetricsCalculatorService.calculateIslandResourceFields(
-                            modelMapper.map(islandResource, IslandResourceDTO.class)), IslandResource.class);
+                    islandResource = islandMetricsCalculatorService.calculateIslandResourceFields(islandResource);
                     break;
                 case WHEAT_HOURLY_PRODUCTION:
                     islandResource.setWheatHourlyProduction(newValue.intValue());
-                    islandResource = modelMapper.map(islandMetricsCalculatorService.calculateIslandResourceFields(
-                            modelMapper.map(islandResource, IslandResourceDTO.class)), IslandResource.class);
+                    islandResource = islandMetricsCalculatorService.calculateIslandResourceFields(islandResource);
                     break;
                 case ADDITIONAL_HAPPINESS_SCORE:
                     islandResource.setAdditionalHappinessScore(newValue.doubleValue());
-                    islandResource = modelMapper.map(islandMetricsCalculatorService.calculateHappinessScore(
-                            modelMapper.map(islandResource, IslandResourceDTO.class)), IslandResource.class);
+                    islandResource = islandMetricsCalculatorService.calculateIslandResourceFields(islandResource);
                     break;
                 default:
                     throw new CustomRunTimeException(ExceptionE.ENUM_NOT_FOUND);
@@ -236,10 +232,20 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
                             totalIronProduction = totalIronProduction < 0 ? 0 : totalIronProduction;
                             islandResource.setIronHourlyProduction(totalIronProduction);
                             break;
+                        case IRON_HOURL_PRODUCTION_MULTIPLY:
+                            Integer totalIronHourlyProductionMultiply = islandResource.getIronHourlyProductionMultiply() + value.intValue();
+                            totalIronHourlyProductionMultiply = totalIronHourlyProductionMultiply < 0 ? 0 : totalIronHourlyProductionMultiply;
+                            islandResource.setIronHourlyProductionMultiply(totalIronHourlyProductionMultiply);
+                            break;
                         case CLAY_HOURLY_PRODUCTION:
                             Integer totalClayProduction = islandResource.getClayHourlyProduction() + value.intValue();
                             totalClayProduction = totalClayProduction < 0 ? 0 : totalClayProduction;
                             islandResource.setClayHourlyProduction(totalClayProduction);
+                            break;
+                        case CLAY_HOURL_PRODUCTION_MULTIPLY:
+                            Integer totalClayHourlyProductionMultiply = islandResource.getClayHourlyProductionMultiply() + value.intValue();
+                            totalClayHourlyProductionMultiply = totalClayHourlyProductionMultiply < 0 ? 0 : totalClayHourlyProductionMultiply;
+                            islandResource.setClayHourlyProductionMultiply(totalClayHourlyProductionMultiply);
                             break;
                         case RAW_MATERIAL_STORAGE_SIZE:
                             Integer totalRawMaterialStorageSize = islandResource.getRawMaterialStorageSize() + value.intValue();
@@ -249,14 +255,36 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
                         case POPULATION:
                             Integer totalPopulation = islandResource.getPopulation() + value.intValue();
                             islandResource.setPopulation(totalPopulation < 0 ? 0 : totalPopulation);
-                            islandResource = modelMapper.map(islandMetricsCalculatorService.calculateIslandResourceFields(
-                                    modelMapper.map(islandResource, IslandResourceDTO.class)), IslandResource.class);
+                            islandResource = islandMetricsCalculatorService.calculateIslandResourceFields(islandResource);
                             break;
                         case TEMPORARY_POPULATION:
                             Integer totalTemporaryPopulation = islandResource.getTemporaryPopulation() + value.intValue();
                             islandResource.setTemporaryPopulation(totalTemporaryPopulation);
-                            islandResource = modelMapper.map(islandMetricsCalculatorService.calculateIslandResourceFields(
-                                    modelMapper.map(islandResource, IslandResourceDTO.class)), IslandResource.class);
+                            islandResource = islandMetricsCalculatorService.calculateIslandResourceFields(islandResource);
+                            break;
+                        case WHEAT_HOURLY_PRODUCTION:
+                            Integer wheatHourlyProduction = islandResource.getWheatHourlyProduction() + value.intValue();
+                            wheatHourlyProduction = wheatHourlyProduction < 0 ? 0 : wheatHourlyProduction;
+                            islandResource.setWheatHourlyProduction(wheatHourlyProduction);
+                            islandResource = islandMetricsCalculatorService.calculateIslandResourceFields(islandResource);
+                            break;
+                        case FISH_HOURLY_PRODUCTION:
+                            Integer fishHourlyProduction = islandResource.getFishHourlyProduction() + value.intValue();
+                            fishHourlyProduction = fishHourlyProduction < 0 ? 0 : fishHourlyProduction;
+                            islandResource.setFishHourlyProduction(fishHourlyProduction);
+                            islandResource = islandMetricsCalculatorService.calculateIslandResourceFields(islandResource);
+                            break;
+                        case MEAT_HOURLY_PRODUCTION:
+                            Integer meatHourlyProduction = islandResource.getMeatHourlyProduction() + value.intValue();
+                            meatHourlyProduction = meatHourlyProduction < 0 ? 0 : meatHourlyProduction;
+                            islandResource.setMeatHourlyProduction(meatHourlyProduction);
+                            islandResource = islandMetricsCalculatorService.calculateIslandResourceFields(islandResource);
+                            break;
+                        case ADDITIONAL_HAPPINESS_SCORE:
+                            Double additionalHappinessScore = islandResource.getAdditionalHappinessScore() + value.doubleValue();
+                            additionalHappinessScore = additionalHappinessScore < 0 ? 0 : additionalHappinessScore;
+                            islandResource.setAdditionalHappinessScore(additionalHappinessScore);
+                            islandResource = islandMetricsCalculatorService.calculateHappinessScore(islandResource);
                             break;
                         default:
                             throw new CustomRunTimeException(ExceptionE.ENUM_NOT_FOUND);
@@ -301,8 +329,7 @@ public class IslandResourceServiceImplService implements IslandResourceQueryServ
             island1.setLastCalculatedTimestamp(System.currentTimeMillis());
             island1.setCreatedDate(timestampNow);
 
-            IslandResourceDTO islandResourceDTO = modelMapper.map(island1, IslandResourceDTO.class);
-            island1 = modelMapper.map(islandMetricsCalculatorService.calculateIslandResourceFields(islandResourceDTO), IslandResource.class);
+            island1 = islandMetricsCalculatorService.calculateIslandResourceFields(island1);
             islands.add(island1);
         }
         return this.islandResourceRepository.saveAll(islands);

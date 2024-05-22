@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FoodWareHouseLevel extends BuildingLevel {
 
-    private int storageAmount;
+    private double additionalHappinessScore;
 
 }
