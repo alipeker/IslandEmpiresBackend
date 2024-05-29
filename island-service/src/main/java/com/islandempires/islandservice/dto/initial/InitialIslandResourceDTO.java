@@ -56,8 +56,6 @@ public class InitialIslandResourceDTO implements Serializable {
 
     @NotBlank
     private Integer population;
-    @NotBlank
-    private Integer temporaryPopulation;
 
     @NotBlank
     private Integer populationLimit;

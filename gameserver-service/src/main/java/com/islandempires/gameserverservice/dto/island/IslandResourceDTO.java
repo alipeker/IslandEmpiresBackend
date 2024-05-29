@@ -53,8 +53,6 @@ public class IslandResourceDTO implements Serializable {
     private Integer populationLimit;
 
 
-    private Integer temporaryPopulation;
-
     private Double happinessScore;
 
     private Double additionalHappinessScore;
