@@ -4,6 +4,7 @@ import com.islandempires.gameserverservice.dto.GameServerDTO;
 import com.islandempires.gameserverservice.dto.initial.InitialGameServerPropertiesDTO;
 import com.islandempires.gameserverservice.model.GameServer;
 import com.islandempires.gameserverservice.model.GameServerIslands;
+import com.islandempires.gameserverservice.model.GameServerSoldier;
 import com.islandempires.gameserverservice.model.building.AllBuildings;
 import com.islandempires.gameserverservice.service.GameServerReadService;
 import com.islandempires.gameserverservice.service.GameServerWriteService;
@@ -30,7 +31,7 @@ public class GameServerController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/")
-    public Mono<GameServer> initializeIslandResource(@RequestBody GameServerDTO gameServerDTO) {
+    public Mono<Void> initializeIslandResource(@RequestBody GameServerDTO gameServerDTO) {
         return gameServerWriteService.initializeGameServerProperties(gameServerDTO);
     }
 
@@ -69,6 +70,12 @@ public class GameServerController {
     @GetMapping("/getGameServerBuildingProperties")
     public Flux<AllBuildings> getGameServerBuildingProperties() {
         return gameServerReadService.getGameServerBuildingProperties();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/getGameServerSoldierProperties")
+    public Flux<GameServerSoldier> getGameServerSoldierProperties() {
+        return gameServerReadService.getGameServerSoldierProperties();
     }
 
     @ResponseStatus(HttpStatus.OK)

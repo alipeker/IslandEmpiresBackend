@@ -9,7 +9,8 @@ import java.util.function.Predicate;
 @Service
 public class UrlValidator {
     public static final List<String> openApiEndpoints = List.of(
-            "/gameservice/getGameServerBuildingProperties"
+            "/gameservice/getGameServerBuildingProperties",
+            "/gameservice/getGameServerSoldierProperties"
     );
 
     public Predicate<ServerHttpRequest> isSecured =

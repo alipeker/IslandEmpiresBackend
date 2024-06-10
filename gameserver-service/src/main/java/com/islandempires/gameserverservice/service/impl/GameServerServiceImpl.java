@@ -3,14 +3,9 @@ package com.islandempires.gameserverservice.service.impl;
 import com.islandempires.gameserverservice.dto.GameServerDTO;
 import com.islandempires.gameserverservice.dto.initial.InitialGameServerPropertiesDTO;
 import com.islandempires.gameserverservice.mapper.GameServerMapper;
-import com.islandempires.gameserverservice.model.GameServer;
-import com.islandempires.gameserverservice.model.GameServerIslands;
-import com.islandempires.gameserverservice.model.IslandResource;
+import com.islandempires.gameserverservice.model.*;
 import com.islandempires.gameserverservice.model.building.AllBuildings;
-import com.islandempires.gameserverservice.redis.RedisService;
-import com.islandempires.gameserverservice.repository.GameServerIslandsRepository;
-import com.islandempires.gameserverservice.repository.GameServerRepository;
-import com.islandempires.gameserverservice.repository.IslandOutboxEventRecordRepository;
+import com.islandempires.gameserverservice.repository.*;
 import com.islandempires.gameserverservice.service.GameServerReadService;
 import com.islandempires.gameserverservice.service.GameServerWriteService;
 import com.islandempires.gameserverservice.service.client.GateWayClient;
@@ -32,6 +27,15 @@ public class GameServerServiceImpl implements GameServerWriteService, GameServer
     private GameServerRepository gameServerRepository;
 
     @Autowired
+    private GameServerIslandResourceRepository gameServerIslandResourceRepository;
+
+    @Autowired
+    private GameServerAllBuildingsRepository gameServerAllBuildingsRepository;
+
+    @Autowired
+    private GameServerSoldierRepository gameServerSoldierRepository;
+
+    @Autowired
     private GameServerIslandsRepository gameServerIslandsRepository;
 
     @Autowired
@@ -43,15 +47,19 @@ public class GameServerServiceImpl implements GameServerWriteService, GameServer
     @Autowired
     private GateWayClient gateWayClient;
 
-    @Autowired
-    private RedisService redisService;
 
     @Autowired
     private GameServerMapper gameServerMapper;
 
     @Override
-    public Mono<GameServer> initializeGameServerProperties(GameServerDTO gameServerDTO) {
-        return gameServerRepository.save(modelMapper.map(gameServerDTO, GameServer.class));
+    public Mono<Void> initializeGameServerProperties(GameServerDTO gameServerDTO) {
+        return gameServerIslandResourceRepository.save(
+                new GameServerIslandResource(gameServerDTO.getId(), gameServerDTO.getIslandResource(), LocalDateTime.now()))
+                .flatMap(e -> gameServerAllBuildingsRepository.save(
+                        new GameServerAllBuildings(gameServerDTO.getId(), gameServerDTO.getAllBuildings(), LocalDateTime.now())))
+                .flatMap(e -> gameServerSoldierRepository.save(
+                        new GameServerSoldier(gameServerDTO.getId(), gameServerDTO.getSoldierBaseInfoList(), LocalDateTime.now())
+                )).then(Mono.empty());
     }
 
     @Override
@@ -73,13 +81,11 @@ public class GameServerServiceImpl implements GameServerWriteService, GameServer
     }
 
     @Override
-    @Cacheable(value = "gameServerCache", key = "#serverId")
     public GameServer getGameServerInfo(String serverId) {
         return gameServerRepository.findById(serverId).share().block();
     }
 
     @Override
-    @Cacheable(value = "initialGameServerPropertiesDTO", key = "#serverId")
     public InitialGameServerPropertiesDTO getGameServerInitialProperties(String serverId) {
         GameServer gameServer = gameServerRepository.findById(serverId).share().block();
         return gameServerMapper.mapAll(gameServer.getAllBuildings(),
@@ -88,14 +94,18 @@ public class GameServerServiceImpl implements GameServerWriteService, GameServer
 
     @Override
     public Flux<AllBuildings> getGameServerBuildingProperties() {
-        return gameServerRepository.findAll().flatMap(gameServer -> {
+        return gameServerAllBuildingsRepository.findAll().flatMap(gameServer -> {
             AllBuildings allBuildings = gameServer.getAllBuildings();
             allBuildings.setServerId(gameServer.getId());
             return Flux.just(allBuildings);
         });
     }
 
-    @Cacheable(value = "gameServerProperties", key = "#serverId")
+    @Override
+    public Flux<GameServerSoldier> getGameServerSoldierProperties() {
+        return gameServerSoldierRepository.findAll();
+    }
+
     public GameServer getServerBuildingInfo(String serverId) {
         GameServer gameServer = gameServerRepository.findById(serverId).share().block();
         return gameServer;

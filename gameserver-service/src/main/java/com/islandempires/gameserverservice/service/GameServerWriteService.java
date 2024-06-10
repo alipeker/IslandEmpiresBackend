@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 
 public interface GameServerWriteService {
 
-    Mono<GameServer> initializeGameServerProperties(GameServerDTO gameServerDTO);
+    Mono<Void> initializeGameServerProperties(GameServerDTO gameServerDTO);
 
     Mono<GameServerIslands> initializeIsland(String serverId, Long userId, String jwtToken);
 }

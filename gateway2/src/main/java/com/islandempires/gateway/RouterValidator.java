@@ -10,7 +10,8 @@ public class RouterValidator {
             "/auth/signin",
             "/auth/signup",
             "/gameservice/getServerBuildingsInfo",
-            "/gameservice/getGameServerBuildingProperties"
+            "/gameservice/getGameServerBuildingProperties",
+            "/gameservice/getGameServerSoldierProperties"
     );
 
     public Predicate<ServerHttpRequest> isSecured =

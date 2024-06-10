@@ -51,13 +51,4 @@ public class GameserverServiceApplication {
 		return new HttpMessageConverters(converters.orderedStream().collect(Collectors.toList()));
 	}
 
-	@Bean
-	public RedisConnectionFactory redisConnectionFactory() {
-		// Configure LettuceConnectionFactory with the appropriate settings
-		LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory("localhost", 6380);
-		// You can set other properties like password, timeout, etc. if needed
-		return lettuceConnectionFactory;
-	}
-
-
 }
