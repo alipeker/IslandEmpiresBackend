@@ -49,6 +49,15 @@ public abstract class Soldier {
         return BigDecimal.valueOf(averageDefensePoint).multiply(new BigDecimal(soldierCount));
     }
 
+    public SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePointsEachSoldierType() {
+        return new SoldierTotalDefenceAgainstSoldierType(
+                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.INFANTRYMAN))),
+                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.RIFLE))),
+                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.CANNON))),
+                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.SHIP)))
+                );
+    }
+
     public SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePoints() {
         return new SoldierTotalDefenceAgainstSoldierType(
                 new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.INFANTRYMAN))),

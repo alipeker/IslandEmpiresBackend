@@ -81,7 +81,7 @@ public class WarService {
         movingTroopsRepository.save(sendingTroop);
     }
 
-    @Transactional
+
     public void evaluateBattleVictory(Long troopId) {
         MovingTroops movingTroops = movingTroopsRepository.findById(troopId).orElseThrow();
         SoldierRatios senderSoldierRatio = movingTroops.calculateRatioPerEachMainSoldierType();
@@ -102,17 +102,18 @@ public class WarService {
 
         } else {
             // Attack win
-            SoldierTotalDefenceAgainstSoldierType soldierTotalDefenceAgainstSoldierType = movingTroops.getTargetToIslandMilitary().calculateTotalDefencePointPerEachSoldierType();
             BigDecimal strengthDifferenceRatio = new BigDecimal(totalAttackPoint).divide(new BigDecimal(totalDefencePoint), 10, RoundingMode.HALF_UP);
+            SoldierTotalDefenceAgainstSoldierType soldierTotalDefenceAgainstSoldierType = movingTroops.getTargetToIslandMilitary().getStationaryTroops().calculateTotalDefencePointOfAllUnitsPerEachSoldierType();
+            soldierTotalDefenceAgainstSoldierType = soldierTotalDefenceAgainstSoldierType.divideAllValues(strengthDifferenceRatio);
             movingTroops.getTargetToIslandMilitary().killAllSoldiers();
 
             movingTroops.getMilitaryUnits()
-                            .killSoldiersWithTotalStrengthDifferencePoint(new BigDecimal(totalDefencePoint).divide(strengthDifferenceRatio,10, RoundingMode.HALF_UP),
+                            .killSoldiersWithTotalStrengthDifferencePoint(soldierTotalDefenceAgainstSoldierType,
                                                                   1.0,
-                                                                          soldierTotalDefenceAgainstSoldierType,
                                                                           gameServerSoldier);
         }
-        movingTroopsRepository.save(movingTroops);
+        System.out.println(movingTroops);
+        //movingTroopsRepository.save(movingTroops);
     }
 
     public void simulateBattleVictory(MilitaryUnits attackerMilitaryUnits, MilitaryUnits targetMilitaryUnits) {

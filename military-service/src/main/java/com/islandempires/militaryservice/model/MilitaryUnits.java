@@ -253,11 +253,22 @@ public class MilitaryUnits {
     }*/
 
     public SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePointPerEachSoldierType() {
-        return pikeman.calculateTotalDefencePoints().addPoints(axeman.calculateTotalDefencePoints()).addPoints(archers.calculateTotalDefencePoints())
-        .addPoints(swordsman.calculateTotalDefencePoints()).addPoints(lightArmedMusketeer.calculateTotalDefencePoints()).addPoints(mediumArmedMusketeer.calculateTotalDefencePoints())
-        .addPoints(heavyArmedMusketeer.calculateTotalDefencePoints()).addPoints(culverin.calculateTotalDefencePoints()).addPoints(mortar.calculateTotalDefencePoints())
-        .addPoints(ribault.calculateTotalDefencePoints()).addPoints(holk.calculateTotalDefencePoints()).addPoints(gunHolk.calculateTotalDefencePoints())
-        .addPoints(carrack.calculateTotalDefencePoints());
+        SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePoints = new SoldierTotalDefenceAgainstSoldierType();
+        List<SoldierTotalDefenceAgainstSoldierType> soldierTotalDefenceAgainstSoldierTypeList = new ArrayList<>();
+        soldierTotalDefenceAgainstSoldierTypeList.add(pikeman.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(axeman.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(archers.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(swordsman.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(lightArmedMusketeer.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(mediumArmedMusketeer.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(heavyArmedMusketeer.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(culverin.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(mortar.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(ribault.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(holk.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(gunHolk.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(carrack.calculateTotalDefencePoints());
+        return calculateTotalDefencePoints.addListPoints(soldierTotalDefenceAgainstSoldierTypeList);
     }
 
     public SoldierRatios calculateRatioPerEachSoldierType() {
@@ -522,18 +533,11 @@ public class MilitaryUnits {
         return kiledMilitaryUnits;
     }*/
 
-    public void killSoldiersWithTotalStrengthDifferencePoint(BigDecimal enemyDefencePointDivideAttackDefenceRatio, double killRatio,
-                                                             SoldierTotalDefenceAgainstSoldierType enemySoldierTotalDefenceAgainstSoldierType, GameServerSoldier gameServerSoldier) {
-        BigDecimal totalDefencePoint = enemySoldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint().add(enemySoldierTotalDefenceAgainstSoldierType.getRiflesDefencePoint())
-                .add(enemySoldierTotalDefenceAgainstSoldierType.getCannonDefencePoint()).add(enemySoldierTotalDefenceAgainstSoldierType.getShipDefencePoint());
-
-        totalDefencePoint = totalDefencePoint.compareTo(BigDecimal.ZERO) == 0 ? BigDecimal.ONE : totalDefencePoint;
-
-        BigDecimal totalAttackPointForKillSoldier = enemyDefencePointDivideAttackDefenceRatio.divide(BigDecimal.valueOf(killRatio), 10, RoundingMode.HALF_UP);
-        BigDecimal totalAttackPointForKillInfantryman = enemySoldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint().divide(totalDefencePoint, 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillSoldier);
-        BigDecimal totalAttackPointForKillRifle = enemySoldierTotalDefenceAgainstSoldierType.getRiflesDefencePoint().divide(totalDefencePoint, 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillSoldier);
-        BigDecimal totalAttackPointForKillCannon = enemySoldierTotalDefenceAgainstSoldierType.getCannonDefencePoint().divide(totalDefencePoint, 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillSoldier);
-        BigDecimal totalAttackPointForKillShip = enemySoldierTotalDefenceAgainstSoldierType.getShipDefencePoint().divide(totalDefencePoint, 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillSoldier);
+    public void killSoldiersWithTotalStrengthDifferencePoint(SoldierTotalDefenceAgainstSoldierType enemySoldierTotalDefenceAgainstSoldierType, double killRatio, GameServerSoldier gameServerSoldier) {
+        BigDecimal totalAttackPointForKillInfantryman = enemySoldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint().divide(BigDecimal.valueOf(killRatio));
+        BigDecimal totalAttackPointForKillRifle = enemySoldierTotalDefenceAgainstSoldierType.getRiflesDefencePoint().divide(BigDecimal.valueOf(killRatio));
+        BigDecimal totalAttackPointForKillCannon = enemySoldierTotalDefenceAgainstSoldierType.getCannonDefencePoint().divide(BigDecimal.valueOf(killRatio));
+        BigDecimal totalAttackPointForKillShip = enemySoldierTotalDefenceAgainstSoldierType.getShipDefencePoint().divide(BigDecimal.valueOf(killRatio));
 
         List<Soldier> soldiers = new ArrayList<>();
         soldiers.add(pikeman);

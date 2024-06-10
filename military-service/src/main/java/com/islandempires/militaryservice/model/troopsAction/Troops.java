@@ -54,6 +54,24 @@ public abstract class Troops implements Serializable {
         return totalDefencePoint;
     }
 
+    public SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePointOfAllUnitsPerEachSoldierType() {
+        SoldierTotalDefenceAgainstSoldierType totalDefencePoint = new SoldierTotalDefenceAgainstSoldierType();
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getPikeman().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getAxeman().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getArchers().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getSwordsman().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getLightArmedMusketeer().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getMediumArmedMusketeer().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getHeavyArmedMusketeer().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getCulverin().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getMortar().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getRibault().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getHolk().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getGunHolk().calculateTotalDefencePointsEachSoldierType());
+        totalDefencePoint = totalDefencePoint.addPoints(militaryUnits.getCarrack().calculateTotalDefencePointsEachSoldierType());
+        return totalDefencePoint;
+    }
+
     public SoldierRatios calculateRatioPerEachMainSoldierType() {
         return militaryUnits.calculateRatioPerEachSoldierType();
     }
