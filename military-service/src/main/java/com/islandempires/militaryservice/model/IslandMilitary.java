@@ -1,7 +1,6 @@
 package com.islandempires.militaryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.islandempires.militaryservice.dto.SoldierRatios;
 import com.islandempires.militaryservice.dto.SoldierTotalDefenceAgainstSoldierType;
 import com.islandempires.militaryservice.dto.TotalSoldierCount;
@@ -49,6 +48,16 @@ public class IslandMilitary {
         this.otherIslandsIncomingOrDeployedTroops = new ArrayList();
     }
 
+    public List<MilitaryUnits> getAllMilitaryUnitsOnIsland() {
+        List<MilitaryUnits> militaryUnits = new ArrayList<>();
+        militaryUnits.add(stationaryTroops.getMilitaryUnits());
+        otherIslandsIncomingOrDeployedTroops.stream().filter(Troops -> Troops.getMissionStatus().equals(MissionStatusEnum.DEPLOYED))
+                .forEach(troop -> {
+                    militaryUnits.add(troop.getMilitaryUnits());
+                });
+
+        return militaryUnits;
+    }
 
     public SoldierRatios calculateTotalSoldierRatioOnIsland() {
         TotalSoldierCount totalSoldierCount = stationaryTroops.calculateTotalSoldierCount();
@@ -60,34 +69,24 @@ public class IslandMilitary {
         return totalSoldierCount.calculateSoldierRatio();
     }
 
-    public BigInteger calculateTotalDefencePointOfIsland(SoldierRatios soldierRatios) {
-        BigDecimal totalDefencePointIslandStationaryTroop = this.stationaryTroops.calculateTotalDefencePointOfAllUnits(soldierRatios);
-        otherIslandsIncomingOrDeployedTroops.stream().filter(Troops -> Troops.getMissionStatus().equals(MissionStatusEnum.DEPLOYED))
-                .forEach(troop -> {
-                    totalDefencePointIslandStationaryTroop.add(troop.calculateTotalDefencePointOfAllUnits(soldierRatios));
-                });
-
-        return totalDefencePointIslandStationaryTroop.multiply(BigDecimal.valueOf(defensePointChangePercent)).toBigInteger();
+    public BigDecimal calculateTotalDefencePointOnIsland(SoldierRatios soldierRatios) {
+        BigDecimal totalDefencePoint = stationaryTroops.calculateTotalDefencePointOfAllUnits(soldierRatios);
+        totalDefencePoint.add(otherIslandsIncomingOrDeployedTroops.stream().filter(Troops -> Troops.getMissionStatus().equals(MissionStatusEnum.DEPLOYED))
+                .map(troop -> troop.calculateTotalDefencePointOfAllUnits(soldierRatios))
+                .reduce(BigDecimal.ZERO, BigDecimal::add));
+        return totalDefencePoint;
     }
 
-    public BigInteger killSoldiersWithStrengthDifferencePoint(SoldierRatios soldierRatios, BigInteger strengthDifferencePoint) {
-        BigDecimal totalDefencePointIslandStationaryTroop = this.stationaryTroops.calculateTotalDefencePointOfAllUnits(soldierRatios);
-        BigDecimal totalDefencePointSupportingTroops = BigDecimal.ZERO;
-        otherIslandsIncomingOrDeployedTroops.stream().filter(Troops -> Troops.getMissionStatus().equals(MissionStatusEnum.DEPLOYED))
-                .forEach(troop -> {
-                    totalDefencePointSupportingTroops.add(troop.calculateTotalDefencePointOfAllUnits(soldierRatios));
-                });
+    public BigInteger killSoldiersWithStrengthDifferencePoint(SoldierRatios soldierRatios, BigDecimal strengthDifferencePoint, GameServerSoldier gameServerSoldier) {
+        /*
+        BigDecimal totalDefencePointOnIsland = calculateTotalDefencePointOnIsland(soldierRatios);
 
-        double totalKillOfIslandStationaryTroopRatio = totalDefencePointIslandStationaryTroop.divide(totalDefencePointIslandStationaryTroop.add(totalDefencePointSupportingTroops)).doubleValue();
-        double totalKillOfSupportingTroopsRatio = totalDefencePointSupportingTroops.divide(totalDefencePointIslandStationaryTroop.add(totalDefencePointSupportingTroops)).doubleValue();
-/*
-        stationaryTroops.getMilitaryUnits().killSoldiersWithTotalStrengthDifferencePoint(strengthDifferencePoint, totalKillOfIslandStationaryTroopRatio, soldierRatios);
-        otherIslandsIncomingOrDeployedTroops.stream().filter(Troops -> Troops.getMissionStatus().equals(MissionStatusEnum.DEPLOYED))
-                .forEach(troop -> {
-                    troop.getMilitaryUnits().killSoldiersWithTotalStrengthDifferencePoint(strengthDifferencePoint, totalKillOfSupportingTroopsRatio, soldierRatios);
-                });*/
-
-        return totalDefencePointIslandStationaryTroop.multiply(BigDecimal.valueOf(defensePointChangePercent)).toBigInteger();
+        BigDecimal ratio = stationaryTroops.calculateTotalDefencePointOfAllUnits(soldierRatios).divide(totalDefencePointOnIsland);
+        stationaryTroops.getMilitaryUnits().killSoldiersWithTotalStrengthDifferencePointAttackWin(strengthDifferencePoint,
+                totalDefencePointOnIsland,
+                gameServerSoldier);
+        return totalDefencePointIslandStationaryTroop.multiply(BigDecimal.valueOf(defensePointChangePercent)).toBigInteger();*/
+        return null;
     }
 
     public void killAllSoldiers() {

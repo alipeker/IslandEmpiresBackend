@@ -1,8 +1,8 @@
 package com.islandempires.militaryservice.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.islandempires.militaryservice.dto.*;
 import com.islandempires.militaryservice.enums.SoldierSubTypeEnum;
-import com.islandempires.militaryservice.enums.SoldierTypeEnum;
 import com.islandempires.militaryservice.model.soldier.Soldier;
 import com.islandempires.militaryservice.model.soldier.SoldierBaseInfo;
 import com.islandempires.militaryservice.model.soldier.cannon.Cannon;
@@ -18,20 +18,16 @@ import com.islandempires.militaryservice.model.soldier.ship.Carrack;
 import com.islandempires.militaryservice.model.soldier.ship.GunHolk;
 import com.islandempires.militaryservice.model.soldier.ship.Holk;
 import com.islandempires.militaryservice.model.soldier.ship.Ship;
-import com.islandempires.militaryservice.repository.GameServerSoldierBaseInfoRepository;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Entity
@@ -43,6 +39,11 @@ public class MilitaryUnits {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MilitaryUnits_generator")
     @SequenceGenerator(name="MilitaryUnits_generator", sequenceName = "MilitaryUnits_sequence", allocationSize=1)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ownerId")
+    @JsonBackReference
+    private IslandMilitary owner;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Pikeman pikeman;
@@ -533,26 +534,13 @@ public class MilitaryUnits {
         return kiledMilitaryUnits;
     }*/
 
-    public void killSoldiersWithTotalStrengthDifferencePoint(SoldierTotalDefenceAgainstSoldierType enemySoldierTotalDefenceAgainstSoldierType, double killRatio, GameServerSoldier gameServerSoldier) {
-        BigDecimal totalAttackPointForKillInfantryman = enemySoldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint().divide(BigDecimal.valueOf(killRatio));
-        BigDecimal totalAttackPointForKillRifle = enemySoldierTotalDefenceAgainstSoldierType.getRiflesDefencePoint().divide(BigDecimal.valueOf(killRatio));
-        BigDecimal totalAttackPointForKillCannon = enemySoldierTotalDefenceAgainstSoldierType.getCannonDefencePoint().divide(BigDecimal.valueOf(killRatio));
-        BigDecimal totalAttackPointForKillShip = enemySoldierTotalDefenceAgainstSoldierType.getShipDefencePoint().divide(BigDecimal.valueOf(killRatio));
+    public MilitaryUnitsKilledMilitaryUnitCountDTO killSoldiersWithTotalStrengthDifferencePointAttackWin(SoldierTotalDefenceAgainstSoldierType enemySoldierTotalDefenceAgainstSoldierType, BigDecimal killRatio, GameServerSoldier gameServerSoldier) {
+        BigDecimal totalAttackPointForKillInfantryman = enemySoldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint().divide(killRatio);
+        BigDecimal totalAttackPointForKillRifle = enemySoldierTotalDefenceAgainstSoldierType.getRiflesDefencePoint().divide(killRatio);
+        BigDecimal totalAttackPointForKillCannon = enemySoldierTotalDefenceAgainstSoldierType.getCannonDefencePoint().divide(killRatio);
+        BigDecimal totalAttackPointForKillShip = enemySoldierTotalDefenceAgainstSoldierType.getShipDefencePoint().divide(killRatio);
 
-        List<Soldier> soldiers = new ArrayList<>();
-        soldiers.add(pikeman);
-        soldiers.add(axeman);
-        soldiers.add(archers);
-        soldiers.add(swordsman);
-        soldiers.add(lightArmedMusketeer);
-        soldiers.add(mediumArmedMusketeer);
-        soldiers.add(heavyArmedMusketeer);
-        soldiers.add(culverin);
-        soldiers.add(mortar);
-        soldiers.add(ribault);
-        soldiers.add(holk);
-        soldiers.add(gunHolk);
-        soldiers.add(carrack);
+        List<Soldier> soldiers = prepareSoldierList();
 
         TotalAttackPointForKillSoldierMainType totalAttackPointForKillSoldierMainType = new TotalAttackPointForKillSoldierMainType();
         totalAttackPointForKillSoldierMainType.setTotalAttackPointForKillInfantryman(totalAttackPointForKillInfantryman);
@@ -580,7 +568,25 @@ public class MilitaryUnits {
 
         militaryUnitsKilledMilitaryUnitCountDTO = killSoldierWithAverageAttackPointOfEnemy(soldiers, militaryUnitsKilledMilitaryUnitCountDTO);
 
-        return;
+        return militaryUnitsKilledMilitaryUnitCountDTO;
+    }
+
+    public List<Soldier> prepareSoldierList() {
+        List<Soldier> soldiers = new ArrayList<>();
+        soldiers.add(pikeman);
+        soldiers.add(axeman);
+        soldiers.add(archers);
+        soldiers.add(swordsman);
+        soldiers.add(lightArmedMusketeer);
+        soldiers.add(mediumArmedMusketeer);
+        soldiers.add(heavyArmedMusketeer);
+        soldiers.add(culverin);
+        soldiers.add(mortar);
+        soldiers.add(ribault);
+        soldiers.add(holk);
+        soldiers.add(gunHolk);
+        soldiers.add(carrack);
+        return soldiers;
     }
 
     public void killAllSoldiers() {

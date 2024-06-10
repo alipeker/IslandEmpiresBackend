@@ -1,5 +1,6 @@
 package com.islandempires.militaryservice.service;
 
+import com.islandempires.militaryservice.dto.MilitaryUnitsKilledMilitaryUnitCountDTO;
 import com.islandempires.militaryservice.dto.SoldierTotalDefenceAgainstSoldierType;
 import com.islandempires.militaryservice.dto.SoldierRatios;
 import com.islandempires.militaryservice.enums.MissionStatusEnum;
@@ -8,6 +9,7 @@ import com.islandempires.militaryservice.model.GameServerSoldier;
 import com.islandempires.militaryservice.model.IslandMilitary;
 import com.islandempires.militaryservice.model.MilitaryUnits;
 import com.islandempires.militaryservice.model.troopsAction.MovingTroops;
+import com.islandempires.militaryservice.model.war.AttackWarReport;
 import com.islandempires.militaryservice.repository.GameServerSoldierBaseInfoRepository;
 import com.islandempires.militaryservice.repository.IslandMilitaryRepository;
 import com.islandempires.militaryservice.repository.MovingTroopsRepository;
@@ -37,6 +39,8 @@ public class WarService {
     private final GameServerSoldierBaseInfoRepository gameServerSoldierBaseInfoRepository;
 
     private final ModelMapper modelMapper;
+
+    private final WarReportService warReportService;
 
     @Transactional
     public IslandMilitary initializeIslandMilitary(String serverId, String islandId) {
@@ -85,7 +89,6 @@ public class WarService {
     public void evaluateBattleVictory(Long troopId) {
         MovingTroops movingTroops = movingTroopsRepository.findById(troopId).orElseThrow();
         SoldierRatios senderSoldierRatio = movingTroops.calculateRatioPerEachMainSoldierType();
-        SoldierRatios defenderSoldierRatio = movingTroops.getTargetToIslandMilitary().calculateTotalSoldierRatioOnIsland();
         BigInteger totalDefencePoint = movingTroops.getTargetToIslandMilitary().getStationaryTroops().calculateTotalDefencePointOfAllUnits(senderSoldierRatio).toBigInteger();
         BigInteger totalAttackPoint = movingTroops.calculateTotalAttackPointOfAllUnits();
 
@@ -94,10 +97,13 @@ public class WarService {
 
         GameServerSoldier gameServerSoldier = movingTroops.getMilitaryUnits().getSwordsman().getSoldierBaseInfo().getGameServerSoldier();
 
+        AttackWarReport attackWarReport = warReportService.prepareAttackWarReportBeforeWar(movingTroops);
+
         if (totalDefencePoint.subtract(totalAttackPoint).compareTo(BigInteger.valueOf(0)) > 0) {
             // Defence win
-            movingTroops.calculateTotalAttackPointOfAllUnits();
-            movingTroops.getTargetToIslandMilitary().killSoldiersWithStrengthDifferencePoint(senderSoldierRatio, totalDefencePoint.subtract(totalAttackPoint).abs());
+            BigDecimal strengthDifferenceRatio = new BigDecimal(totalDefencePoint).divide(new BigDecimal(totalAttackPoint), 10, RoundingMode.HALF_UP);
+
+            //movingTroops.getTargetToIslandMilitary().killSoldiersWithStrengthDifferencePoint(senderSoldierRatio, new BigDecimal(totalAttackPoint).divide(strengthDifferenceRatio));
             movingTroops.getMilitaryUnits().killAllSoldiers();
 
         } else {
@@ -107,11 +113,13 @@ public class WarService {
             soldierTotalDefenceAgainstSoldierType = soldierTotalDefenceAgainstSoldierType.divideAllValues(strengthDifferenceRatio);
             movingTroops.getTargetToIslandMilitary().killAllSoldiers();
 
-            movingTroops.getMilitaryUnits()
-                            .killSoldiersWithTotalStrengthDifferencePoint(soldierTotalDefenceAgainstSoldierType,
-                                                                  1.0,
-                                                                          gameServerSoldier);
+            MilitaryUnitsKilledMilitaryUnitCountDTO militaryUnitsKilledMilitaryUnitCountDTO = movingTroops.getMilitaryUnits()
+                                                                                                .killSoldiersWithTotalStrengthDifferencePointAttackWin(soldierTotalDefenceAgainstSoldierType,
+                                                                                                                                              BigDecimal.ONE,
+                                                                                                                                              gameServerSoldier);
+            warReportService.prepareAndSaveAttackWarReportAfterWarAttackWin(attackWarReport, movingTroops, militaryUnitsKilledMilitaryUnitCountDTO.getMilitaryUnits());
         }
+
         System.out.println(movingTroops);
         //movingTroopsRepository.save(movingTroops);
     }
