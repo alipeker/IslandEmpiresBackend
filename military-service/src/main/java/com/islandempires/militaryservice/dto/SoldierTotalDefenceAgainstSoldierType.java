@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.List;
 
@@ -41,6 +40,22 @@ public class SoldierTotalDefenceAgainstSoldierType {
         this.setRiflesDefencePoint(riflesDefencePoint.divide(divideValue, 10, RoundingMode.HALF_UP));
         this.setCannonDefencePoint(cannonDefencePoint.divide(divideValue, 10, RoundingMode.HALF_UP));
         this.setShipDefencePoint(shipDefencePoint.divide(divideValue, 10, RoundingMode.HALF_UP));
+        return this;
+    }
+
+    public SoldierTotalDefenceAgainstSoldierType divideAllValuesWithPerSoldierTypeRatio(SoldierTotalDefenceAgainstSoldierType soldierTotalDefenceAgainstSoldierType) {
+        this.setInfantrymanDefencePoint(infantrymanDefencePoint.divide(soldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint(), 10, RoundingMode.HALF_UP));
+        this.setRiflesDefencePoint(riflesDefencePoint.divide(soldierTotalDefenceAgainstSoldierType.getRiflesDefencePoint(), 10, RoundingMode.HALF_UP));
+        this.setCannonDefencePoint(cannonDefencePoint.divide(soldierTotalDefenceAgainstSoldierType.getCannonDefencePoint(), 10, RoundingMode.HALF_UP));
+        this.setShipDefencePoint(shipDefencePoint.divide(soldierTotalDefenceAgainstSoldierType.getShipDefencePoint(), 10, RoundingMode.HALF_UP));
+        return this;
+    }
+
+    public SoldierTotalDefenceAgainstSoldierType multiplyAllValuesWithPerSoldierTypeRatio(SoldierTotalDefenceAgainstSoldierType soldierTotalDefenceAgainstSoldierType) {
+        this.setInfantrymanDefencePoint(infantrymanDefencePoint.multiply(soldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint()));
+        this.setRiflesDefencePoint(riflesDefencePoint.multiply(soldierTotalDefenceAgainstSoldierType.getRiflesDefencePoint()));
+        this.setCannonDefencePoint(cannonDefencePoint.multiply(soldierTotalDefenceAgainstSoldierType.getCannonDefencePoint()));
+        this.setShipDefencePoint(shipDefencePoint.multiply(soldierTotalDefenceAgainstSoldierType.getShipDefencePoint()));
         return this;
     }
 }

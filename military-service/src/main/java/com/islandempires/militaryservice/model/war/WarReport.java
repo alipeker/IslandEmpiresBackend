@@ -22,14 +22,18 @@ public abstract class WarReport {
     protected Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "attacker_island_military_Id")
+    @JoinColumn(name = "attacker_island_military_Id", insertable = false, updatable = false)
     @JsonBackReference
     private IslandMilitary attackerIslandMilitary;
 
+    private String attacker_island_military_Id;
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "defender_island_military_id")
+    @JoinColumn(name = "defender_island_military_id", insertable = false, updatable = false)
     @JsonBackReference
     private IslandMilitary defenderIslandMilitary;
+
+    private String defender_island_military_id;
 
     private LocalDateTime localDateTime;
 }

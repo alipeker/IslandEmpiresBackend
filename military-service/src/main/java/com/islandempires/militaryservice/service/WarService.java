@@ -3,6 +3,7 @@ package com.islandempires.militaryservice.service;
 import com.islandempires.militaryservice.dto.MilitaryUnitsKilledMilitaryUnitCountDTO;
 import com.islandempires.militaryservice.dto.SoldierTotalDefenceAgainstSoldierType;
 import com.islandempires.militaryservice.dto.SoldierRatios;
+import com.islandempires.militaryservice.dto.TotalAttackPointForKillSoldierMainType;
 import com.islandempires.militaryservice.enums.MissionStatusEnum;
 import com.islandempires.militaryservice.enums.MissionTypeEnum;
 import com.islandempires.militaryservice.model.GameServerSoldier;
@@ -10,10 +11,7 @@ import com.islandempires.militaryservice.model.IslandMilitary;
 import com.islandempires.militaryservice.model.MilitaryUnits;
 import com.islandempires.militaryservice.model.troopsAction.MovingTroops;
 import com.islandempires.militaryservice.model.war.AttackWarReport;
-import com.islandempires.militaryservice.repository.GameServerSoldierBaseInfoRepository;
-import com.islandempires.militaryservice.repository.IslandMilitaryRepository;
-import com.islandempires.militaryservice.repository.MovingTroopsRepository;
-import com.islandempires.militaryservice.repository.StationaryTroopsRepository;
+import com.islandempires.militaryservice.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,6 +22,7 @@ import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Service
@@ -41,6 +40,8 @@ public class WarService {
     private final ModelMapper modelMapper;
 
     private final WarReportService warReportService;
+
+    private final TroopsRepository troopsRepository;
 
     @Transactional
     public IslandMilitary initializeIslandMilitary(String serverId, String islandId) {
@@ -64,7 +65,10 @@ public class WarService {
         GameServerSoldier gameServerSoldier = gameServerSoldierBaseInfoRepository.findById("s").orElseThrow();
         MilitaryUnits militaryUnits = new MilitaryUnits();
         militaryUnits.initialize(gameServerSoldier);
-        sendTroopToTargetIsland("warAttack", militaryUnits, "warDefence", MissionTypeEnum.ATTACK);
+        militaryUnits.setOwner(islandMilitaryRepository.findById("warAttack").orElseThrow());
+        militaryUnits.getMortar().setSoldierCount(BigInteger.valueOf(20));
+        militaryUnits.getHeavyArmedMusketeer().setSoldierCount(BigInteger.valueOf(50));
+        sendTroopToTargetIsland("warAttack", militaryUnits, "warDefence", MissionTypeEnum.SUPPORT);
     }
 
     public void sendTroopToTargetIsland(String senderIslandId, MilitaryUnits militaryUnits, String targetIslandId, MissionTypeEnum missionType) {
@@ -86,14 +90,19 @@ public class WarService {
     }
 
 
+    @Transactional
     public void evaluateBattleVictory(Long troopId) {
         MovingTroops movingTroops = movingTroopsRepository.findById(troopId).orElseThrow();
         SoldierRatios senderSoldierRatio = movingTroops.calculateRatioPerEachMainSoldierType();
-        BigInteger totalDefencePoint = movingTroops.getTargetToIslandMilitary().getStationaryTroops().calculateTotalDefencePointOfAllUnits(senderSoldierRatio).toBigInteger();
+        if(senderSoldierRatio.isAllValueZero()) {
+            senderSoldierRatio = senderSoldierRatio.setAllValueAsOne();
+        }
+        BigInteger totalDefencePoint = movingTroops.getTargetToIslandMilitary().calculateTotalDefencePointOfAllUnits(senderSoldierRatio).toBigInteger();
         BigInteger totalAttackPoint = movingTroops.calculateTotalAttackPointOfAllUnits();
 
         totalDefencePoint = totalDefencePoint.compareTo(BigInteger.ZERO) == 0 ? BigInteger.ONE : totalDefencePoint;
         totalAttackPoint = totalAttackPoint.compareTo(BigInteger.ZERO) == 0 ? BigInteger.ONE : totalAttackPoint;
+
 
         GameServerSoldier gameServerSoldier = movingTroops.getMilitaryUnits().getSwordsman().getSoldierBaseInfo().getGameServerSoldier();
 
@@ -101,11 +110,34 @@ public class WarService {
 
         if (totalDefencePoint.subtract(totalAttackPoint).compareTo(BigInteger.valueOf(0)) > 0) {
             // Defence win
+            TotalAttackPointForKillSoldierMainType totalAttackPointForKillSoldierMainType = movingTroops.getMilitaryUnits().calculateTotalAttackPointPerEachOfMainSoldierType();
+            SoldierRatios defenderSoldierRatios = movingTroops.getTargetToIslandMilitary().calculateTotalRatioOnIsland();
+
             BigDecimal strengthDifferenceRatio = new BigDecimal(totalDefencePoint).divide(new BigDecimal(totalAttackPoint), 10, RoundingMode.HALF_UP);
+            totalAttackPointForKillSoldierMainType.divideAll(strengthDifferenceRatio);
 
-            //movingTroops.getTargetToIslandMilitary().killSoldiersWithStrengthDifferencePoint(senderSoldierRatio, new BigDecimal(totalAttackPoint).divide(strengthDifferenceRatio));
+            List<MilitaryUnitsKilledMilitaryUnitCountDTO> militaryUnitsKilledMilitaryUnitCountDTOList =
+                    movingTroops.getTargetToIslandMilitary().killSoldiersWithStrengthDifferencePoint(totalAttackPointForKillSoldierMainType, gameServerSoldier, defenderSoldierRatios);
+
             movingTroops.getMilitaryUnits().killAllSoldiers();
+            warReportService.prepareAndSaveAttackWarReportAfterWarDefenceWin(attackWarReport, movingTroops, militaryUnitsKilledMilitaryUnitCountDTOList);
 
+            IslandMilitary ownerIslandMilitary = movingTroops.getOwnerIslandMilitary();
+            IslandMilitary targetIslandMilitary = movingTroops.getOwnerIslandMilitary();
+
+            ownerIslandMilitary.getMyTroops().removeIf(removeTroop -> removeTroop.getId().equals(movingTroops.getId()));
+            targetIslandMilitary.getOtherIslandsIncomingOrDeployedTroops().removeIf(removeTroop -> removeTroop.getId().equals(movingTroops.getId()));
+            targetIslandMilitary.getOtherIslandsIncomingOrDeployedTroops().removeIf(removeTroop ->
+                removeTroop.getMilitaryUnits().calculateTotalSoldierCount().getInfantrymanCount().compareTo(BigInteger.ZERO) == 0 &&
+                removeTroop.getMilitaryUnits().calculateTotalSoldierCount().getRifleCount().compareTo(BigInteger.ZERO) == 0 &&
+                removeTroop.getMilitaryUnits().calculateTotalSoldierCount().getCannonCount().compareTo(BigInteger.ZERO) == 0 &&
+                removeTroop.getMilitaryUnits().calculateTotalSoldierCount().getShipCount().compareTo(BigInteger.ZERO) == 0
+            );
+
+            movingTroops.setMilitaryUnits(null);
+            MovingTroops movingTroop = movingTroopsRepository.save(movingTroops);
+
+            movingTroopsRepository.deleteByIdQuery(movingTroop.getId());
         } else {
             // Attack win
             BigDecimal strengthDifferenceRatio = new BigDecimal(totalAttackPoint).divide(new BigDecimal(totalDefencePoint), 10, RoundingMode.HALF_UP);
@@ -114,14 +146,17 @@ public class WarService {
             movingTroops.getTargetToIslandMilitary().killAllSoldiers();
 
             MilitaryUnitsKilledMilitaryUnitCountDTO militaryUnitsKilledMilitaryUnitCountDTO = movingTroops.getMilitaryUnits()
-                                                                                                .killSoldiersWithTotalStrengthDifferencePointAttackWin(soldierTotalDefenceAgainstSoldierType,
+                                                                                                .killSoldiersWithTotalStrengthDifferencePoint(soldierTotalDefenceAgainstSoldierType,
                                                                                                                                               BigDecimal.ONE,
                                                                                                                                               gameServerSoldier);
-            warReportService.prepareAndSaveAttackWarReportAfterWarAttackWin(attackWarReport, movingTroops, militaryUnitsKilledMilitaryUnitCountDTO.getMilitaryUnits());
-        }
+            movingTroops.setStartTime(LocalDateTime.now());
+            movingTroops.setMissionStatus(MissionStatusEnum.RETURNING);
 
-        System.out.println(movingTroops);
-        //movingTroopsRepository.save(movingTroops);
+            warReportService.prepareAndSaveAttackWarReportAfterWarAttackWin(attackWarReport, movingTroops, militaryUnitsKilledMilitaryUnitCountDTO.getMilitaryUnits());
+
+            movingTroopsRepository.save(movingTroops);
+
+        }
     }
 
     public void simulateBattleVictory(MilitaryUnits attackerMilitaryUnits, MilitaryUnits targetMilitaryUnits) {

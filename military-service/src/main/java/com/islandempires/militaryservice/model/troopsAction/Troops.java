@@ -1,10 +1,7 @@
 package com.islandempires.militaryservice.model.troopsAction;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.islandempires.militaryservice.dto.SoldierRatios;
-import com.islandempires.militaryservice.dto.SoldierTotalDefenceAgainstSoldierType;
-import com.islandempires.militaryservice.dto.TotalSoldierCount;
-import com.islandempires.militaryservice.enums.SoldierTypeEnum;
+import com.islandempires.militaryservice.dto.*;
+import com.islandempires.militaryservice.model.GameServerSoldier;
 import com.islandempires.militaryservice.model.MilitaryUnits;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,7 +27,7 @@ public abstract class Troops implements Serializable {
     @SequenceGenerator(name="Troops_generator", sequenceName = "Troops_sequence", allocationSize=1)
     protected Long id;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "militaryUnitId", referencedColumnName = "id")
     protected MilitaryUnits militaryUnits;
 
@@ -87,4 +84,13 @@ public abstract class Troops implements Serializable {
     public SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePointPerEachSoldierType(){
         return militaryUnits.calculateTotalDefencePointPerEachSoldierType();
     }
+
+    public MilitaryUnitsKilledMilitaryUnitCountDTO killSoldiersWithTotalStrengthDifferencePointDefenceWin(TotalAttackPointForKillSoldierMainType totalAttackPointForKillSoldierMainType,
+                                                                                                          SoldierTotalDefenceAgainstSoldierType soldierTotalDefenceAgainstSoldierType,
+                                                                                                          GameServerSoldier gameServerSoldier) {
+        return militaryUnits.killSoldiersWithTotalStrengthDifferencePointDefenceWin(totalAttackPointForKillSoldierMainType, soldierTotalDefenceAgainstSoldierType, gameServerSoldier);
+    }
+
+
 }
+

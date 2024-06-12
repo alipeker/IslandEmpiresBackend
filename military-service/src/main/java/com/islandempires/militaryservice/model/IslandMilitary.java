@@ -1,12 +1,11 @@
 package com.islandempires.militaryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.islandempires.militaryservice.dto.SoldierRatios;
-import com.islandempires.militaryservice.dto.SoldierTotalDefenceAgainstSoldierType;
-import com.islandempires.militaryservice.dto.TotalSoldierCount;
+import com.islandempires.militaryservice.dto.*;
 import com.islandempires.militaryservice.enums.MissionStatusEnum;
 import com.islandempires.militaryservice.model.troopsAction.MovingTroops;
 import com.islandempires.militaryservice.model.troopsAction.StationaryTroops;
+import com.islandempires.militaryservice.model.troopsAction.Troops;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Entity(name = "IslandMilitary")
@@ -32,11 +32,11 @@ public class IslandMilitary {
 
     private int defensePointChangePercent;
 
-    @OneToMany(mappedBy = "ownerIslandMilitary", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "ownerIslandMilitary", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonIgnore
     private List<MovingTroops> myTroops;
 
-    @OneToMany(mappedBy = "targetToIslandMilitary", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "targetToIslandMilitary", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JsonIgnore
     private List<MovingTroops> otherIslandsIncomingOrDeployedTroops;
 
@@ -69,32 +69,44 @@ public class IslandMilitary {
         return totalSoldierCount.calculateSoldierRatio();
     }
 
-    public BigDecimal calculateTotalDefencePointOnIsland(SoldierRatios soldierRatios) {
-        BigDecimal totalDefencePoint = stationaryTroops.calculateTotalDefencePointOfAllUnits(soldierRatios);
-        totalDefencePoint.add(otherIslandsIncomingOrDeployedTroops.stream().filter(Troops -> Troops.getMissionStatus().equals(MissionStatusEnum.DEPLOYED))
-                .map(troop -> troop.calculateTotalDefencePointOfAllUnits(soldierRatios))
-                .reduce(BigDecimal.ZERO, BigDecimal::add));
-        return totalDefencePoint;
+    public List<Troops> getAllTroopsOnIsland() {
+        List<Troops> troopOnIslandList = new ArrayList<>();
+        troopOnIslandList.add(stationaryTroops);
+        troopOnIslandList.addAll(otherIslandsIncomingOrDeployedTroops.stream().filter(Troops -> Troops.getMissionStatus().equals(MissionStatusEnum.DEPLOYED)).collect(Collectors.toList()));
+        return troopOnIslandList;
     }
 
-    public BigInteger killSoldiersWithStrengthDifferencePoint(SoldierRatios soldierRatios, BigDecimal strengthDifferencePoint, GameServerSoldier gameServerSoldier) {
-        /*
-        BigDecimal totalDefencePointOnIsland = calculateTotalDefencePointOnIsland(soldierRatios);
+    public List<MilitaryUnitsKilledMilitaryUnitCountDTO> killSoldiersWithStrengthDifferencePoint(TotalAttackPointForKillSoldierMainType totalAttackPointForKillSoldierMainType, GameServerSoldier gameServerSoldier, SoldierRatios defenceSoldierRatios) {
+        List<Troops> troopsOnIsland = getAllTroopsOnIsland();
+        SoldierTotalDefenceAgainstSoldierType totalDefencePointPerEachSoldierType =
+                troopsOnIsland.stream().map(Troops::calculateTotalDefencePointOfAllUnitsPerEachSoldierType)
+                        .reduce(new SoldierTotalDefenceAgainstSoldierType(), SoldierTotalDefenceAgainstSoldierType::addPoints);
 
-        BigDecimal ratio = stationaryTroops.calculateTotalDefencePointOfAllUnits(soldierRatios).divide(totalDefencePointOnIsland);
-        stationaryTroops.getMilitaryUnits().killSoldiersWithTotalStrengthDifferencePointAttackWin(strengthDifferencePoint,
-                totalDefencePointOnIsland,
-                gameServerSoldier);
-        return totalDefencePointIslandStationaryTroop.multiply(BigDecimal.valueOf(defensePointChangePercent)).toBigInteger();*/
-        return null;
+        List<MilitaryUnitsKilledMilitaryUnitCountDTO> militaryUnitsKilledMilitaryUnitCountDTOList = new ArrayList<>();
+        troopsOnIsland.forEach(troop -> {
+            MilitaryUnitsKilledMilitaryUnitCountDTO militaryUnitsKilledMilitaryUnitCountDTO = troop.killSoldiersWithTotalStrengthDifferencePointDefenceWin(
+                    totalAttackPointForKillSoldierMainType.multiplyAll(troop.calculateTotalDefencePointOfAllUnitsPerEachSoldierType().divideAllValuesWithPerSoldierTypeRatio(totalDefencePointPerEachSoldierType)),
+                    troop.calculateTotalDefencePointPerEachSoldierType().divideAllValuesWithPerSoldierTypeRatio(totalDefencePointPerEachSoldierType),
+                    gameServerSoldier);
+            militaryUnitsKilledMilitaryUnitCountDTO.getMilitaryUnits().setOwner(troop.getMilitaryUnits().getOwner());
+            militaryUnitsKilledMilitaryUnitCountDTOList.add(militaryUnitsKilledMilitaryUnitCountDTO);
+        });
+        return militaryUnitsKilledMilitaryUnitCountDTOList;
+    }
+
+    public SoldierRatios calculateTotalRatioOnIsland() {
+        SoldierRatios soldierRatios = this.stationaryTroops.getMilitaryUnits().calculateRatioPerEachSoldierType();
+        otherIslandsIncomingOrDeployedTroops.stream()
+                .filter(troops -> troops.getMissionStatus().equals(MissionStatusEnum.DEPLOYED))
+                .map(Troops::getMilitaryUnits)
+                .map(MilitaryUnits::calculateRatioPerEachSoldierType)
+                .forEach(soldierRatios::addSoldierRatio);
+        return soldierRatios;
     }
 
     public void killAllSoldiers() {
         stationaryTroops.getMilitaryUnits().killAllSoldiers();
-        otherIslandsIncomingOrDeployedTroops.stream().filter(Troops -> Troops.getMissionStatus().equals(MissionStatusEnum.DEPLOYED))
-                .forEach(troop -> {
-                    troop.getMilitaryUnits().killAllSoldiers();
-                });
+        otherIslandsIncomingOrDeployedTroops.removeIf(troop -> troop.getMissionStatus().equals(MissionStatusEnum.DEPLOYED));
     }
 
     public BigInteger getTotalSoldierCount() {
@@ -115,6 +127,14 @@ public class IslandMilitary {
         return soldierTotalDefenceAgainstSoldierType;
     }
 
+    public BigDecimal calculateTotalDefencePointOfAllUnits(SoldierRatios soldierRatios) {
+        BigDecimal initialDefencePoint = stationaryTroops.getMilitaryUnits().calculateTotalDefencePointOfAllUnits(soldierRatios);
+        BigDecimal totalDefencePoint = otherIslandsIncomingOrDeployedTroops.stream()
+                .filter(troop -> troop.getMissionStatus().equals(MissionStatusEnum.DEPLOYED))
+                .map(troop -> troop.getMilitaryUnits().calculateTotalDefencePointOfAllUnits(soldierRatios))
+                .reduce(initialDefencePoint, BigDecimal::add);
+        return totalDefencePoint;
+    }
 
     @Override
     public String toString() {

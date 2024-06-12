@@ -1,6 +1,7 @@
 package com.islandempires.militaryservice.model.war;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.islandempires.militaryservice.model.IslandMilitary;
 import com.islandempires.militaryservice.model.MilitaryUnits;
 import com.islandempires.militaryservice.model.soldier.cannon.Culverin;
@@ -27,23 +28,30 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class MilitaryUnitReport {
+public class MilitaryUnitReport implements Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MilitaryUnitReport_generator")
     @SequenceGenerator(name="MilitaryUnitReport_generator", sequenceName = "MilitaryUnitReport_sequence", allocationSize=1)
     protected Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ownerId")
+    @JoinColumn(name = "ownerId", insertable = false, updatable = false)
     @JsonBackReference
+    @JsonIgnore
     private IslandMilitary owner;
+
+    private String ownerId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "defender_military_unit_report")
+    @JsonBackReference
+    @JsonIgnore
     private WarReport defenderMilitaryUnitReport;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "defender_military_unit_causalities_report")
+    @JsonBackReference
+    @JsonIgnore
     private WarReport defenderMilitaryUnitCausalitiesReport;
 
     private BigInteger pikeman;
@@ -86,6 +94,34 @@ public class MilitaryUnitReport {
         this.holk = militaryUnit.getHolk().getSoldierCount();
         this.gunHolk = militaryUnit.getGunHolk().getSoldierCount();
         this.carrack = militaryUnit.getCarrack().getSoldierCount();
-        this.owner = militaryUnit.getOwner();
+        this.ownerId = militaryUnit.getOwner().getIslandId();
+    }
+
+    @Override
+    public String toString() {
+        return "MilitaryUnitReport{" +
+                "id=" + id +
+                ", ownerId='" + ownerId + '\'' +
+                ", defenderMilitaryUnitReport=" + defenderMilitaryUnitReport +
+                ", defenderMilitaryUnitCausalitiesReport=" + defenderMilitaryUnitCausalitiesReport +
+                ", pikeman=" + pikeman +
+                ", axeman=" + axeman +
+                ", archers=" + archers +
+                ", swordsman=" + swordsman +
+                ", lightArmedMusketeer=" + lightArmedMusketeer +
+                ", mediumArmedMusketeer=" + mediumArmedMusketeer +
+                ", heavyArmedMusketeer=" + heavyArmedMusketeer +
+                ", culverin=" + culverin +
+                ", mortar=" + mortar +
+                ", ribault=" + ribault +
+                ", holk=" + holk +
+                ", gunHolk=" + gunHolk +
+                ", carrack=" + carrack +
+                '}';
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

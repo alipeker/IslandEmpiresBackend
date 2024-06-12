@@ -341,6 +341,29 @@ public class MilitaryUnits {
         return totalAttackPoint;
     }
 
+    public TotalAttackPointForKillSoldierMainType calculateTotalAttackPointPerEachOfMainSoldierType() {
+        TotalAttackPointForKillSoldierMainType totalAttackPointForKillSoldierMainType = new TotalAttackPointForKillSoldierMainType();
+
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.PIKEMAN, new BigDecimal(pikeman.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.AXEMAN, new BigDecimal(axeman.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.ARCHER, new BigDecimal(archers.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.SWORDSMAN, new BigDecimal(swordsman.calculateTotalAttackPoint()));
+
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addRifleSubtype(SoldierSubTypeEnum.LIGHT_ARMED_MUSKETEER, new BigDecimal(lightArmedMusketeer.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addRifleSubtype(SoldierSubTypeEnum.MEDIUM_ARMED_MUSKETEER, new BigDecimal(mediumArmedMusketeer.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addRifleSubtype(SoldierSubTypeEnum.HEAVY_ARMED_MUSKETEER, new BigDecimal(heavyArmedMusketeer.calculateTotalAttackPoint()));
+
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addCannonSubtype(SoldierSubTypeEnum.CULVERIN, new BigDecimal(culverin.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addCannonSubtype(SoldierSubTypeEnum.MORTAR, new BigDecimal(mortar.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addCannonSubtype(SoldierSubTypeEnum.RIBAULT, new BigDecimal(ribault.calculateTotalAttackPoint()));
+
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addShipSubtype(SoldierSubTypeEnum.HOLK, new BigDecimal(holk.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addShipSubtype(SoldierSubTypeEnum.GUN_HOLK, new BigDecimal(gunHolk.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addShipSubtype(SoldierSubTypeEnum.CARRACK, new BigDecimal(carrack.calculateTotalAttackPoint()));
+
+        return totalAttackPointForKillSoldierMainType;
+    }
+
     public TotalSoldierCount calculateTotalSoldierCount() {
         return new TotalSoldierCount(getInfantrymanNumber(), getRifleNumber(), getCannonNumber(), getShipNumber());
     }
@@ -500,41 +523,13 @@ public class MilitaryUnits {
         return militaryUnitsKilledMilitaryUnitCountDTO;
     }
 
-    public MilitaryUnits killSoldierWithAttackPointOfEnemy(List<Soldier> soldiers, BigDecimal totalAttackPoint, MilitaryUnits kiledMilitaryUnits) {
-        for(int i=0; i<soldiers.size(); i++) {
-            if(totalAttackPoint.compareTo(BigDecimal.ZERO) <= 0 ||
-                    soldiers.stream().map(Soldier::calculateTotalAttackPoint).reduce(BigInteger.ZERO, BigInteger::add).compareTo(BigInteger.ZERO) <= 0) {
-                return kiledMilitaryUnits;
-            }
-            Soldier soldier = soldiers.get(i);
-            KillSoldierSubType killSoldierSubType = killSoldierBySubType(soldier, totalAttackPoint);
-            totalAttackPoint = totalAttackPoint.subtract(new BigDecimal(killSoldierSubType.getTotalKilledSoldier())
-                    .multiply(new BigDecimal(killSoldierSubType.getSoldier().getSoldierBaseInfo().getAttackPoint())));
-            kiledMilitaryUnits = kiledMilitaryUnits.addSoldier(SoldierSubTypeEnum.valueOf(soldier.getSoldierBaseInfo().getSoldierSubTypeName()), killSoldierSubType.getSoldier().getSoldierCount());
-        }
-        return kiledMilitaryUnits;
-    }
-/*
-    public MilitaryUnits killRemainderSoldiers(List<Soldier> soldiers, MilitaryUnits kiledMilitaryUnits, BigInteger remainderTotalAttackPoint) {
-        int i = 0;
-        BigInteger totalSoldierCount = soldiers.stream()
-                .map(Soldier::getSoldierCount)
-                .reduce(BigInteger.ZERO, BigInteger::add);
-        while(remainderTotalAttackPoint.compareTo(BigInteger.ONE) <= 0 || totalSoldierCount.compareTo(BigInteger.ZERO) == 0){
-            if(soldiers.size() - 1 == i) {
-                i = 0;
-            }
-            Soldier soldier = soldiers.get(i);
-            soldier.setSoldierCount(soldier.getSoldierCount().subtract(BigInteger.ZERO));
-            remainderTotalAttackPoint = remainderTotalAttackPoint.subtract(soldier.calculateTotalAttackPoint());
-            totalSoldierCount = totalSoldierCount.subtract(BigInteger.ONE);
-            kiledMilitaryUnits.set
-            i++;
-        }
-        return kiledMilitaryUnits;
-    }*/
-
-    public MilitaryUnitsKilledMilitaryUnitCountDTO killSoldiersWithTotalStrengthDifferencePointAttackWin(SoldierTotalDefenceAgainstSoldierType enemySoldierTotalDefenceAgainstSoldierType, BigDecimal killRatio, GameServerSoldier gameServerSoldier) {
+    /* Bu fonksiypna TotalAttackPointForKillSoldierMainType bu gelicek parametre SoldierTotalDefenceAgainstSoldierType bunun yerine
+    *  Bu fonksiyon gelen SoldierTotalDefenceAgainstSoldierType değeri üzerinden her asker tipine göre kaç kişi ölmesi gerektiğini hesaplıyor
+    *  Burada SoldierTotalDefenceAgainstSoldierType yerine direkt TotalAttackPointForKillSoldierMainType bunun gelmesini sağla
+    *
+    * */
+    public MilitaryUnitsKilledMilitaryUnitCountDTO killSoldiersWithTotalStrengthDifferencePoint(SoldierTotalDefenceAgainstSoldierType enemySoldierTotalDefenceAgainstSoldierType,
+                                                                                                BigDecimal killRatio, GameServerSoldier gameServerSoldier) {
         BigDecimal totalAttackPointForKillInfantryman = enemySoldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint().divide(killRatio);
         BigDecimal totalAttackPointForKillRifle = enemySoldierTotalDefenceAgainstSoldierType.getRiflesDefencePoint().divide(killRatio);
         BigDecimal totalAttackPointForKillCannon = enemySoldierTotalDefenceAgainstSoldierType.getCannonDefencePoint().divide(killRatio);
@@ -567,8 +562,39 @@ public class MilitaryUnits {
                 soldiers.stream().filter(soldier -> soldier instanceof Ship).toList());
 
         militaryUnitsKilledMilitaryUnitCountDTO = killSoldierWithAverageAttackPointOfEnemy(soldiers, militaryUnitsKilledMilitaryUnitCountDTO);
-
+        militaryUnitsKilledMilitaryUnitCountDTO.getMilitaryUnits().setOwner(getOwner());
         return militaryUnitsKilledMilitaryUnitCountDTO;
+    }
+
+    public MilitaryUnitsKilledMilitaryUnitCountDTO killSoldiersWithTotalStrengthDifferencePointDefenceWin(TotalAttackPointForKillSoldierMainType totalAttackPointForKillSoldierMainType2,
+                                                                                                          SoldierTotalDefenceAgainstSoldierType soldierTotalDefenceAgainstSoldierType,
+                                                                                                          GameServerSoldier gameServerSoldier) {
+
+        List<Soldier> soldiers = prepareSoldierList();
+
+        TotalAttackPointForKillSoldierMainType totalAttackPointForKillSoldierMainType = new TotalAttackPointForKillSoldierMainType();
+        totalAttackPointForKillSoldierMainType.setTotalAttackPointForKillInfantryman(totalAttackPointForKillSoldierMainType2.getTotalAttackPointForKillInfantryman());
+        totalAttackPointForKillSoldierMainType.setTotalAttackPointForKillRifle(totalAttackPointForKillSoldierMainType2.getTotalAttackPointForKillRifle());
+        totalAttackPointForKillSoldierMainType.setTotalAttackPointForKillCannon(totalAttackPointForKillSoldierMainType2.getTotalAttackPointForKillCannon());
+        totalAttackPointForKillSoldierMainType.setTotalAttackPointForKillShip(totalAttackPointForKillSoldierMainType2.getTotalAttackPointForKillShip());
+
+        totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillInfantrymanSubTypes(
+                soldiers.stream().filter(soldier -> soldier instanceof Infantryman).toList());
+
+        totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillRifleSubTypes(
+                soldiers.stream().filter(soldier -> soldier instanceof Rifle).toList());
+
+        totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillCannonSubTypes(
+                soldiers.stream().filter(soldier -> soldier instanceof Cannon).toList());
+
+        totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillShipSubTypes(
+                soldiers.stream().filter(soldier -> soldier instanceof Ship).toList());
+
+        MilitaryUnits kiledMilitaryUnits = new MilitaryUnits();
+        kiledMilitaryUnits.initialize(gameServerSoldier);
+        MilitaryUnitsKilledMilitaryUnitCountDTO militaryUnitsKilledMilitaryUnitCountDTO = new MilitaryUnitsKilledMilitaryUnitCountDTO(totalAttackPointForKillSoldierMainType, kiledMilitaryUnits);
+
+        return killSoldierWithAverageAttackPointOfEnemy(soldiers, militaryUnitsKilledMilitaryUnitCountDTO);
     }
 
     public List<Soldier> prepareSoldierList() {
