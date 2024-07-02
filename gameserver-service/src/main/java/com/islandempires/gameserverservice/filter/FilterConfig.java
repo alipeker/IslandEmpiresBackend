@@ -20,9 +20,10 @@ public class FilterConfig {
     @Bean
     public WebFilter jwtWebFilter() {
         return (exchange, chain) -> {
-            if(!urlValidator.isSecured.test(exchange.getRequest())) {
+            if(exchange.getRequest().getPath().toString().startsWith("/gameservice/private")) {
                 return chain.filter(exchange);
             }
+
             String jwtToken = exchange.getRequest().getHeaders().getFirst("Authorization");
             if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
                 return whoAmIClient.whoami(jwtToken).flatMap(userId -> {
@@ -30,7 +31,6 @@ public class FilterConfig {
                     return Mono.just(userId);
                 }).then(chain.filter(exchange));
             } else {
-                // JWT token bulunamadıysa isteği reddet
                 exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                 return Mono.empty();
             }

@@ -11,5 +11,5 @@ public interface GameServerWriteService {
 
     Mono<Void> initializeGameServerProperties(GameServerDTO gameServerDTO);
 
-    Mono<GameServerIslands> initializeIsland(String serverId, Long userId, String jwtToken);
+    Mono<GameServerIslands> initializeIsland(String serverId, Long userId);
 }

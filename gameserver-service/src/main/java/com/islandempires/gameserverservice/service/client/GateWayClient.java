@@ -26,11 +26,10 @@ public class GateWayClient {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
     }
 
-    public Mono<IslandDTO> initializeIsland(String jwtToken, InitialGameServerPropertiesDTO initialGameServerPropertiesDTO,
-                                            String serverId) {
+    public Mono<IslandDTO> initializeIsland(InitialGameServerPropertiesDTO initialGameServerPropertiesDTO,
+                                            String serverId, Long userId) {
         return gatewayWebClient.post()
-                .uri("/island/" + serverId)
-                .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                .uri("/island/private/{serverId}/{userId}", serverId, userId)
                 .bodyValue(initialGameServerPropertiesDTO)
                 .retrieve()
                 .bodyToMono(IslandDTO.class)

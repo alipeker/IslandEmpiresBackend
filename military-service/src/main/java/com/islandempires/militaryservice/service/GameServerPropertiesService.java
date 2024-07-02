@@ -2,10 +2,16 @@ package com.islandempires.militaryservice.service;
 
 import com.islandempires.militaryservice.converter.SoldierBaseInfoConverter;
 import com.islandempires.militaryservice.dto.GameServerSoldierDTO;
+import com.islandempires.militaryservice.dto.IslandResourceDTO;
 import com.islandempires.militaryservice.dto.SoldierBaseInfoDTO;
+import com.islandempires.militaryservice.enums.SoldierSubTypeEnum;
+import com.islandempires.militaryservice.enums.SoldierTypeEnum;
 import com.islandempires.militaryservice.model.GameServerSoldier;
+import com.islandempires.militaryservice.model.resource.RawMaterialsAndPopulationCost;
+import com.islandempires.militaryservice.model.soldier.ShipBaseInfo;
 import com.islandempires.militaryservice.model.soldier.SoldierBaseInfo;
 import com.islandempires.militaryservice.repository.GameServerSoldierBaseInfoRepository;
+import com.islandempires.militaryservice.service.client.MilitaryGatewayClient;
 import jakarta.annotation.PostConstruct;
 import org.hibernate.Hibernate;
 import org.modelmapper.ModelMapper;
@@ -23,6 +29,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class GameServerPropertiesService {
@@ -36,25 +43,20 @@ public class GameServerPropertiesService {
     @Autowired
     private ModelMapper modelMapper;
 
-    private final WebClient islandResourceWebClient;
-
     @Autowired
-    public GameServerPropertiesService(@Qualifier("gatewayClient") WebClient.Builder webClientBuilder,
-                            @Value("${urls.gateway}") String gatewayUrl) {
-        System.out.println(gatewayUrl);
-        this.islandResourceWebClient = webClientBuilder
-                .baseUrl(gatewayUrl)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
-    }
+    private MilitaryGatewayClient militaryGatewayClient;
+
+    @Value("${admin-token}")
+    private String adminToken;
+
 
     @PostConstruct
     public void getAllBuildingsServerProperties() {
 
-        Flux<GameServerSoldierDTO> serverSoldierProperties = getGameServerSoldierProperties();
+        List<GameServerSoldierDTO> serverSoldierProperties = militaryGatewayClient.getGameServerSoldierProperties();
 
-        getGameServerSoldierProperties().subscribe(gameServerSoldierProperty -> {
+        serverSoldierProperties.forEach(gameServerSoldierProperty -> {
             Optional<GameServerSoldier> gameServerSoldierOptional = gameServerSoldierBaseInfoRepository.findById(gameServerSoldierProperty.getId());
-            //List<SoldierBaseInfo> soldierBaseInfoList = soldierBaseInfoConverter.convertToEntityList(gameServerSoldierProperty.getSoldierBaseInfoList(), newGameServerSoldier);
 
             if(gameServerSoldierOptional.isPresent()) {
                 GameServerSoldier gameServerSoldier = gameServerSoldierOptional.get();
@@ -64,28 +66,34 @@ public class GameServerPropertiesService {
 
                     soldierBaseInfo.setAttackPoint(updatedSoldierBaseInfoDTO.getAttackPoint());
                     soldierBaseInfo.setDefensePoints(updatedSoldierBaseInfoDTO.getDefensePoints());
-                    soldierBaseInfo.setRawMaterialsAndPopulationCost(updatedSoldierBaseInfoDTO.getRawMaterialsAndPopulationCost());
+                    soldierBaseInfo.setProductionDuration(updatedSoldierBaseInfoDTO.getProductionDuration());
+                    soldierBaseInfo.updateRawMaterialAndPopulationCost(updatedSoldierBaseInfoDTO.getRawMaterialsAndPopulationCost());
+                });
+                gameServerSoldier.getShipBaseInfoList().forEach(soldierBaseInfo -> {
+                    SoldierBaseInfoDTO updatedSoldierBaseInfoDTO = gameServerSoldierProperty.getSoldierBaseInfoList().stream()
+                            .filter(soldierBaseInfoDTO -> soldierBaseInfoDTO.getId().equals(soldierBaseInfo.getShipSubTypeName())).findFirst().orElseThrow();
+
+                    soldierBaseInfo.setTimeToTraverseMapCell(updatedSoldierBaseInfoDTO.getTimeToTraverseMapCell());
+                    soldierBaseInfo.setCanonCapacityOfShip(updatedSoldierBaseInfoDTO.getCanonCapacityOfShip());
+                    soldierBaseInfo.setSoldierCapacityOfShip(updatedSoldierBaseInfoDTO.getSoldierCapacityOfShip());
+                    soldierBaseInfo.setTotalLootCapacity(updatedSoldierBaseInfoDTO.getTotalLootCapacity());
                 });
                 gameServerSoldierBaseInfoRepository.save(gameServerSoldier);
             } else {
                 GameServerSoldier newGameServerSoldier = new GameServerSoldier(gameServerSoldierProperty.getId());
                 List<SoldierBaseInfo> soldierBaseInfoList = soldierBaseInfoConverter.convertToEntityList(gameServerSoldierProperty.getSoldierBaseInfoList(), newGameServerSoldier);
+                List<ShipBaseInfo> shipBaseInfoList = soldierBaseInfoConverter.convertToShipEntityList(
+                        gameServerSoldierProperty.getSoldierBaseInfoList().stream().filter(soldierBaseInfo ->
+                                    soldierBaseInfo.getId().equals(SoldierSubTypeEnum.HOLK.toString()) ||
+                                    soldierBaseInfo.getId().equals(SoldierSubTypeEnum.GUN_HOLK.toString()) ||
+                                    soldierBaseInfo.getId().equals(SoldierSubTypeEnum.CARRACK.toString())
+                        ).collect(Collectors.toList()), newGameServerSoldier);
                 newGameServerSoldier.setSoldierBaseInfoList(soldierBaseInfoList);
+                newGameServerSoldier.setShipBaseInfoList(shipBaseInfoList);
                 gameServerSoldierBaseInfoRepository.save(newGameServerSoldier);
             }
 
         });
     }
 
-
-    public Flux<GameServerSoldierDTO> getGameServerSoldierProperties() {
-        return islandResourceWebClient.get()
-                .uri("/gameservice/getGameServerSoldierProperties")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .retrieve()
-                .bodyToFlux(GameServerSoldierDTO.class)
-                .onErrorResume(e -> {
-                    return Flux.error(e);
-                });
-    }
 }

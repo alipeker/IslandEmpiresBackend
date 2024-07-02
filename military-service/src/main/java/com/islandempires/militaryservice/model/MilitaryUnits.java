@@ -2,7 +2,9 @@ package com.islandempires.militaryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.islandempires.militaryservice.dto.*;
+import com.islandempires.militaryservice.dto.request.WarMilitaryUnitRequest;
 import com.islandempires.militaryservice.enums.SoldierSubTypeEnum;
+import com.islandempires.militaryservice.model.soldier.ShipBaseInfo;
 import com.islandempires.militaryservice.model.soldier.Soldier;
 import com.islandempires.militaryservice.model.soldier.SoldierBaseInfo;
 import com.islandempires.militaryservice.model.soldier.cannon.Cannon;
@@ -26,15 +28,18 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MilitaryUnits {
+public class MilitaryUnits implements Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MilitaryUnits_generator")
     @SequenceGenerator(name="MilitaryUnits_generator", sequenceName = "MilitaryUnits_sequence", allocationSize=1)
@@ -72,6 +77,22 @@ public class MilitaryUnits {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Carrack carrack;
 
+    public void initializeWithInitialValues(WarMilitaryUnitRequest warMilitaryUnitRequest) {
+        pikeman.setSoldierCount(warMilitaryUnitRequest.getPikeman());
+        axeman.setSoldierCount(warMilitaryUnitRequest.getAxeman());
+        archers.setSoldierCount(warMilitaryUnitRequest.getArchers());
+        swordsman.setSoldierCount(warMilitaryUnitRequest.getSwordsman());
+        lightArmedMusketeer.setSoldierCount(warMilitaryUnitRequest.getLightArmedMusketeer());
+        mediumArmedMusketeer.setSoldierCount(warMilitaryUnitRequest.getMediumArmedMusketeer());
+        heavyArmedMusketeer.setSoldierCount(warMilitaryUnitRequest.getHeavyArmedMusketeer());
+        culverin.setSoldierCount(warMilitaryUnitRequest.getCulverin());
+        mortar.setSoldierCount(warMilitaryUnitRequest.getMortar());
+        ribault.setSoldierCount(warMilitaryUnitRequest.getRibault());
+        holk.setSoldierCount(warMilitaryUnitRequest.getHolk());
+        gunHolk.setSoldierCount(warMilitaryUnitRequest.getGunHolk());
+        carrack.setSoldierCount(warMilitaryUnitRequest.getCarrack());
+    }
+
     public void initialize(GameServerSoldier gameServerSoldier) {
         this.pikeman = createPikeman(
                 gameServerSoldier.getSoldierBaseInfoList().stream().filter(soldierBaseInfo -> soldierBaseInfo.getSoldierSubTypeName().equals(SoldierSubTypeEnum.PIKEMAN.toString())).findFirst().orElseThrow());
@@ -94,10 +115,13 @@ public class MilitaryUnits {
         this.ribault = createRibault(
                 gameServerSoldier.getSoldierBaseInfoList().stream().filter(soldierBaseInfo -> soldierBaseInfo.getSoldierSubTypeName().equals(SoldierSubTypeEnum.RIBAULT.toString())).findFirst().orElseThrow());
         this.holk = createHolk(
+                gameServerSoldier.getShipBaseInfoList().stream().filter(soldierBaseInfo -> soldierBaseInfo.getShipSubTypeName().equals(SoldierSubTypeEnum.HOLK.toString())).findFirst().orElseThrow(),
                 gameServerSoldier.getSoldierBaseInfoList().stream().filter(soldierBaseInfo -> soldierBaseInfo.getSoldierSubTypeName().equals(SoldierSubTypeEnum.HOLK.toString())).findFirst().orElseThrow());
         this.gunHolk = createGunHolk(
+                gameServerSoldier.getShipBaseInfoList().stream().filter(soldierBaseInfo -> soldierBaseInfo.getShipSubTypeName().equals(SoldierSubTypeEnum.GUN_HOLK.toString())).findFirst().orElseThrow(),
                 gameServerSoldier.getSoldierBaseInfoList().stream().filter(soldierBaseInfo -> soldierBaseInfo.getSoldierSubTypeName().equals(SoldierSubTypeEnum.GUN_HOLK.toString())).findFirst().orElseThrow());
         this.carrack = createCarrack(
+                gameServerSoldier.getShipBaseInfoList().stream().filter(soldierBaseInfo -> soldierBaseInfo.getShipSubTypeName().equals(SoldierSubTypeEnum.CARRACK.toString())).findFirst().orElseThrow(),
                 gameServerSoldier.getSoldierBaseInfoList().stream().filter(soldierBaseInfo -> soldierBaseInfo.getSoldierSubTypeName().equals(SoldierSubTypeEnum.CARRACK.toString())).findFirst().orElseThrow());
     }
 
@@ -171,23 +195,26 @@ public class MilitaryUnits {
         return newRibault;
     }
 
-    private Holk createHolk(SoldierBaseInfo soldierBaseInfo) {
+    private Holk createHolk(ShipBaseInfo shipBaseInfo, SoldierBaseInfo soldierBaseInfo) {
         Holk newHolk = new Holk();
         newHolk.setSoldierCount(BigInteger.ZERO);
+        newHolk.setShipBaseInfo(shipBaseInfo);
         newHolk.setSoldierBaseInfo(soldierBaseInfo);
         return newHolk;
     }
 
-    private GunHolk createGunHolk(SoldierBaseInfo soldierBaseInfo) {
+    private GunHolk createGunHolk(ShipBaseInfo shipBaseInfo, SoldierBaseInfo soldierBaseInfo) {
         GunHolk newGunHolk = new GunHolk();
         newGunHolk.setSoldierCount(BigInteger.ZERO);
+        newGunHolk.setShipBaseInfo(shipBaseInfo);
         newGunHolk.setSoldierBaseInfo(soldierBaseInfo);
         return newGunHolk;
     }
 
-    private Carrack createCarrack(SoldierBaseInfo soldierBaseInfo) {
+    private Carrack createCarrack(ShipBaseInfo shipBaseInfo, SoldierBaseInfo soldierBaseInfo) {
         Carrack newCarrack = new Carrack();
         newCarrack.setSoldierCount(BigInteger.ZERO);
+        newCarrack.setShipBaseInfo(shipBaseInfo);
         newCarrack.setSoldierBaseInfo(soldierBaseInfo);
         return newCarrack;
     }
@@ -224,34 +251,17 @@ public class MilitaryUnits {
                 .add(getShipNumber());
     }
 
-    /*
-    public BigInteger getInfantrymenTotalAttackPoint() {
-        return swordsman.calculateTotalAttackPoint()
-                .add(archers.calculateTotalAttackPoint())
-                .add(axeman.calculateTotalAttackPoint())
-                .add(pikeman.calculateTotalAttackPoint());
+    public List<Ship> getShips() {
+        List<Ship> ships = new ArrayList<>();
+        ships.add(holk);
+        ships.add(gunHolk);
+        ships.add(carrack);
+        return ships;
     }
 
-    public BigInteger getInfantrymenTotalAttackPoint() {
-        return swordsman.calculateTotalAttackPoint()
-                .add(archers.calculateTotalAttackPoint())
-                .add(axeman.calculateTotalAttackPoint())
-                .add(pikeman.calculateTotalAttackPoint());
+    public Soldier getSoldiersWithSoldierSubTypeEnum(SoldierSubTypeEnum soldierSubTypeEnum) {
+        return prepareSoldierList().stream().filter(soldier -> soldier.getSoldierBaseInfo().getSoldierSubTypeName().equals(soldierSubTypeEnum.toString())).findFirst().orElseThrow();
     }
-
-    public BigInteger getInfantrymenTotalAttackPoint() {
-        return swordsman.calculateTotalAttackPoint()
-                .add(archers.calculateTotalAttackPoint())
-                .add(axeman.calculateTotalAttackPoint())
-                .add(pikeman.calculateTotalAttackPoint());
-    }
-
-    public BigInteger getInfantrymenTotalAttackPoint() {
-        return swordsman.calculateTotalAttackPoint()
-                .add(archers.calculateTotalAttackPoint())
-                .add(axeman.calculateTotalAttackPoint())
-                .add(pikeman.calculateTotalAttackPoint());
-    }*/
 
     public SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePointPerEachSoldierType() {
         SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePoints = new SoldierTotalDefenceAgainstSoldierType();
@@ -369,18 +379,69 @@ public class MilitaryUnits {
     }
 
     public void diminishingMilitaryUnitsCount(MilitaryUnits diminishingMilitaryUnits) {
+        if(pikeman.getSoldierCount().compareTo(diminishingMilitaryUnits.getPikeman().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         pikeman.setSoldierCount(pikeman.getSoldierCount().subtract(diminishingMilitaryUnits.getPikeman().getSoldierCount()));
+
+        if(axeman.getSoldierCount().compareTo(diminishingMilitaryUnits.getAxeman().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         axeman.setSoldierCount(axeman.getSoldierCount().subtract(diminishingMilitaryUnits.getAxeman().getSoldierCount()));
+
+        if(archers.getSoldierCount().compareTo(diminishingMilitaryUnits.getArchers().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         archers.setSoldierCount(archers.getSoldierCount().subtract(diminishingMilitaryUnits.getArchers().getSoldierCount()));
+
+        if(swordsman.getSoldierCount().compareTo(diminishingMilitaryUnits.getSwordsman().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         swordsman.setSoldierCount(swordsman.getSoldierCount().subtract(diminishingMilitaryUnits.getSwordsman().getSoldierCount()));
+
+        if(lightArmedMusketeer.getSoldierCount().compareTo(diminishingMilitaryUnits.getLightArmedMusketeer().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         lightArmedMusketeer.setSoldierCount(lightArmedMusketeer.getSoldierCount().subtract(diminishingMilitaryUnits.getLightArmedMusketeer().getSoldierCount()));
+
+        if(mediumArmedMusketeer.getSoldierCount().compareTo(diminishingMilitaryUnits.getMediumArmedMusketeer().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         mediumArmedMusketeer.setSoldierCount(mediumArmedMusketeer.getSoldierCount().subtract(diminishingMilitaryUnits.getMediumArmedMusketeer().getSoldierCount()));
+
+        if(heavyArmedMusketeer.getSoldierCount().compareTo(diminishingMilitaryUnits.getHeavyArmedMusketeer().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         heavyArmedMusketeer.setSoldierCount(heavyArmedMusketeer.getSoldierCount().subtract(diminishingMilitaryUnits.getHeavyArmedMusketeer().getSoldierCount()));
+
+        if(culverin.getSoldierCount().compareTo(diminishingMilitaryUnits.getCulverin().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         culverin.setSoldierCount(culverin.getSoldierCount().subtract(diminishingMilitaryUnits.getCulverin().getSoldierCount()));
+
+        if(mortar.getSoldierCount().compareTo(diminishingMilitaryUnits.getMortar().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         mortar.setSoldierCount(mortar.getSoldierCount().subtract(diminishingMilitaryUnits.getMortar().getSoldierCount()));
+
+        if(ribault.getSoldierCount().compareTo(diminishingMilitaryUnits.getRibault().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         ribault.setSoldierCount(ribault.getSoldierCount().subtract(diminishingMilitaryUnits.getRibault().getSoldierCount()));
+
+        if(holk.getSoldierCount().compareTo(diminishingMilitaryUnits.getHolk().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         holk.setSoldierCount(holk.getSoldierCount().subtract(diminishingMilitaryUnits.getHolk().getSoldierCount()));
+
+        if(gunHolk.getSoldierCount().compareTo(diminishingMilitaryUnits.getGunHolk().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         gunHolk.setSoldierCount(gunHolk.getSoldierCount().subtract(diminishingMilitaryUnits.getGunHolk().getSoldierCount()));
+
+        if(carrack.getSoldierCount().compareTo(diminishingMilitaryUnits.getCarrack().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
         carrack.setSoldierCount(carrack.getSoldierCount().subtract(diminishingMilitaryUnits.getCarrack().getSoldierCount()));
     }
 
@@ -629,5 +690,64 @@ public class MilitaryUnits {
         holk.setSoldierCount(BigInteger.ZERO);
         gunHolk.setSoldierCount(BigInteger.ZERO);
         carrack.setSoldierCount(BigInteger.ZERO);
+    }
+
+    public Duration findSlowerShipDuration() {
+        return getShips().stream().filter(ship -> ship.getSoldierCount().compareTo(BigInteger.ZERO) > 0 && ship.getShipBaseInfo() != null && ship.getShipBaseInfo().getTimeToTraverseMapCell() != null)
+                .max(Comparator.comparing(ship -> ship.getShipBaseInfo().getTimeToTraverseMapCell()))
+                .orElseThrow().getShipBaseInfo().getTimeToTraverseMapCell();
+    }
+
+    public Boolean isShipCapacitySufficient() {
+        BigInteger soldierCapacityOfShips = calculateTotalSoldierCapacityWithShips();
+        BigInteger cannonCapacityOfShips = calculateTotalCannonCapacityWithShips();
+
+        return soldierCapacityOfShips.compareTo(getTotalInfantrymanAndRifleCount()) >= 0 &&
+                cannonCapacityOfShips.compareTo(getTotalCannonCount()) >= 0;
+    }
+
+    private BigInteger getTotalCannonCount() {
+        return culverin.getSoldierCount().add(mortar.getSoldierCount()).add(ribault.getSoldierCount());
+    }
+
+    private BigInteger getTotalInfantrymanAndRifleCount() {
+        return pikeman.getSoldierCount().add(axeman.getSoldierCount()).add(archers.getSoldierCount())
+                .add(swordsman.getSoldierCount()).add(lightArmedMusketeer.getSoldierCount()).add(mediumArmedMusketeer.getSoldierCount())
+                .add(heavyArmedMusketeer.getSoldierCount());
+    }
+
+    public BigInteger calculateTotalSoldierCapacityWithShips() {
+        return getShips().stream()
+                .map(ship -> {
+                    ShipBaseInfo info = ship.getShipBaseInfo();
+                    BigInteger soldierCapacity = BigInteger.valueOf(info.getSoldierCapacityOfShip());
+                    BigInteger soldierCount = ship.getSoldierCount();
+                    return soldierCapacity.multiply(soldierCount);
+                })
+                .reduce(BigInteger.ZERO, BigInteger::add);
+    }
+
+    public BigInteger calculateTotalCannonCapacityWithShips() {
+        return getShips().stream()
+                .map(ship -> {
+                    ShipBaseInfo info = ship.getShipBaseInfo();
+                    BigInteger soldierCapacity = BigInteger.valueOf(info.getCanonCapacityOfShip());
+                    BigInteger soldierCount = ship.getSoldierCount();
+                    return soldierCapacity.multiply(soldierCount);
+                })
+                .reduce(BigInteger.ZERO, BigInteger::add);
+    }
+
+    public BigInteger calculateTotalLootCapacityWithShips() {
+        return getShips().stream()
+                .map(Ship::getShipBaseInfo)
+                .map(ShipBaseInfo::getTotalLootCapacity)
+                .map(BigInteger::valueOf)
+                .reduce(BigInteger.ZERO, BigInteger::add);
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

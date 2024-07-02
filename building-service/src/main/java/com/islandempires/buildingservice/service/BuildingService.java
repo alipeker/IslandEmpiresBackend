@@ -62,8 +62,11 @@ public class BuildingService {
     }
 
 
-    public Mono<IslandResourceDTO> increaseIslandBuildingLvl(String islandId, IslandBuildingEnum islandBuildingEnum, String token, Long userid) {
+    public Mono<IslandResourceDTO> increaseIslandBuildingLvl(String islandId, IslandBuildingEnum islandBuildingEnum, Long userid) {
         return this.islandBuildingRepository.findById(islandId).flatMap(islandBuilding -> {
+                    if(!islandBuilding.getUserId().equals(userid)) {
+                        throw new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
+                    }
                     Building building = findBuilding(islandBuilding.getAllBuilding(), islandBuildingEnum);
                     if(building != null) {
                         return serverPropertiesService.get(islandBuilding.getServerId()).flatMap(allBuildingsServerProperties -> {
@@ -88,10 +91,10 @@ public class BuildingService {
 
                                 buildingScheduledTask.setLastCalculatedTimestamp(System.currentTimeMillis());
 
-                                return islandResourceWebClientNew.assignResources(islandId, rawMaterialsAndPopulationCost, token)
+                                return islandResourceWebClientNew.assignResources(islandId, rawMaterialsAndPopulationCost)
                                         .flatMap(islandResourceDTO -> buildingScheduledTaskRepository.save(buildingScheduledTask)
                                                 .thenReturn(islandResourceDTO))
-                                        .doOnError(e -> Mono.error(e));
+                                        .doOnError(Mono::error);
                             });
                         });
                     }

@@ -11,4 +11,14 @@ import lombok.NoArgsConstructor;
 public class MilitaryUnitsKilledMilitaryUnitCountDTO {
     private TotalAttackPointForKillSoldierMainType totalAttackPointForKillSoldierMainType;
     private MilitaryUnits militaryUnits;
+
+    public MilitaryUnitsKilledMilitaryUnitCountDTO cloneMilitaryUnit(MilitaryUnitsKilledMilitaryUnitCountDTO militaryUnitsKilledMilitaryUnitCountDTO) {
+        try {
+            militaryUnitsKilledMilitaryUnitCountDTO.setMilitaryUnits((MilitaryUnits) militaryUnits.clone());
+            militaryUnitsKilledMilitaryUnitCountDTO.setTotalAttackPointForKillSoldierMainType(totalAttackPointForKillSoldierMainType);
+            return militaryUnitsKilledMilitaryUnitCountDTO;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

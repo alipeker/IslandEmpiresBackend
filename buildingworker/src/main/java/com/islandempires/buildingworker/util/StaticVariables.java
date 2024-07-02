@@ -6,6 +6,6 @@ public class StaticVariables {
     }
 
     public static String getGatewayUrl() {
-        return "http://192.168.0.14:9000";
+        return "http://localhost:9000";
     }
 }

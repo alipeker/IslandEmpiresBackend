@@ -40,7 +40,7 @@ public class GameServerClient {
 
     public Flux<AllBuildingsServerProperties> getGameServerBuildingProperties() {
         return islandResourceWebClient.get()
-                .uri("/gameservice/getGameServerBuildingProperties")
+                .uri("/gameservice/private/getGameServerBuildingProperties")
                 .retrieve()
                 .bodyToFlux(AllBuildingsServerProperties.class)
                 .onErrorResume(e -> {

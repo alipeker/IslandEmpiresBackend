@@ -1,6 +1,5 @@
 package com.islandempires.buildingservice.shared.service;
 
-import com.islandempires.buildingservice.model.building.AllBuildings;
 import com.islandempires.buildingservice.shared.building.AllBuildingsServerProperties;
 import com.islandempires.buildingservice.shared.repository.AllBuildingsServerRepository;
 import com.islandempires.buildingservice.shared.service.client.GameServerClient;

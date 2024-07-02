@@ -1,6 +1,5 @@
 package com.islandempires.gameserverservice.controller;
 
-import com.islandempires.gameserverservice.dto.GameServerDTO;
 import com.islandempires.gameserverservice.dto.initial.InitialGameServerPropertiesDTO;
 import com.islandempires.gameserverservice.model.GameServer;
 import com.islandempires.gameserverservice.model.GameServerIslands;
@@ -17,7 +16,7 @@ import reactor.core.publisher.Mono;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/gameservice")
+@RequestMapping("gameservice/public")
 public class GameServerController {
 
     @Autowired
@@ -29,23 +28,11 @@ public class GameServerController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/")
-    public Mono<Void> initializeIslandResource(@RequestBody GameServerDTO gameServerDTO) {
-        return gameServerWriteService.initializeGameServerProperties(gameServerDTO);
-    }
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/initializeIsland")
-    public Mono<GameServerIslands> initializeIsland(@RequestParam("serverId") String serverId, @RequestAttribute("userId") Long userid,
-                                                    @RequestHeader("Authorization") String jwtToken) {
-        return gameServerWriteService.initializeIsland(serverId, userid, jwtToken);
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/getServiceBuildingSpecs")
-    public Mono<String> initializeIsland4() {
-        return Mono.just("a");
+    public Mono<GameServerIslands> initializeIsland(@RequestParam("serverId") String serverId, @RequestAttribute("userId") Long userid) {
+        return gameServerWriteService.initializeIsland(serverId, userid);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -76,12 +63,6 @@ public class GameServerController {
     @GetMapping("/getGameServerSoldierProperties")
     public Flux<GameServerSoldier> getGameServerSoldierProperties() {
         return gameServerReadService.getGameServerSoldierProperties();
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/testali/{serverId}")
-    public InitialGameServerPropertiesDTO testali(@PathVariable String serverId) {
-        return gameServerReadService.getGameServerInitialProperties(serverId);
     }
 
 }

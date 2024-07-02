@@ -26,23 +26,29 @@ public class GateWayClient {
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).build();
     }
 
-    public Mono<InitialAllBuildingsDTO> initializeIslandBuildings(String islandId, InitialAllBuildingsDTO allBuildingList, String jwtToken, String serverId) {
+    public Mono<InitialAllBuildingsDTO> initializeIslandBuildings(String islandId, InitialAllBuildingsDTO allBuildingList, Long userId, String serverId) {
         return gatewayWebClient.post()
-                .uri("/building/{serverId}/{islandId}", serverId, islandId)
-                .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                .uri("/building/private/{serverId}/{islandId}/{userId}", serverId, islandId, userId)
                 .bodyValue(allBuildingList)
                 .retrieve()
                 .bodyToMono(InitialAllBuildingsDTO.class)
                 .doOnError(e -> Mono.error(e));
     }
 
-    public Mono<InitialIslandResourceDTO> initializeIslandResource(String islandId, InitialIslandResourceDTO initialIslandResourceDTO, String jwtToken, String serverId) {
+    public Mono<InitialIslandResourceDTO> initializeIslandResource(String islandId, InitialIslandResourceDTO initialIslandResourceDTO, Long userId, String serverId) {
         return gatewayWebClient.post()
-                .uri("/resource/{serverId}/{islandId}", serverId, islandId)
-                .header(HttpHeaders.AUTHORIZATION, jwtToken)
+                .uri("/resource/private/{serverId}/{islandId}/{userId}", serverId, islandId, userId)
                 .bodyValue(initialIslandResourceDTO)
                 .retrieve()
                 .bodyToMono(InitialIslandResourceDTO.class)
+                .doOnError(e -> Mono.error(e));
+    }
+
+    public Mono<Object> initializeIslandMilitary(String islandId, Long userId, String serverId) {
+        return gatewayWebClient.post()
+                .uri("/military/private/{userId}/{serverId}/{islandId}", userId, serverId, islandId)
+                .retrieve()
+                .bodyToMono(Object.class)
                 .doOnError(e -> Mono.error(e));
     }
 

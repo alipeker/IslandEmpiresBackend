@@ -2,21 +2,17 @@ package com.islandempires.islandservice.controller;
 
 import com.islandempires.islandservice.dto.IslandDTO;
 import com.islandempires.islandservice.dto.UpdateIslandDTO;
-import com.islandempires.islandservice.dto.UpdateOwnerDTO;
-import com.islandempires.islandservice.dto.initial.InitialGameServerPropertiesDTO;
-import com.islandempires.islandservice.model.Island;
-import com.islandempires.islandservice.service.IslandModificationService;
-import com.islandempires.islandservice.service.IslandQueryService;
+import com.islandempires.islandservice.service.publics.IslandModificationService;
+import com.islandempires.islandservice.service.publics.IslandQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
 @CrossOrigin
 @RestController
-@RequestMapping("/island")
+@RequestMapping("/island/public")
 public class IslandController {
     @Autowired
     private IslandQueryService islandQueryService;
@@ -25,9 +21,9 @@ public class IslandController {
     private IslandModificationService islandModificationService;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("test")
-    public Mono<String> test() {
-        return Mono.just("a");
+    @GetMapping("calculateDistance/{islandId1}/{islandId2}")
+    public Mono<Double> calculateDistance(@PathVariable String islandId1, @PathVariable String islandId2) {
+        return islandQueryService.calculateDistance(islandId1, islandId2);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -43,42 +39,9 @@ public class IslandController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/getAll")
-    public Flux<Island> getAll() {
-        return islandQueryService.getAll();
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/getIsland/{islandid}")
-    public Mono<IslandDTO> getIsland(@PathVariable String islandid, @RequestAttribute("userId") Long userid) {
-        return islandQueryService.getIsland(islandid, userid);
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/{serverId}")
-    public Mono<IslandDTO> create(@RequestAttribute("userId") Long userid,
-                                  @RequestBody InitialGameServerPropertiesDTO initialGameServerPropertiesDTO,
-                                  @RequestHeader("Authorization") String jwtToken,
-                                  @PathVariable String serverId) {
-        return islandModificationService.create(userid, initialGameServerPropertiesDTO, jwtToken, serverId);
-    }
-
-    @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/updateName")
     public Mono<IslandDTO> updateName(@RequestBody UpdateIslandDTO updateIslandDTO, @RequestAttribute("userId") Long userid) {
         return islandModificationService.updateName(userid, updateIslandDTO.getIslandID(), updateIslandDTO.getName());
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/updateOwner")
-    public Mono<IslandDTO> updateOwner(@RequestBody UpdateOwnerDTO updateOwnerDTO, @RequestAttribute("userId") Long userid) {
-        return islandModificationService.updateOwner(updateOwnerDTO.getUserId(), updateOwnerDTO.getIslandID());
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/{islandId}")
-    public Mono<Void> delete(@RequestParam String islandId) {
-        return islandModificationService.delete(islandId);
     }
 
 }

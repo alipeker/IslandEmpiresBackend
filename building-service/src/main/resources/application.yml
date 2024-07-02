@@ -1,5 +1,5 @@
 server:
-  host: 192.168.0.14
+  host: localhost
   port: 4000
   tomcat:
     max-connections: 2000
@@ -11,7 +11,7 @@ spring:
     name: building-service
   data:
     mongodb:
-      host: 192.168.0.14
+      host: localhost
       username: user
       database: building
       port: 27400
@@ -29,9 +29,9 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://192.168.0.14:1000/eureka/
+      defaultZone: http://localhost:1000/eureka/
 
 urls:
-  gateway: http://192.168.0.14:9000
+  gateway: http://localhost:9001
 
 

@@ -1,5 +1,5 @@
 server:
-  host: 192.168.0.14
+  host: localhost
   port: ${PORT:1000}
 
 spring:
@@ -8,7 +8,7 @@ spring:
 
 eureka:
   instance:
-    hostname: 192.168.0.14
+    hostname: localhost
   server:
     leaseRenewalThresholdUpdateIntervalMs: 60000
   client:

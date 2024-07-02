@@ -1,5 +1,5 @@
 server:
-  host: 192.168.0.14
+  host: localhost
   port: 2001
 
 spring:
@@ -9,7 +9,7 @@ spring:
     name: resourceworker
   data:
     mongodb:
-      host: 192.168.0.14
+      host: localhost
       username: user
       database: building
       port: 27400
@@ -19,14 +19,14 @@ eureka:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://192.168.0.14:1000/eureka/
+      defaultZone: http://localhost:1000/eureka/
 
 debezium:
   connector:
     name: building-connector
     connectorClass: io.debezium.connector.mongodb.MongoDbConnector
     mongodb:
-      host: mongodb://192.168.0.14:27400
+      host: mongodb://localhost:27400
       user: user
       database: building
   database:
@@ -41,4 +41,4 @@ debezium:
 
 
 urls:
-  gateway: http://192.168.0.14:9000
+  gateway: http://localhost:9000

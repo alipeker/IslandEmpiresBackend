@@ -1,29 +1,50 @@
 server:
-  host: 192.168.0.14
+  host: localhost
   port: 9000
 
 spring:
-  application:
-    name: api-gateway
   main:
     allow-bean-definition-overriding: true
-
-gateway:
-  auth: http://192.168.0.14:1000
-  resource: http://192.168.0.14:2000
-
+  application:
+    name: api-gateway
+  config:
+    import: "optional:configserver:"
+  cloud:
+    gateway:
+      routes:
+        - id: resource-service
+          uri: http://localhost:2000
+          predicates:
+            - Path=/resource/public/**
+        - id: auth-service
+          uri: http://localhost:1001
+          predicates:
+            - Path=/auth/**
+        - id: game-service
+          uri: http://localhost:2002
+          predicates:
+            - Path=/gameservice/public/**
+        - id: island-service
+          uri: http://localhost:3000
+          predicates:
+            - Path=/island/public/**
+        - id: building-service
+          uri: http://localhost:4000
+          predicates:
+            - Path=/building/public/**
+        - id: military-service
+          uri: http://localhost:6000
+          predicates:
+            - Path=/military/public/**
 
 eureka:
   client:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://192.168.0.14:1000/eureka/
+      defaultZone: http://localhost:1000/eureka/
 
 
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
-
-
-auth-service-url: http://192.168.0.14:1000

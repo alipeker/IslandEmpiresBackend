@@ -17,6 +17,9 @@ public class FilterConfig {
     @Bean
     public WebFilter jwtWebFilter() {
         return (exchange, chain) -> {
+            if(exchange.getRequest().getPath().toString().startsWith("/island/private")) {
+                return chain.filter(exchange);
+            }
             String jwtToken = exchange.getRequest().getHeaders().getFirst("Authorization");
             if (jwtToken != null && jwtToken.startsWith("Bearer ")) {
                 return whoAmIClient.whoami(jwtToken).flatMap(userId -> {

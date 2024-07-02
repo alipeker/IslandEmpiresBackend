@@ -13,11 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 public class AttackWarReport extends WarReport {
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "attackerMilitaryUnitReport_id")
     private MilitaryUnitReport attackerMilitaryUnitReport;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "attackerMilitaryUnitCausalitiesReport_id")
     private MilitaryUnitReport attackerMilitaryUnitCausalitiesReport;
 
@@ -47,7 +47,11 @@ public class AttackWarReport extends WarReport {
     }
 
     public void defenceWin() {
-        attackerMilitaryUnitCausalitiesReport = attackerMilitaryUnitReport;
+        try {
+            attackerMilitaryUnitCausalitiesReport = (MilitaryUnitReport) attackerMilitaryUnitReport.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

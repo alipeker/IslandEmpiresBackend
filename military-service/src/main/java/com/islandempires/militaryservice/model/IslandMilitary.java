@@ -1,11 +1,16 @@
 package com.islandempires.militaryservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.islandempires.militaryservice.dto.*;
+import com.islandempires.militaryservice.dto.request.WarMilitaryUnitRequest;
 import com.islandempires.militaryservice.enums.MissionStatusEnum;
+import com.islandempires.militaryservice.enums.SoldierSubTypeEnum;
+import com.islandempires.militaryservice.model.production.SoldierProduction;
 import com.islandempires.militaryservice.model.troopsAction.MovingTroops;
 import com.islandempires.militaryservice.model.troopsAction.StationaryTroops;
 import com.islandempires.militaryservice.model.troopsAction.Troops;
+import com.islandempires.militaryservice.model.war.WarReport;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +31,8 @@ public class IslandMilitary {
     @Id
     private String islandId;
 
+    private Long userId;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "stationaryTroopId", referencedColumnName = "id")
     private StationaryTroops stationaryTroops;
@@ -40,9 +47,13 @@ public class IslandMilitary {
     @JsonIgnore
     private List<MovingTroops> otherIslandsIncomingOrDeployedTroops;
 
-    public void initialize(GameServerSoldier gameServerSoldier) {
+    @OneToMany(mappedBy = "islandMilitary", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JsonIgnore
+    private List<SoldierProduction> soldierProductionList;
+
+    public void initialize(GameServerSoldier gameServerSoldier, IslandMilitary islandMilitary) {
         this.stationaryTroops = new StationaryTroops();
-        this.stationaryTroops.initialize(gameServerSoldier);
+        this.stationaryTroops.initialize(gameServerSoldier, islandMilitary);
 
         this.myTroops = new ArrayList<>();
         this.otherIslandsIncomingOrDeployedTroops = new ArrayList();
@@ -57,6 +68,10 @@ public class IslandMilitary {
                 });
 
         return militaryUnits;
+    }
+
+    public void addSoldierWithSoldierSubTypeEnum(SoldierSubTypeEnum soldierSubTypeEnum) {
+        this.stationaryTroops.getMilitaryUnits().addSoldier(soldierSubTypeEnum, BigInteger.ONE);
     }
 
     public SoldierRatios calculateTotalSoldierRatioOnIsland() {
@@ -135,6 +150,57 @@ public class IslandMilitary {
                 .reduce(initialDefencePoint, BigDecimal::add);
         return totalDefencePoint;
     }
+
+    public Boolean isSoldierCapacitySufficient(WarMilitaryUnitRequest warMilitaryUnitRequest) {
+        MilitaryUnits militaryUnit = stationaryTroops.getMilitaryUnits();
+
+        if (militaryUnit.getPikeman().getSoldierCount().compareTo(warMilitaryUnitRequest.getPikeman()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getAxeman().getSoldierCount().compareTo(warMilitaryUnitRequest.getAxeman()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getArchers().getSoldierCount().compareTo(warMilitaryUnitRequest.getArchers()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getSwordsman().getSoldierCount().compareTo(warMilitaryUnitRequest.getSwordsman()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getLightArmedMusketeer().getSoldierCount().compareTo(warMilitaryUnitRequest.getLightArmedMusketeer()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getMediumArmedMusketeer().getSoldierCount().compareTo(warMilitaryUnitRequest.getMediumArmedMusketeer()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getHeavyArmedMusketeer().getSoldierCount().compareTo(warMilitaryUnitRequest.getHeavyArmedMusketeer()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getCulverin().getSoldierCount().compareTo(warMilitaryUnitRequest.getCulverin()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getMortar().getSoldierCount().compareTo(warMilitaryUnitRequest.getMortar()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getRibault().getSoldierCount().compareTo(warMilitaryUnitRequest.getRibault()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getHolk().getSoldierCount().compareTo(warMilitaryUnitRequest.getHolk()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getGunHolk().getSoldierCount().compareTo(warMilitaryUnitRequest.getGunHolk()) >= 0) {
+            return false;
+        }
+        if (militaryUnit.getCarrack().getSoldierCount().compareTo(warMilitaryUnitRequest.getCarrack()) >= 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void addReturningSoldiers(MilitaryUnits militaryUnit) {
+        stationaryTroops.addReturningSoldiers(militaryUnit);
+    }
+
 
     @Override
     public String toString() {

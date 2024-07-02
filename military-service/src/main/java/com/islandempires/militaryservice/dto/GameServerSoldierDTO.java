@@ -1,5 +1,6 @@
 package com.islandempires.militaryservice.dto;
 
+import com.islandempires.militaryservice.model.soldier.ShipBaseInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

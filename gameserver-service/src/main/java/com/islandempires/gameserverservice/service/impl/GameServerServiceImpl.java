@@ -2,6 +2,8 @@ package com.islandempires.gameserverservice.service.impl;
 
 import com.islandempires.gameserverservice.dto.GameServerDTO;
 import com.islandempires.gameserverservice.dto.initial.InitialGameServerPropertiesDTO;
+import com.islandempires.gameserverservice.exception.CustomRunTimeException;
+import com.islandempires.gameserverservice.exception.ExceptionE;
 import com.islandempires.gameserverservice.mapper.GameServerMapper;
 import com.islandempires.gameserverservice.model.*;
 import com.islandempires.gameserverservice.model.building.AllBuildings;
@@ -63,20 +65,28 @@ public class GameServerServiceImpl implements GameServerWriteService, GameServer
     }
 
     @Override
-    public Mono<GameServerIslands> initializeIsland(String serverId, Long userId, String jwtToken) {
+    public Mono<GameServerIslands> initializeIsland(String serverId, Long userId) {
         return gameServerRepository.findById(serverId).flatMap( gameServer -> {
                 AllBuildings allBuildings = gameServer.getAllBuildings();
                 IslandResource islandResource = gameServer.getIslandResource();
-                return gateWayClient.initializeIsland(jwtToken, gameServerMapper.mapAll(allBuildings, islandResource), serverId)
-                        .doOnError(e -> Mono.error(e))
-                        .flatMap(islandDTO -> {
-                            GameServerIslands gameServerIslands = new GameServerIslands();
-                            gameServerIslands.setIslandId(islandDTO.getId());
-                            gameServerIslands.setServerId(gameServer.getId());
-                            gameServerIslands.setUserId(userId);
-                            gameServerIslands.setCreatedDate(LocalDateTime.now());
-                            return gameServerIslandsRepository.save(gameServerIslands).then(Mono.just(gameServerIslands));
-                        });
+
+                return gameServerIslandsRepository.existsByServerIdAndUserId(serverId, userId).flatMap(alreadyExist -> {
+                    if(Boolean.TRUE.equals(alreadyExist)) {
+                        throw new CustomRunTimeException(ExceptionE.ALREADY_EXIST);
+                    }
+
+                    return gateWayClient.initializeIsland(gameServerMapper.mapAll(allBuildings, islandResource), serverId, userId)
+                            .doOnError(Mono::error)
+                            .flatMap(islandDTO -> {
+                                GameServerIslands gameServerIslands = new GameServerIslands();
+                                gameServerIslands.setIslandId(islandDTO.getId());
+                                gameServerIslands.setServerId(gameServer.getId());
+                                gameServerIslands.setUserId(userId);
+                                gameServerIslands.setCreatedDate(LocalDateTime.now());
+                                return gameServerIslandsRepository.save(gameServerIslands).then(Mono.just(gameServerIslands));
+                            });
+                });
+
         });
     }
 

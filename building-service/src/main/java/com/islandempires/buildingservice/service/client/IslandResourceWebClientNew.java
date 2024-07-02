@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -24,15 +23,14 @@ public class IslandResourceWebClientNew {
         this.islandResourceWebClient = webClientBuilder.baseUrl(gatewayUrl).build();
     }
 
-    public Mono<IslandResourceDTO> assignResources(String islandId, RawMaterialsAndPopulationCost resourceAllocationRequestDTO, String jwtToken) {
+    public Mono<IslandResourceDTO> assignResources(String islandId, RawMaterialsAndPopulationCost resourceAllocationRequestDTO) {
         return islandResourceWebClient.post()
-                .uri("/resource/assignResources/{islandId}", islandId)
+                .uri("/resource/private/assignResources/{islandId}", islandId)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .bodyValue(resourceAllocationRequestDTO)
                 .retrieve()
                 .bodyToMono(IslandResourceDTO.class)
-                .doOnError(e -> Mono.error(e));
+                .doOnError(Mono::error);
     }
 
     public Mono<Long> whoami(String jwtToken) {
@@ -42,6 +40,6 @@ public class IslandResourceWebClientNew {
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .retrieve()
                 .bodyToMono(Long.class)
-                .doOnError(e -> Mono.error(e));
+                .doOnError(Mono::error);
     }
 }

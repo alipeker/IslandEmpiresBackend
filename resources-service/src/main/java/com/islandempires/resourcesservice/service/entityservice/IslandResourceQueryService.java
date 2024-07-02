@@ -7,6 +7,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface IslandResourceQueryService {
-    Flux<IslandResourceDTO> getAll();
     Mono<IslandResourceDTO> get(String islandId, Long userId);
+
+    Mono<Boolean> validateResourceAllocationForIsland(String islandId, ResourceAllocationRequestDTO resourceAllocationRequestDTO, Long userId);
 }

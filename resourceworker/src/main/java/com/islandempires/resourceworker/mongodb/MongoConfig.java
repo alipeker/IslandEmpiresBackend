@@ -20,7 +20,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @Bean
     public MongoClient mongoClient() {
         // Assuming you are using MongoDB without authentication
-        return MongoClients.create("mongodb://192.168.0.14:27017");
+        return MongoClients.create("mongodb://localhost:27017");
     }
 
     @Bean

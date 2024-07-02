@@ -1,7 +1,8 @@
 package com.islandempires.islandservice.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.islandempires.islandservice.service.IslandModificationService;
+import com.islandempires.islandservice.service.privates.IslandModificationPrivateService;
+import com.islandempires.islandservice.service.publics.IslandModificationService;
 import lombok.AllArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class KafkaOutboxConsumerService {
-    private final IslandModificationService islandModificationService;
+    private final IslandModificationPrivateService islandModificationService;
 
 
     @KafkaListener(groupId = "#{@environment['spring.kafka.consumer.group-id']}", topics = "#{@environment['spring.kafka.consumer.island-delete-topic']}")

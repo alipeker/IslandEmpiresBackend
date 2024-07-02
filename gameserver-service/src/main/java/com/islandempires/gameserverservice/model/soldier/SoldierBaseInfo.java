@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Duration;
 import java.util.Map;
 
 
@@ -31,4 +32,9 @@ public class SoldierBaseInfo {
 
     private int canonCapacityOfShip;
 
+    private int totalLootCapacity;
+
+    private Duration timeToTraverseMapCell;
+
+    private Duration productionDuration;
 }

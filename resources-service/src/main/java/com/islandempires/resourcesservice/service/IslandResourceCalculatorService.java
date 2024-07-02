@@ -52,6 +52,28 @@ public class IslandResourceCalculatorService {
         return  islandResource;
     }
 
+    public IslandResource refundResources(IslandResource islandResource,
+                                                      ResourceAllocationRequestDTO resourceAllocationRequestDTO) {
+        Integer rawMaterialStorageSize = islandResource.getRawMaterialStorageSize();
+
+        Integer wood = resourceAllocationRequestDTO.getWood();
+        Integer iron = resourceAllocationRequestDTO.getIron();
+        Integer clay = resourceAllocationRequestDTO.getClay();
+        Integer population = resourceAllocationRequestDTO.getPopulation();
+
+        Double totalWood = islandResource.getWood() + wood > rawMaterialStorageSize ? rawMaterialStorageSize : islandResource.getWood() + wood;
+        Double totalIron = islandResource.getIron() + iron > rawMaterialStorageSize ? rawMaterialStorageSize : islandResource.getIron() + wood;
+        Double totalClay = islandResource.getClay() + clay > rawMaterialStorageSize ? rawMaterialStorageSize : islandResource.getClay() + wood;
+        Integer totalPopulation = islandResource.getPopulation() - population <= 0 ? 0 : islandResource.getPopulation() - population;
+
+
+        islandResource.setWood(totalWood);
+        islandResource.setIron(totalIron);
+        islandResource.setClay(totalClay);
+        islandResource.setPopulation(totalPopulation);
+        return  islandResource;
+    }
+
     public Map<RawMaterialEnum, Integer> randomLootingRawMaterials(Map<RawMaterialEnum, Integer> plunderedIslandRawMaterials, Map<RawMaterialEnum, Integer> calculatedLootingRawMaterialMap,
                                                                    Integer lootingSize) {
         List<RawMaterialEnum> rawMaterialList = new ArrayList(calculatedLootingRawMaterialMap.keySet());

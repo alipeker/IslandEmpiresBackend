@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.util.Map;
 
 @Entity
@@ -35,6 +36,8 @@ public class SoldierBaseInfo {
 
     private int attackPoint;
 
+    private Duration productionDuration;
+
     @ElementCollection
     @MapKeyEnumerated(EnumType.STRING)
     @CollectionTable(name = "defense_points_mapping",
@@ -52,6 +55,23 @@ public class SoldierBaseInfo {
     }
     public SoldierBaseInfo(Long id) {
         this.id = id;
+    }
+
+    public void updateRawMaterialAndPopulationCost(RawMaterialsAndPopulationCost rawMaterialsAndPopulationCostUpdate) {
+        if(rawMaterialsAndPopulationCost != null) {
+            rawMaterialsAndPopulationCost.setPopulation(rawMaterialsAndPopulationCostUpdate.getPopulation());
+            rawMaterialsAndPopulationCost.setClay(rawMaterialsAndPopulationCostUpdate.getClay());
+            rawMaterialsAndPopulationCost.setWood(rawMaterialsAndPopulationCostUpdate.getWood());
+            rawMaterialsAndPopulationCost.setIron(rawMaterialsAndPopulationCostUpdate.getIron());
+        } else {
+            RawMaterialsAndPopulationCost newRawMaterialsAndPopulationCost = new RawMaterialsAndPopulationCost();
+            newRawMaterialsAndPopulationCost.setPopulation(rawMaterialsAndPopulationCostUpdate.getPopulation());
+            newRawMaterialsAndPopulationCost.setClay(rawMaterialsAndPopulationCostUpdate.getClay());
+            newRawMaterialsAndPopulationCost.setWood(rawMaterialsAndPopulationCostUpdate.getWood());
+            newRawMaterialsAndPopulationCost.setIron(rawMaterialsAndPopulationCostUpdate.getIron());
+            this.rawMaterialsAndPopulationCost = newRawMaterialsAndPopulationCost;
+        }
+
     }
 
     @Override

@@ -19,14 +19,14 @@ import java.time.Duration;
 @Entity
 public class MovingTroops extends Troops {
 
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ownerIslandMilitaryId")
     @JsonBackReference
     private IslandMilitary ownerIslandMilitary;
 
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "targetToIslandMilitary")
+    @JoinColumn(name = "targetToIslandMilitaryId")
     @JsonBackReference
     private IslandMilitary targetToIslandMilitary;
 
@@ -36,8 +36,20 @@ public class MovingTroops extends Troops {
 
     private Duration duration;
 
+    private Boolean isActive = true;
+
     public BigInteger calculateTotalAttackPointOfAllUnits() {
         return militaryUnits.calculateTotalAttackPointOfAllUnits();
+    }
+
+    public Duration findSlowerShipDuration() {
+        return militaryUnits.findSlowerShipDuration();
+    }
+
+    public void calculateDuration(Double distance) {
+        long durationNanos = militaryUnits.findSlowerShipDuration().toNanos();
+        long newDurationNanos = (long) (durationNanos * distance);
+        this.duration = Duration.ofNanos(newDurationNanos);
     }
 
     @Override

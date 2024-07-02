@@ -1,6 +1,8 @@
 package com.islandempires.militaryservice.model.war;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.islandempires.militaryservice.enums.MissionTypeEnum;
+import com.islandempires.militaryservice.enums.WarWinnerEnum;
 import com.islandempires.militaryservice.model.IslandMilitary;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,6 +36,10 @@ public abstract class WarReport {
     private IslandMilitary defenderIslandMilitary;
 
     private String defender_island_military_id;
+
+    private MissionTypeEnum missionTypeEnum;
+
+    private WarWinnerEnum winner;
 
     private LocalDateTime localDateTime;
 }

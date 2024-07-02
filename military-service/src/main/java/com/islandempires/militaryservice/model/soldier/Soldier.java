@@ -44,7 +44,7 @@ public abstract class Soldier {
         Double averageCannonDefencePoint = soldierRatios.getCannonToTotalSoldiersRatio() * soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.CANNON);
         Double averageShipDefencePoint = soldierRatios.getShipsToTotalSoldiersRatio() * soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.SHIP);
 
-        Double averageDefensePoint = averageInfantrymanDefencePoint + averageRifleDefencePoint + averageCannonDefencePoint + averageShipDefencePoint;
+        double averageDefensePoint = averageInfantrymanDefencePoint + averageRifleDefencePoint + averageCannonDefencePoint + averageShipDefencePoint;
 
         return BigDecimal.valueOf(averageDefensePoint).multiply(new BigDecimal(soldierCount));
     }

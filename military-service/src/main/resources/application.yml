@@ -1,16 +1,21 @@
 server:
-  host: 192.168.0.14
+  host: localhost
   port: 6000
 
 spring:
   application:
     name: military-service
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     url: jdbc:mariadb://localhost:3308/military
     username: root
     password: root
     driver-class-name: org.mariadb.jdbc.Driver
     testWhileIdle: true
+  config:
+      import: "optional:configserver:"
+
   jpa:
     show-sql: true
     properties:
@@ -20,13 +25,36 @@ spring:
       ddl-auto: update
       format_sql: true
 
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: island-military-id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      island-delete-topic: island-delete-topic
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 5
+          initial-interval: 1000
+          max-interval: 10000
+          multiplier: 2
+          stateless: true
+
 eureka:
   client:
     registerWithEureka: true
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://192.168.0.14:1000/eureka/
+      defaultZone: http://localhost:1000/eureka/
 
 urls:
-  gateway: http://192.168.0.14:9000
-
+  gateway: http://localhost:9001

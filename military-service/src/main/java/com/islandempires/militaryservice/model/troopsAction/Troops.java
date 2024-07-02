@@ -1,7 +1,9 @@
 package com.islandempires.militaryservice.model.troopsAction;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.islandempires.militaryservice.dto.*;
 import com.islandempires.militaryservice.model.GameServerSoldier;
+import com.islandempires.militaryservice.model.IslandMilitary;
 import com.islandempires.militaryservice.model.MilitaryUnits;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,6 +32,7 @@ public abstract class Troops implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "militaryUnitId", referencedColumnName = "id")
     protected MilitaryUnits militaryUnits;
+
 
     protected LocalDateTime startTime;
 

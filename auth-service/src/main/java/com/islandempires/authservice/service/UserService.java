@@ -15,6 +15,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +73,10 @@ public class UserService implements CommandLineRunner {
 
     public boolean isTokenValid(String jwtToken) {
         return jwtTokenProvider.validateToken(jwtTokenProvider.resolveToken(jwtToken));
+    }
+
+    public List<AppUser> getAllUsers() {
+        return this.userRepository.findAll();
     }
 
 

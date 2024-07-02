@@ -19,7 +19,7 @@ public class IslandClient {
         headers.add("Authorization", token);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        ResponseEntity<Boolean> responseEntity = restTemplate.exchange("http://192.168.0.14:9000/island/isUserIslandOwner/" + islandId, HttpMethod.GET, requestEntity, Boolean.class);
+        ResponseEntity<Boolean> responseEntity = restTemplate.exchange("http://localhost:9000/island/isUserIslandOwner/" + islandId, HttpMethod.GET, requestEntity, Boolean.class);
 
         return true;
     }

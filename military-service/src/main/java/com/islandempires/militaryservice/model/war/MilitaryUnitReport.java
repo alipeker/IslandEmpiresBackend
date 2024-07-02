@@ -34,12 +34,6 @@ public class MilitaryUnitReport implements Cloneable {
     @SequenceGenerator(name="MilitaryUnitReport_generator", sequenceName = "MilitaryUnitReport_sequence", allocationSize=1)
     protected Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ownerId", insertable = false, updatable = false)
-    @JsonBackReference
-    @JsonIgnore
-    private IslandMilitary owner;
-
     private String ownerId;
 
     @ManyToOne(fetch = FetchType.EAGER)

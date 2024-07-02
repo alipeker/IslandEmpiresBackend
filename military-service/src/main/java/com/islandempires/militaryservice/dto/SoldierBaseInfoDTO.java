@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.util.Map;
 
 @Data
@@ -18,4 +19,8 @@ public class SoldierBaseInfoDTO {
     private RawMaterialsAndPopulationCost rawMaterialsAndPopulationCost;
     private int soldierCapacityOfShip;
     private int canonCapacityOfShip;
+    private int totalLootCapacity;
+    private Duration timeToTraverseMapCell;
+
+    private Duration productionDuration;
 }
