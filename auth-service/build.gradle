@@ -40,6 +40,10 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 }
 
+bootRun {
+	mainClass = 'com.islandempires.authservice.AuthServiceApplication'
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }

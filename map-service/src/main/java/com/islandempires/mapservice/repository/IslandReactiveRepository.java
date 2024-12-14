@@ -7,7 +7,7 @@ import reactor.core.publisher.Mono;
 
 
 public interface IslandReactiveRepository extends ReactiveElasticsearchRepository<IslandCombined, String> {
-    Flux<IslandCombined> findByXBetweenAndYBetween(int xStart, int xEnd, int yStart, int yEnd);
+    Flux<IslandCombined> findByServerIdAndXBetweenAndYBetween(String serverId, int xStart, int xEnd, int yStart, int yEnd);
 
     Mono<IslandCombined> save(IslandCombined islandCombined);
 

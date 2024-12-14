@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class Embassy extends BasicStructures implements Serializable {
     private List<EmbassyLevel> embassyLevelList;
 
-    private Integer minLvlForClanCreation;
+    private int minLvlForClanCreation;
 
     @Override
     public List<BuildingLevel> getBuildingLevelList() {

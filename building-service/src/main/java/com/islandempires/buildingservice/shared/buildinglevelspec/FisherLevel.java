@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FisherLevel extends BuildingLevel {
 
-    private Integer hourlyFishProduction;
+    private int hourlyFishProduction;
 
 }

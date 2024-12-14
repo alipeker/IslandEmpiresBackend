@@ -23,6 +23,5 @@ public abstract class BaseStructures implements Serializable {
 
     private HashMap<IslandBuildingEnum, Integer> upgradeConditions;
 
-
     protected abstract List<BuildingLevel> getBuildingLevelList();
 }

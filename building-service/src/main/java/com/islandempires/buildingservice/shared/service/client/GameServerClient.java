@@ -1,7 +1,6 @@
 package com.islandempires.buildingservice.shared.service.client;
 
-import com.islandempires.buildingservice.model.building.AllBuildings;
-import com.islandempires.buildingservice.shared.building.AllBuildingsServerProperties;
+import com.islandempires.buildingservice.shared.BuildingServerProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,8 +10,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 @Component
 public class GameServerClient {
@@ -38,11 +35,11 @@ public class GameServerClient {
                 .doOnError(e -> Mono.error(e));
     }
 
-    public Flux<AllBuildingsServerProperties> getGameServerBuildingProperties() {
+    public Flux<BuildingServerProperties> getGameServerBuildingProperties() {
         return islandResourceWebClient.get()
                 .uri("/gameservice/private/getGameServerBuildingProperties")
                 .retrieve()
-                .bodyToFlux(AllBuildingsServerProperties.class)
+                .bodyToFlux(BuildingServerProperties.class)
                 .onErrorResume(e -> {
                     return Flux.error(e);
                 });

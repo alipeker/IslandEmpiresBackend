@@ -1,5 +1,5 @@
 server:
-  host: localhost
+  host: 192.168.0.14
   port: 9000
 
 spring:
@@ -11,6 +11,8 @@ spring:
     import: "optional:configserver:"
   cloud:
     gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
       routes:
         - id: resource-service
           uri: http://localhost:2000
@@ -36,6 +38,18 @@ spring:
           uri: http://localhost:6000
           predicates:
             - Path=/military/public/**
+        - id: map-service
+          uri: http://localhost:500
+          predicates:
+            - Path=/map/public/**
+        - id: clan-service
+          uri: http://localhost:2050
+          predicates:
+            - Path=/clan/public/**
+        - id: websocket-service
+          uri: http://localhost:3003
+          predicates:
+            - Path=/websocket/**
 
 eureka:
   client:

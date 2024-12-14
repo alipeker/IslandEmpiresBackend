@@ -11,13 +11,14 @@ import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverte
 import org.springframework.data.elasticsearch.repository.config.EnableReactiveElasticsearchRepositories;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.net.UnknownHostException;
 
 @SpringBootApplication
 @EnableAutoConfiguration
 @EnableWebFlux
 @EnableReactiveElasticsearchRepositories
+@EnableScheduling
 public class MapServiceApplication {
 
 	public static void main(String[] args) {

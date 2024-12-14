@@ -1,9 +1,9 @@
 package com.islandempires.militaryservice.controller;
 
+import com.islandempires.militaryservice.dto.CreateSoldierResponseDTO;
 import com.islandempires.militaryservice.dto.IslandResourceDTO;
 import com.islandempires.militaryservice.dto.request.CreateSoldierRequest;
 import com.islandempires.militaryservice.dto.request.WarMilitaryUnitRequest;
-import com.islandempires.militaryservice.enums.MissionTypeEnum;
 import com.islandempires.militaryservice.model.IslandMilitary;
 import com.islandempires.militaryservice.model.war.WarReport;
 import com.islandempires.militaryservice.service.SoldierService;
@@ -12,8 +12,8 @@ import com.islandempires.militaryservice.service.WarService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
-@CrossOrigin
 @RestController
 @RequestMapping("military/public")
 @AllArgsConstructor
@@ -45,6 +45,12 @@ public class MilitaryServiceController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/getIslandMilitaries")
+    public List<IslandMilitary> getIslandMilitariesWithIdList(@RequestBody List<String> islandIdList, @RequestAttribute("userId") Long userId) {
+        return warService.getIslandMilitaries(islandIdList, userId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/warReport/{warReportId}")
     public WarReport getWarReportId(@PathVariable Long warReportId, @RequestAttribute("userId") Long userId) {
         return warReportService.get(warReportId, userId);
@@ -52,7 +58,7 @@ public class MilitaryServiceController {
 
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/createSoldier/{islandId}")
-    public IslandResourceDTO createSoldier(@PathVariable String  islandId, @RequestBody CreateSoldierRequest createSoldierRequest, @RequestAttribute("userId") Long userId) {
+    public CreateSoldierResponseDTO createSoldier(@PathVariable String islandId, @RequestBody CreateSoldierRequest createSoldierRequest, @RequestAttribute("userId") Long userId) {
         return soldierService.createSoldier(islandId, userId, createSoldierRequest.getSoldierSubType(), createSoldierRequest.getSoldierCount());
     }
 

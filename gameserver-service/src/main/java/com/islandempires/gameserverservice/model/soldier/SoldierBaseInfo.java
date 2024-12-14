@@ -37,4 +37,6 @@ public class SoldierBaseInfo {
     private Duration timeToTraverseMapCell;
 
     private Duration productionDuration;
+
+    private Boolean isResearched;
 }

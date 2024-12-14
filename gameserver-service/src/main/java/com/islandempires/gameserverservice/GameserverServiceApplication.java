@@ -21,11 +21,16 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import reactivefeign.spring.config.EnableReactiveFeignClients;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +60,6 @@ public class GameserverServiceApplication {
 	public HttpMessageConverters messageConverters(ObjectProvider<HttpMessageConverter<?>> converters) {
 		return new HttpMessageConverters(converters.orderedStream().collect(Collectors.toList()));
 	}
-
 
 /*
 	@Override

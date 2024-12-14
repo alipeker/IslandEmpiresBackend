@@ -25,6 +25,7 @@ public class IslandResourceAggregation {
         AggregationOperation project1 = Aggregation.project()
                 .and("_id").as("_id")
                 .and("userId").as("userId")
+                .and("islandId").as("islandId")
                 .and("serverId").as("serverId")
                 .and("wood").as("wood")
                 .and("woodHourlyProduction").as("woodHourlyProduction")
@@ -45,8 +46,10 @@ public class IslandResourceAggregation {
                 .and("populationLimit").as("populationLimit")
                 .and("happinessScore").as("happinessScore")
                 .and("additionalHappinessScore").as("additionalHappinessScore")
-                .and("happinessScoreMinimumValue").as("happinessScoreMinimumValue")
-                .and("happinessScoreMaximumValue").as("happinessScoreMaximumValue")
+                .and("shipCapacity").as("shipCapacity")
+                .and("shipNumber").as("shipNumber")
+                .and("usageShipNumber").as("usageShipNumber")
+                .and("tradingTimeReductionPercentage").as("tradingTimeReductionPercentage")
                 .and("createdDate").as("createdDate")
                 .and("_class").as("_class")
                 .and(ArithmeticOperators.Subtract.valueOf(new Date().getTime()).subtract("lastCalculatedTimestamp")).as("elapsedTime");
@@ -54,6 +57,7 @@ public class IslandResourceAggregation {
         AggregationOperation project2 = Aggregation.project()
                 .and("_id").as("_id")
                 .and("userId").as("userId")
+                .and("islandId").as("islandId")
                 .and("serverId").as("serverId")
                 .and(ConditionalOperators.Cond.newBuilder()
                         .when(ComparisonOperators.Gt.valueOf(ArithmeticOperators.Add.valueOf("wood").add(ArithmeticOperators.Add.valueOf(ArithmeticOperators
@@ -110,6 +114,10 @@ public class IslandResourceAggregation {
                                         .divideBy("population")
                         ))).as("happinessScore")
                 .and("additionalHappinessScore").as("additionalHappinessScore")
+                .and("shipCapacity").as("shipCapacity")
+                .and("shipNumber").as("shipNumber")
+                .and("usageShipNumber").as("usageShipNumber")
+                .and("tradingTimeReductionPercentage").as("tradingTimeReductionPercentage")
                 .and("_class").as("_class");
 
         AggregationOperation project3 = Aggregation

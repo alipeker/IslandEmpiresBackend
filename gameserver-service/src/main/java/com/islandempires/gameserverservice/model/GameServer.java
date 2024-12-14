@@ -1,7 +1,5 @@
 package com.islandempires.gameserverservice.model;
 
-import com.islandempires.gameserverservice.model.building.*;
-import com.islandempires.gameserverservice.model.buildingtype.BaseStructures;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Document
 @Data
@@ -22,10 +19,12 @@ public class GameServer implements Serializable {
 
     private String serverName;
 
-    private IslandResource islandResource;
+    private GameServerIslandResource gameServerIslandResource;
 
-    private AllBuildings allBuildings;
+    private GameServerAllBuildings gameServerAllBuildings;
 
-    private long timestamp = new Date().getTime();
+    private GameServerSoldier gameServerSoldier;
+
+    private LocalDateTime localDateTime;
 
 }

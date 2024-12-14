@@ -35,7 +35,7 @@ public class IslandResourcePrivateController {
     @Autowired
     private WhoAmIClient whoAmIClient;
 
-    @GetMapping(value = "/getAll", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/getAll")
     public Flux<IslandResourceDTO> streamResources() {
         return islandResourceQueryService.getAll();
     }
@@ -44,6 +44,12 @@ public class IslandResourcePrivateController {
     @GetMapping("/{islandid}")
     public Mono<IslandResourceDTO> get(@PathVariable String islandid) {
         return islandResourceQueryService.get(islandid);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/getByUserId/{userId}/{serverId}")
+    public Flux<IslandResourceDTO> getByUserId(@PathVariable Long userId, @PathVariable String serverId) {
+        return islandResourceQueryService.getByUserId(userId, serverId);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -78,6 +84,7 @@ public class IslandResourcePrivateController {
         return islandResourceInteractionService.refundResources(islandId, resourceAllocationRequestDTO);
     }
 
+// 1.000.000 $ looting from ali peker
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/looting/{plunderedIslandId}/{raidingIslandId}")
     public Mono<Tuple2<IslandResource, IslandResource>> looting(@Size(min = 1, message = "Id must be not empty") @PathVariable String plunderedIslandId,
@@ -106,6 +113,19 @@ public class IslandResourcePrivateController {
     public Mono<IslandResourceDTO> updateIslandResourceField(@Size(min = 1, message = "Id must be not empty") @PathVariable String islandId,
                                                              @Valid @RequestBody UpdateIslandResourceFieldDTO updateIslandResourceFieldDTO) {
         return islandResourceModificationService.updateIslandResourceField(islandId, updateIslandResourceFieldDTO.getIslandResourceEnum(), updateIslandResourceFieldDTO.getValue());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/updateIslandTrading/{islandId}")
+    public Mono<IslandResourceDTO> updateIslandTrading(@PathVariable String islandId, @RequestBody UpdateIslandTradingDTO updateIslandTradingDTO) {
+        return islandResourceModificationService.updateIslandTrading(islandId, updateIslandTradingDTO.getTotalShipNumber(), updateIslandTradingDTO.getShipCapacity(), updateIslandTradingDTO.getTimeReductionPercentage());
+    }
+
+    // get population of user serverid islands
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/getPopulations/{serverId}/{userId}")
+    public Flux<IslandResourceDTO> getPopulations(@PathVariable String serverId, @PathVariable Long userId) {
+        return islandResourceQueryService.getPopulations(serverId, userId);
     }
 
 }

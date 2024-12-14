@@ -1,15 +1,14 @@
 package com.islandempires.buildingservice.util;
 
 import com.islandempires.buildingservice.enums.IslandBuildingEnum;
-import com.islandempires.buildingservice.model.building.AllBuildings;
 import com.islandempires.buildingservice.model.building.Building;
-import com.islandempires.buildingservice.shared.building.AllBuildingsServerProperties;
+import com.islandempires.buildingservice.shared.building.AllBuildings;
 import com.islandempires.buildingservice.shared.buildingtype.BaseStructures;
 
 import java.lang.reflect.Method;
 
 public class FindInListWithField {
-    public static Building findBuilding(AllBuildings allBuildings, IslandBuildingEnum islandBuildingEnum) {
+    public static Building findBuilding(com.islandempires.buildingservice.model.building.AllBuildings allBuildings, IslandBuildingEnum islandBuildingEnum) {
         Method[] methods = AllBuildings.class.getDeclaredMethods();
         for (Method method : methods) {
             if (method.getName().startsWith("get")) {
@@ -26,8 +25,8 @@ public class FindInListWithField {
         return null;
     }
 
-    public static BaseStructures findBuildingProperties(AllBuildingsServerProperties allBuildings, IslandBuildingEnum islandBuildingEnum) {
-        Method[] methods = AllBuildingsServerProperties.class.getDeclaredMethods();
+    public static BaseStructures findBuildingProperties(AllBuildings allBuildings, IslandBuildingEnum islandBuildingEnum) {
+        Method[] methods = AllBuildings.class.getDeclaredMethods();
         for (Method method : methods) {
             if (method.getName().startsWith("get")) {
                 try {

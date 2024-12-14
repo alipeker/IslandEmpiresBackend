@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AcademiaLevel extends BuildingLevel {
-    private Integer missionaryNumber;
+    private int missionaryNumber;
 }

@@ -14,14 +14,26 @@ public class IslandClient {
     @Autowired
     private RestTemplate restTemplate;
 
-    public Boolean isUserIslandOwner(String token, String islandId) {
+    public Long whoAmIClient(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", token);
 
         HttpEntity<String> requestEntity = new HttpEntity<>(headers);
-        ResponseEntity<Boolean> responseEntity = restTemplate.exchange("http://localhost:9000/island/isUserIslandOwner/" + islandId, HttpMethod.GET, requestEntity, Boolean.class);
+        ResponseEntity<Long> responseEntity = restTemplate.exchange("http://localhost:9000/auth/me", HttpMethod.GET, requestEntity, Long.class);
 
-        return true;
+        return responseEntity.getBody();
     }
+
+    public Object getClan(Long clandId) {
+        HttpHeaders headers = new HttpHeaders();
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(headers);
+        ResponseEntity<Object> responseEntity = restTemplate.exchange("http://localhost:9001/clan/private/getClan/" + clandId, HttpMethod.GET, requestEntity, Object.class);
+
+        return responseEntity.getBody();
+    }
+
+    
+    
 
 }

@@ -12,6 +12,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 public class IslandResourceDTO implements Serializable {
+    private String id;
+
     private String islandId;
 
     private Long userId;
@@ -88,4 +90,11 @@ public class IslandResourceDTO implements Serializable {
     @NotNull
     private Double additionalHappinessScore;
 
+    private long shipCapacity;
+
+    private int shipNumber;
+
+    private int usageShipNumber;
+
+    private long tradingTimeReductionPercentage;
 }

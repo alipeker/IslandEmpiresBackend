@@ -3,6 +3,7 @@ package com.islandempires.islandservice.service.privates.impl;
 
 import com.islandempires.islandservice.dto.IslandDTO;
 import com.islandempires.islandservice.dto.initial.InitialGameServerPropertiesDTO;
+import com.islandempires.islandservice.dto.initial.UserClanRegisterDTO;
 import com.islandempires.islandservice.exception.CustomRunTimeException;
 import com.islandempires.islandservice.exception.ExceptionE;
 import com.islandempires.islandservice.kafka.KafkaOutboxProducerService;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.Random;
 
 @Service
@@ -33,6 +35,9 @@ public class IslandPrivateServiceImpl implements IslandQueryPrivateService, Isla
     @Autowired
     private GateWayClient gateWayClient;
 
+    @Autowired
+    private IslandCoordinateGenerator islandCoordinateGenerator;
+
     @Override
     public Mono<IslandDTO> get(String islandId) {
         return islandRepository.findById(islandId)
@@ -44,7 +49,7 @@ public class IslandPrivateServiceImpl implements IslandQueryPrivateService, Isla
 
     @Override
     public Flux<Island> getAll() {
-        return islandRepository.findAll().take(40);
+        return islandRepository.findAll();
     }
 
     @Override
@@ -59,24 +64,36 @@ public class IslandPrivateServiceImpl implements IslandQueryPrivateService, Isla
     @Override
     public Mono<IslandDTO> create(Long userId, InitialGameServerPropertiesDTO initialGameServerPropertiesDTO, String serverId) {
         IslandDTO islandDTO = new IslandDTO();
-        islandDTO.setName("test");
+        islandDTO.setName(initialGameServerPropertiesDTO.getIslandCreateRequestDTO().getIslandName());
         islandDTO.setUserId(userId);
-        islandDTO.setX(new Random().nextInt(100) + 1);
-        islandDTO.setY(new Random().nextInt(100) + 1);
         islandDTO.setServerId(serverId);
-        return islandRepository.save(modelMapper.map(islandDTO, Island.class)).flatMap(island -> {
-            return Mono.zip(gateWayClient.initializeIslandBuildings(island.getId(), initialGameServerPropertiesDTO.getInitialAllBuildings(), userId, serverId).doOnError(Mono::error),
-                            gateWayClient.initializeIslandResource(island.getId(), initialGameServerPropertiesDTO.getIslandResource(), userId, serverId).doOnError(Mono::error),
-                            gateWayClient.initializeIslandMilitary(island.getId(), userId, serverId).doOnError(Mono::error))
-                    .doOnError(e -> {
-                        kafkaOutboxProducerService.sendDeleteIslandEvent(island.getId());
-                        Mono.error(e);
-                    })
-                    .flatMap(Tuple -> {
-                        return Mono.just(modelMapper.map(island, IslandDTO.class));
-                    });
-        });
+        islandDTO.setLocalDateTime(LocalDateTime.now());
+
+        return this.islandCoordinateGenerator.calculateIslandCoordinates(serverId, initialGameServerPropertiesDTO.getIslandCreateRequestDTO().getCardinalDirectionsEnum())
+                .flatMap(coord -> {
+                    islandDTO.setX(coord.getX());
+                    islandDTO.setY(coord.getY());
+
+                    return islandRepository.save(modelMapper.map(islandDTO, Island.class))
+                            .flatMap(island -> Mono.zip(
+                                    gateWayClient.initializeIslandBuildings(island.getId(), initialGameServerPropertiesDTO.getInitialAllBuildings(), userId, serverId)
+                                            .doOnError(Mono::error),
+                                    gateWayClient.initializeIslandResource(island.getId(), initialGameServerPropertiesDTO.getIslandResource(), userId, serverId)
+                                            .doOnError(Mono::error),
+                                    gateWayClient.initializeIslandMilitary(island.getId(), userId, serverId)
+                                            .doOnError(Mono::error)
+                            ).doOnError(e -> {
+                                kafkaOutboxProducerService.sendDeleteIslandEvent(island.getId());
+                                Mono.error(e);
+                            }).then(
+                                    gateWayClient.initializeUserClan(new UserClanRegisterDTO(userId, serverId))
+                                            .doOnError(e -> {
+                                                kafkaOutboxProducerService.sendDeleteIslandEvent(island.getId());
+                                            }).thenReturn(island)
+                            )).map(savedIsland -> modelMapper.map(savedIsland, IslandDTO.class));
+                });
     }
+
 
 
     @Override
@@ -115,5 +132,15 @@ public class IslandPrivateServiceImpl implements IslandQueryPrivateService, Isla
 
                     return Mono.just(distance);
                 });
+    }
+
+
+    @Override
+    public Flux<Island> run(){
+        return islandRepository.findAll().flatMap(island -> {
+            island.setY(island.getY() - 100);
+            island.setX(island.getX() - 100);
+            return islandRepository.save(island);
+        });
     }
 }

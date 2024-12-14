@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class Foundry extends BasicStructures implements Serializable {
     private List<FoundryLevel> foundryLevelList;
+
     @Override
     public List<BuildingLevel> getBuildingLevelList() {
         return foundryLevelList.stream().map(BuildingLevel.class::cast).collect(Collectors.toList());

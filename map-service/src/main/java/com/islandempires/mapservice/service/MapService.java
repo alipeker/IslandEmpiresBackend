@@ -12,8 +12,8 @@ public class MapService {
 
     private final IslandReactiveRepository islandReactiveRepository;
 
-    public Flux<IslandCombined> searchIslandsByCoordinates(int xStart, int xEnd, int yStart, int yEnd) {
-        return islandReactiveRepository.findByXBetweenAndYBetween(xStart, xEnd, yStart, yEnd);
+    public Flux<IslandCombined> searchIslandsByCoordinates(String serverId, int xStart, int xEnd, int yStart, int yEnd) {
+        return islandReactiveRepository.findByServerIdAndXBetweenAndYBetween(serverId, xStart, xEnd, yStart, yEnd);
     }
 
 }

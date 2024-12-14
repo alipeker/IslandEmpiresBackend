@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmbassyLevel extends BuildingLevel {
 
-    private Integer numberOfClanUser;
+    private int numberOfClanUser;
 
 }

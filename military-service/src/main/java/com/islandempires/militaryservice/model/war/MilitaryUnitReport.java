@@ -74,6 +74,8 @@ public class MilitaryUnitReport implements Cloneable {
 
     private BigInteger carrack;
 
+    private BigInteger missionary;
+
     public void setMilitaryUnits(MilitaryUnits militaryUnit) {
         this.pikeman = militaryUnit.getPikeman().getSoldierCount();
         this.axeman = militaryUnit.getAxeman().getSoldierCount();
@@ -88,6 +90,7 @@ public class MilitaryUnitReport implements Cloneable {
         this.holk = militaryUnit.getHolk().getSoldierCount();
         this.gunHolk = militaryUnit.getGunHolk().getSoldierCount();
         this.carrack = militaryUnit.getCarrack().getSoldierCount();
+        this.missionary = militaryUnit.getMissionary().getSoldierCount();
         this.ownerId = militaryUnit.getOwner().getIslandId();
     }
 
@@ -111,6 +114,7 @@ public class MilitaryUnitReport implements Cloneable {
                 ", holk=" + holk +
                 ", gunHolk=" + gunHolk +
                 ", carrack=" + carrack +
+                ", missionary=" + missionary +
                 '}';
     }
 

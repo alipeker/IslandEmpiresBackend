@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TimberCampLevel extends BuildingLevel {
-    private Integer hourlyWoodProduction;
+    private int hourlyWoodProduction;
 }

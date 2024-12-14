@@ -23,7 +23,7 @@ spring:
         - id: auth-service
           uri: http://localhost:1001
           predicates:
-            - Path=/private/auth/**
+            - Path=/auth/private/**
         - id: game-service
           uri: http://localhost:2002
           predicates:
@@ -40,6 +40,14 @@ spring:
           uri: http://localhost:6000
           predicates:
             - Path=/military/private/**
+        - id: clan-service
+          uri: http://localhost:2050
+          predicates:
+            - Path=/clan/private/**
+        - id: websocket-service
+          uri: http://localhost:3003
+          predicates:
+            - Path=/private/websocket/**
 
 eureka:
   client:

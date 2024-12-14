@@ -1,7 +1,7 @@
 package com.islandempires.buildingservice.shared.service;
 
-import com.islandempires.buildingservice.shared.building.AllBuildingsServerProperties;
-import com.islandempires.buildingservice.shared.repository.AllBuildingsServerRepository;
+import com.islandempires.buildingservice.shared.BuildingServerProperties;
+import com.islandempires.buildingservice.shared.repository.BuildingsServerPropertiesRepository;
 import com.islandempires.buildingservice.shared.service.client.GameServerClient;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,22 +14,23 @@ import reactor.core.publisher.Mono;
 public class ServerPropertiesService {
 
     @Autowired
-    private AllBuildingsServerRepository allBuildingsServerRepository;
+    private BuildingsServerPropertiesRepository buildingsServerPropertiesRepository;
 
     @Autowired
     private GameServerClient gameServerClient;
 
-    public Mono<AllBuildingsServerProperties> get(String serverId) {
-        return allBuildingsServerRepository.findById(serverId);
+    public Mono<BuildingServerProperties> get(String serverId) {
+        return buildingsServerPropertiesRepository.findByServerId(serverId);
     }
 
     @PostConstruct
     public void getAllBuildingsServerProperties() {
-        Flux<AllBuildingsServerProperties> allBuildingsServerProperties = gameServerClient.getGameServerBuildingProperties();
+        Flux<BuildingServerProperties> allBuildingsServerProperties = gameServerClient.getGameServerBuildingProperties();
 
-        allBuildingsServerRepository.deleteAll()
+
+        buildingsServerPropertiesRepository.deleteAll()
                 .thenMany(allBuildingsServerProperties
-                        .flatMap(allBuildingsServerRepository::save))
+                        .flatMap(buildingsServerPropertiesRepository::save))
                 .subscribe();
     }
 }

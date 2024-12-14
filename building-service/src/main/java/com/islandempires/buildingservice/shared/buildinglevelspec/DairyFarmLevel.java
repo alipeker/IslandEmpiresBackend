@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DairyFarmLevel extends BuildingLevel {
 
-    private Integer hourlyMeatProduction;
+    private int hourlyMeatProduction;
 
 
 }

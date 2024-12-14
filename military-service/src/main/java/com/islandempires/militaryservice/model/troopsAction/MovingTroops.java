@@ -1,7 +1,6 @@
 package com.islandempires.militaryservice.model.troopsAction;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.islandempires.militaryservice.dto.SoldierRatios;
 import com.islandempires.militaryservice.enums.MissionStatusEnum;
 import com.islandempires.militaryservice.enums.MissionTypeEnum;
 import com.islandempires.militaryservice.model.IslandMilitary;
@@ -39,7 +38,7 @@ public class MovingTroops extends Troops {
     private Boolean isActive = true;
 
     public BigInteger calculateTotalAttackPointOfAllUnits() {
-        return militaryUnits.calculateTotalAttackPointOfAllUnits();
+        return militaryUnits.calculateTotalAttackPointOfAllUnits(targetToIslandMilitary.getDefenceAndAttackMultiplier());
     }
 
     public Duration findSlowerShipDuration() {

@@ -1,0 +1,84 @@
+func searchIslandsByCoordinates(es *elasticsearch.Client, serverID string, xStart, xEnd, yStart, yEnd int) ([]IslandCombined, error) {
+	query := fmt.Sprintf(`
+	{
+		"query": {
+			"bool": {
+				"must": [
+					{ "match": { "serverId": "%s" } },
+					{ "range": { "x": { "gte": %d, "lte": %d } } },
+					{ "range": { "y": { "gte": %d, "lte": %d } } }
+				]
+			}
+		},
+		"aggs": {
+			"unique_clan_ids": {
+				"terms": {
+					"field": "clanId",
+					"size": 10000
+				}
+			}
+		},
+		"size": 10000
+	}`, serverID, xStart, xEnd, yStart, yEnd)
+
+	res, err := es.Search(
+		es.Search.WithContext(context.Background()),
+		es.Search.WithIndex("islands"), // Replace with your index name
+		es.Search.WithBody(strings.NewReader(query)),
+		es.Search.WithTrackTotalHits(true),
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		return nil, fmt.Errorf("Error response from Elasticsearch: %s", res.String())
+	}
+
+	var result struct {
+		Hits struct {
+			Hits []struct {
+				Source IslandCombined `json:"_source"`
+			} `json:"hits"`
+		} `json:"hits"`
+		Aggregations struct {
+			UniqueClanIDs struct {
+				Buckets []struct {
+					Key int64 `json:"key"`
+				} `json:"buckets"`
+			} `json:"unique_clan_ids"`
+		} `json:"aggregations"`
+	}
+
+	if err := json.NewDecoder(res.Body).Decode(&result); err != nil {
+		return nil, err
+	}
+
+	bucketCount := len(result.Aggregations.UniqueClanIDs.Buckets)
+
+	clanIds := make([]int64, bucketCount)
+
+	for i, bucket := range result.Aggregations.UniqueClanIDs.Buckets {
+		clanIds[i] = bucket.Key
+	}
+
+	clanMap, err := fetchClansByIds(es, clanIds)
+	if err != nil {
+		return nil, err
+	}
+
+	var islands []IslandCombined
+	for _, hit := range result.Hits.Hits {
+		var island = hit.Source
+		userp := PublicClanUser{
+			UserId:   island.UserID,
+			UserName: island.Username,
+			Clan:     clanMap[island.ClanId],
+		}
+		island.Clan = userp
+		islands = append(islands, island)
+	}
+
+	return islands, nil
+}

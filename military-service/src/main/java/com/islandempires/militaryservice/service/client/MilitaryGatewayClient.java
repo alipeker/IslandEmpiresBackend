@@ -2,6 +2,8 @@ package com.islandempires.militaryservice.service.client;
 
 import com.islandempires.militaryservice.dto.GameServerSoldierDTO;
 import com.islandempires.militaryservice.dto.IslandResourceDTO;
+import com.islandempires.militaryservice.model.IslandMilitary;
+import com.islandempires.militaryservice.model.production.SoldierProduction;
 import com.islandempires.militaryservice.model.resource.RawMaterialsAndPopulationCost;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,4 +27,7 @@ public interface MilitaryGatewayClient {
 
     @PostMapping("/resource/private/refundResources/{islandId}")
     IslandResourceDTO refundResources(@PathVariable String islandId, @RequestBody RawMaterialsAndPopulationCost resourceAllocationRequestDTO);
+
+    @PostMapping("/private/websocket/military/{serverId}/{userId}")
+    void islandMilitaryChange(@PathVariable String serverId, @PathVariable Long userId, @RequestBody IslandMilitary islandMilitary);
 }

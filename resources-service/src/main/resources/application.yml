@@ -18,6 +18,8 @@ spring:
           min-size: 20
           max-wait-time: 5000
   kafka:
+    producer:
+      island-population-change-topic: island-population-change-topic
     consumer:
       bootstrap-servers: localhost:9092
       group-id: island-resources-id
@@ -25,6 +27,20 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       island-delete-topic: island-delete-topic
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 5
+          initial-interval: 1000
+          max-interval: 10000
+          multiplier: 2
+          stateless: true
 
 eureka:
   client:
@@ -34,5 +50,5 @@ eureka:
       defaultZone: http://localhost:1000/eureka/
 
 urls:
-  gateway: http://localhost:9000
+  gateway: http://localhost:9001
 

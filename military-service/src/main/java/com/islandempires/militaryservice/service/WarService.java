@@ -1,17 +1,12 @@
 package com.islandempires.militaryservice.service;
 
-
 import com.islandempires.militaryservice.dto.*;
 import com.islandempires.militaryservice.dto.request.WarMilitaryUnitRequest;
 import com.islandempires.militaryservice.enums.MissionStatusEnum;
 import com.islandempires.militaryservice.enums.MissionTypeEnum;
-import com.islandempires.militaryservice.enums.SoldierSubTypeEnum;
 import com.islandempires.militaryservice.model.GameServerSoldier;
 import com.islandempires.militaryservice.model.IslandMilitary;
 import com.islandempires.militaryservice.model.MilitaryUnits;
-import com.islandempires.militaryservice.model.production.SoldierProduction;
-import com.islandempires.militaryservice.model.resource.RawMaterialsAndPopulationCost;
-import com.islandempires.militaryservice.model.soldier.Soldier;
 import com.islandempires.militaryservice.model.troopsAction.MovingTroops;
 import com.islandempires.militaryservice.model.war.AttackWarReport;
 import com.islandempires.militaryservice.rabbitmq.RabbitmqService;
@@ -23,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -66,17 +62,38 @@ public class WarService {
         GameServerSoldier gameServerSoldier = gameServerSoldierBaseInfoRepository.findById(serverId).orElseThrow();
         IslandMilitary islandMilitary = new IslandMilitary();
         islandMilitary.setIslandId(islandId);
-        islandMilitary.setDefensePointChangePercent(1);
         islandMilitary.setUserId(userId);
         islandMilitary.initialize(gameServerSoldier, islandMilitary);
+        islandMilitary.setServerId(serverId);
         return islandMilitaryRepository.save(islandMilitary);
     }
 
     @Transactional
-    public IslandMilitary getIslandMilitary(String islandId) {
-        return islandMilitaryRepository.findById(islandId).orElseThrow();
+    public List<IslandMilitary> getIslandMilitaries(List<String> islandIdList, Long userId) {
+        List<IslandMilitary> islandMilitaryList = islandMilitaryRepository.findAllByIslandIdIn(islandIdList);
+
+        if(islandMilitaryList.isEmpty()) {
+            throw new RuntimeException();
+        }
+
+        if(islandMilitaryList.stream().anyMatch(islandMilitary -> !islandMilitary.getUserId().equals(userId))) {
+            throw new RuntimeException();
+        }
+
+        return islandMilitaryList;
     }
 
+    @Transactional
+    public List<IslandMilitary> getIslandMilitaries(Long userId, String serverId) {
+        List<IslandMilitary> islandMilitaryList = islandMilitaryRepository.findByServerIdAndUserId(serverId, userId);
+
+        if(islandMilitaryList.isEmpty()) {
+            throw new RuntimeException();
+        }
+
+        return islandMilitaryList;
+    }
+    
     @Transactional
     public void delete(String islandId) {
         islandMilitaryRepository.deleteById(islandId);
@@ -91,6 +108,12 @@ public class WarService {
         return islandMilitary;
     }
 
+    @Transactional
+    public IslandMilitary getIslandMilitary(String islandId) {
+        IslandMilitary islandMilitary = islandMilitaryRepository.findById(islandId).orElseThrow();
+        return islandMilitary;
+    }
+
     public void pullBackTroop(Long troopId, Long userId) {
         MovingTroops movingTroop = movingTroopsRepository.findById(troopId).orElseThrow();
         if(!movingTroop.getOwnerIslandMilitary().getUserId().equals(userId)) {
@@ -102,13 +125,14 @@ public class WarService {
         rabbitmqService.sendWarReturningEndMessage(movingTroop.getId(), movingTroop.getDuration().toMillis());
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void war(String senderIslandMilitaryId, String targetIslandMilitaryId, WarMilitaryUnitRequest warMilitaryUnitRequest, Long userId) {
         IslandMilitary islandMilitary = islandMilitaryRepository.findById(senderIslandMilitaryId).orElseThrow();
-        if(userId != null && islandMilitary.getUserId() != userId && islandMilitary.isSoldierCapacitySufficient(warMilitaryUnitRequest)) {
+        if(userId != null && !islandMilitary.getUserId().equals(userId) && islandMilitary.isSoldierCapacitySufficient(warMilitaryUnitRequest)) {
             throw new RuntimeException();
         }
 
-        GameServerSoldier gameServerSoldier = gameServerSoldierBaseInfoRepository.findById("s").orElseThrow();
+        GameServerSoldier gameServerSoldier = gameServerSoldierBaseInfoRepository.findById("t1").orElseThrow();
         MilitaryUnits militaryUnits = new MilitaryUnits();
         militaryUnits.initialize(gameServerSoldier);
         militaryUnits.setOwner(islandMilitary);
@@ -121,6 +145,7 @@ public class WarService {
         sendTroopToTargetIsland(senderIslandMilitaryId, militaryUnits, targetIslandMilitaryId, warMilitaryUnitRequest.getMissionType());
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void sendTroopToTargetIsland(String senderIslandId, MilitaryUnits militaryUnits, String targetIslandId, MissionTypeEnum missionType) {
         IslandMilitary senderIslandMilitary = islandMilitaryRepository.findById(senderIslandId).orElseThrow();
         IslandMilitary targetIslandMilitary = islandMilitaryRepository.findById(targetIslandId).orElseThrow();
@@ -155,11 +180,6 @@ public class WarService {
         islandMilitaryRepository.save(senderIslandMilitary);
     }
 
-    @Scheduled(fixedRateString = "5000")
-    public void run() {
-        //evaluateBattleVictory("5");
-    }
-
     @Transactional
     @RabbitListener(queues = RabbitMqConfig.MOVING_TROOPS_ATTACK_QUEUE_NAME)
     public void evaluateBattleVictory(String troopIdString) {
@@ -182,12 +202,19 @@ public class WarService {
         if(senderSoldierRatio.isAllValueZero()) {
             senderSoldierRatio = senderSoldierRatio.setAllValueAsOne();
         }
-        BigInteger totalDefencePoint = movingTroops.getTargetToIslandMilitary().calculateTotalDefencePointOfAllUnits(senderSoldierRatio).toBigInteger();
+
+        BigInteger totalDefencePoint = movingTroops.getTargetToIslandMilitary()
+            .calculateTotalDefencePointOfAllUnits(senderSoldierRatio).toBigInteger();
+
+        BigDecimal defencePointPercentage = BigDecimal.valueOf(movingTroops.getTargetToIslandMilitary().getDefencePointPercentage());
+        BigDecimal defencePointMultiplier = BigDecimal.ONE.add(defencePointPercentage);
+
+        BigDecimal totalDefencePointWithMultiplier = new BigDecimal(totalDefencePoint).multiply(defencePointMultiplier);
+        totalDefencePoint = totalDefencePointWithMultiplier.toBigInteger();
         BigInteger totalAttackPoint = movingTroops.calculateTotalAttackPointOfAllUnits();
 
         totalDefencePoint = totalDefencePoint.compareTo(BigInteger.ZERO) == 0 ? BigInteger.ONE : totalDefencePoint;
         totalAttackPoint = totalAttackPoint.compareTo(BigInteger.ZERO) == 0 ? BigInteger.ONE : totalAttackPoint;
-
 
         GameServerSoldier gameServerSoldier = movingTroops.getMilitaryUnits().getSwordsman().getSoldierBaseInfo().getGameServerSoldier();
 
@@ -238,9 +265,11 @@ public class WarService {
         movingTroopsRepository.save(movingTroops);
     }
 
-    public void handleAttackWin(MovingTroops movingTroops, AttackWarReport attackWarReport, BigInteger totalAttackPoint, BigInteger totalDefencePoint, GameServerSoldier gameServerSoldier) {
+    public void handleAttackWin(MovingTroops movingTroops, AttackWarReport attackWarReport, BigInteger totalAttackPoint,
+                                BigInteger totalDefencePoint, GameServerSoldier gameServerSoldier) {
         BigDecimal strengthDifferenceRatio = new BigDecimal(totalAttackPoint).divide(new BigDecimal(totalDefencePoint), 10, RoundingMode.HALF_UP);
-        SoldierTotalDefenceAgainstSoldierType soldierTotalDefenceAgainstSoldierType = movingTroops.getTargetToIslandMilitary().getStationaryTroops().calculateTotalDefencePointOfAllUnitsPerEachSoldierType();
+        SoldierTotalDefenceAgainstSoldierType soldierTotalDefenceAgainstSoldierType =
+                movingTroops.getTargetToIslandMilitary().getStationaryTroops().calculateTotalDefencePointOfAllUnitsPerEachSoldierType(movingTroops.getTargetToIslandMilitary().getDefenceAndAttackMultiplier());
         soldierTotalDefenceAgainstSoldierType = soldierTotalDefenceAgainstSoldierType.divideAllValues(strengthDifferenceRatio);
         movingTroops.getTargetToIslandMilitary().killAllSoldiers();
 

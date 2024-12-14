@@ -32,4 +32,24 @@ public class WhoAmIClient {
                 .bodyToMono(Long.class)
                 .doOnError(e -> Mono.error(e));
     }
+
+    public Mono<Double> getDistanceBetweenIslands(String islandId1, String islandId2) {
+        return islandResourceWebClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/island/private/calculateDistance/{islandId1}/{islandId2}")
+                        .build(islandId1, islandId2))
+                .retrieve()
+                .bodyToMono(Double.class);
+    }
+
+    public Mono<Boolean> checkUsersSameClan(String userId1, String userId2) {
+        return islandResourceWebClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/clan/private/checkUsersSameClan/{userId1}/{userId2}")
+                        .build(userId1, userId2))
+                .retrieve()
+                .bodyToMono(Boolean.class);
+    }
 }

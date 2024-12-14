@@ -23,12 +23,21 @@ public class IslandPrivateController {
     private IslandQueryPrivateService islandQueryService;
 
     @Autowired
+    private IslandQueryService islandQueryServicePublic;
+
+    @Autowired
     private IslandModificationPrivateService islandModificationService;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{islandid}")
     public Mono<IslandDTO> get(@PathVariable String islandid) {
         return islandQueryService.get(islandid);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/getAllUserIslands/{serverId}/{userId}")
+    public Flux<IslandDTO> getAllUserIslands(@PathVariable String serverId, @PathVariable Long userId) {
+        return islandQueryServicePublic.getAllUserIslands(serverId, userId);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -58,9 +67,21 @@ public class IslandPrivateController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("calculateDistance/{islandId1}/{islandId2}")
+    @GetMapping("/calculateDistance/{islandId1}/{islandId2}")
     public Mono<Double> calculateDistance(@PathVariable String islandId1, @PathVariable String islandId2) {
         return islandQueryService.calculateDistance(islandId1, islandId2);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/isUserIslandOwner/{islandId}")
+    public Mono<Boolean> isUserIslandOwner(@PathVariable String islandId, @RequestAttribute("userId") Long userid) {
+        return islandQueryService.isUserIslandOwner(islandId, userid);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/run")
+    public Flux<Island> run() {
+        return islandModificationService.run();
     }
 }
 

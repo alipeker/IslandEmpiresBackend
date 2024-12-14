@@ -40,6 +40,8 @@ public class WarMilitaryUnitRequest {
 
     private BigInteger carrack = BigInteger.ZERO;
 
+    private BigInteger missionary = BigInteger.ZERO;
+
     private BigInteger getTotalCannonCount() {
         return culverin.add(mortar).add(ribault).add(swordsman).add(lightArmedMusketeer).add(mediumArmedMusketeer).add(heavyArmedMusketeer);
     }

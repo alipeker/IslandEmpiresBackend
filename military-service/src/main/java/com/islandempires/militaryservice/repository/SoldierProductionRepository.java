@@ -14,7 +14,7 @@ public interface SoldierProductionRepository extends JpaRepository<SoldierProduc
 
     @Modifying
     @Transactional
-    @Query("DELETE FROM SoldierProduction mt WHERE mt.isActive = false")
+    @Query("DELETE FROM SoldierProduction sp WHERE sp.soldierCount = 0")
     void deleteInactive();
 }
 

@@ -33,13 +33,10 @@ public class InitialAllBuildingsDTO implements Serializable {
     private InitialBuildingDTO timberCamp1;
     private InitialBuildingDTO timberCamp2;
     private InitialBuildingDTO watchTower;
-
     private InitialBuildingDTO wareHouse;
-
     private InitialBuildingDTO foodWareHouse1;
-
     private InitialBuildingDTO foodWareHouse2;
-
-
+    private InitialBuildingDTO commercialPort;
+    private InitialBuildingDTO shipyard;
 }
 

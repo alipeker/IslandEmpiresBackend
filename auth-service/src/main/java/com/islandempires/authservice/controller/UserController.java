@@ -23,7 +23,7 @@ public class UserController {
   }
 
   @PostMapping("/signup")
-  public String signup(@RequestBody UserDataDTO user) {
+  public JwtResponse signup(@RequestBody UserDataDTO user) {
     return userService.signup(modelMapper.map(user, AppUser.class));
   }
 
@@ -36,6 +36,5 @@ public class UserController {
   public boolean isTokenValid(@RequestHeader(HttpHeaders.AUTHORIZATION) String jwtToken) {
     return userService.isTokenValid(jwtToken);
   }
-
 
 }

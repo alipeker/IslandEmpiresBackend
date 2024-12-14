@@ -51,7 +51,8 @@ public class GameServerMapper {
         initialAllBuildingsDTO.setWareHouse(mapIfNotNull(allBuildings.getWareHouse()));
         initialAllBuildingsDTO.setFoodWareHouse1(mapIfNotNull(allBuildings.getFoodWareHouse1()));
         initialAllBuildingsDTO.setFoodWareHouse2(mapIfNotNull(allBuildings.getFoodWareHouse2()));
-
+        initialAllBuildingsDTO.setShipyard(mapIfNotNull(allBuildings.getShipyard()));
+        initialAllBuildingsDTO.setCommercialPort(mapIfNotNull(allBuildings.getCommercialPort()));
         return initialAllBuildingsDTO;
     }
 

@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CannonCampLevel extends BuildingLevel {
 
-    private double productionTime;
+    private int timeReductionPercentage;
 
 }

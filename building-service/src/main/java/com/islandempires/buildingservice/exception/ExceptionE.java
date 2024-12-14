@@ -75,6 +75,24 @@ public enum ExceptionE {
             return httpStatus.toString();
         }
     },
+    BUILDING_CONDITIONS_ERROR {
+        Integer status = HttpStatus.NOT_ACCEPTABLE.value();
+        HttpStatus httpStatus = HttpStatus.NOT_ACCEPTABLE;
+
+        @Override
+        public HttpStatus getHttpStatus() {
+            return httpStatus;
+        }
+
+        @Override
+        public Integer getStatus() {
+            return this.status;
+        }
+
+        public String toString() {
+            return "The conditions were not met! Please fulfill the requirements first.";
+        }
+    },
     ISLAND_PRIVILEGES{
         Integer status = 1001;
         HttpStatus httpStatus = HttpStatus.NOT_ACCEPTABLE;

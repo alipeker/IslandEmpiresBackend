@@ -165,11 +165,9 @@ public class IslandResourceCalculatorService {
         island1ResourcesDTO.setIron(island1ResourcesDTO.getIron() + (island2TradingRawMaterials.getIron() - island1TradingRawMaterials.getIron()));
         island1ResourcesDTO.setClay(island1ResourcesDTO.getClay() + (island2TradingRawMaterials.getClay() - island1TradingRawMaterials.getClay()));
 
-
         island2ResourcesDTO.setWood(island2ResourcesDTO.getWood() + (island1TradingRawMaterials.getWood() - island2TradingRawMaterials.getWood()));
         island2ResourcesDTO.setIron(island2ResourcesDTO.getIron() + (island1TradingRawMaterials.getIron() - island2TradingRawMaterials.getIron()));
         island2ResourcesDTO.setClay(island2ResourcesDTO.getClay() + (island1TradingRawMaterials.getClay() - island2TradingRawMaterials.getClay()));
-
 
         Map<MutualTradingEnum,IslandResourceDTO> senderAndReceiverIslandResourcesDTO = new HashMap<>();
         senderAndReceiverIslandResourcesDTO.put(MutualTradingEnum.ISLAND1, island1ResourcesDTO);

@@ -9,7 +9,6 @@ import reactor.core.publisher.Flux;
 
 import lombok.AllArgsConstructor;
 
-@CrossOrigin
 @RestController
 @RequestMapping("map/public")
 @AllArgsConstructor
@@ -20,10 +19,10 @@ public class MapController {
     private final ElasticService elasticService;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/{xStart}/{xEnd}/{yStart}/{yEnd}")
-    private Flux<IslandCombined> getIslands(@PathVariable int xStart, @PathVariable int xEnd,
+    @GetMapping("/{serverId}/{xStart}/{xEnd}/{yStart}/{yEnd}")
+    private Flux<IslandCombined> getIslands(@PathVariable String serverId, @PathVariable int xStart, @PathVariable int xEnd,
                                             @PathVariable int yStart, @PathVariable int yEnd) {
-        return mapService.searchIslandsByCoordinates(xStart, xEnd, yStart, yEnd);
+        return mapService.searchIslandsByCoordinates(serverId, xStart, xEnd, yStart, yEnd);
     }
 
     @ResponseStatus(HttpStatus.OK)

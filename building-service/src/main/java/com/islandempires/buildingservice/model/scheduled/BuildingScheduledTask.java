@@ -17,6 +17,8 @@ public class BuildingScheduledTask {
     @Id
     private String id;
 
+    private Long userId;
+
     private String serverId;
 
     private String islandId;
@@ -37,7 +39,13 @@ public class BuildingScheduledTask {
 
     private long lastCalculatedTimestamp;
 
-    public BuildingScheduledTask(String serverId, String islandId, IslandBuildingEnum islandBuildingEnum, int initialLvl, int nextLvl, Duration constructionDuration, RawMaterialsAndPopulationCost rawMaterialsAndPopulationCost) {
+    private boolean isException = false;
+
+    private long actualStartTimeStamp;
+
+    public BuildingScheduledTask(String serverId, String islandId, IslandBuildingEnum islandBuildingEnum, int initialLvl,
+                                 int nextLvl, Duration constructionDuration, RawMaterialsAndPopulationCost rawMaterialsAndPopulationCost,
+                                 Long userId) {
         this.serverId = serverId;
         this.islandId = islandId;
         this.islandBuildingEnum = islandBuildingEnum;
@@ -47,5 +55,10 @@ public class BuildingScheduledTask {
         this.startingDateTimestamp = System.currentTimeMillis();
         this.remainingTime = Duration.parse(constructionDuration.toString()).toMillis();
         this.rawMaterialsAndPopulationCost = rawMaterialsAndPopulationCost;
+        this.userId = userId;
+    }
+
+    public boolean getException() {
+        return isException;
     }
 }

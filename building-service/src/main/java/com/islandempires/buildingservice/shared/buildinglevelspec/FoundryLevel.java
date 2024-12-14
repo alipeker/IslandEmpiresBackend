@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FoundryLevel extends BuildingLevel {
 
-    private double ironProductionIncreasePercentage;
+    private int ironProductionIncreasePercentage;
 
 }

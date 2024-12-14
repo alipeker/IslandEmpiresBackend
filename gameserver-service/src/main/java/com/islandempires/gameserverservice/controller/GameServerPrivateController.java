@@ -1,10 +1,10 @@
 package com.islandempires.gameserverservice.controller;
 
 import com.islandempires.gameserverservice.dto.GameServerDTO;
-import com.islandempires.gameserverservice.dto.initial.InitialGameServerPropertiesDTO;
+import com.islandempires.gameserverservice.dto.response.GameServerIdDTO;
+import com.islandempires.gameserverservice.dto.response.GameServerSoldierDTO;
 import com.islandempires.gameserverservice.model.GameServer;
-import com.islandempires.gameserverservice.model.GameServerSoldier;
-import com.islandempires.gameserverservice.model.building.AllBuildings;
+import com.islandempires.gameserverservice.model.GameServerAllBuildings;
 import com.islandempires.gameserverservice.service.GameServerReadService;
 import com.islandempires.gameserverservice.service.GameServerWriteService;
 import lombok.AllArgsConstructor;
@@ -45,19 +45,25 @@ public class GameServerPrivateController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/getGameServerInitialProperties/{serverId}")
-    public InitialGameServerPropertiesDTO getGameServerInitialProperties(@PathVariable String serverId) {
+    public Mono<GameServer> getGameServerInitialProperties(@PathVariable String serverId) {
         return gameServerReadService.getGameServerInitialProperties(serverId);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/getGameServerBuildingProperties")
-    public Flux<AllBuildings> getGameServerBuildingProperties() {
+    public Flux<GameServerAllBuildings> getGameServerBuildingProperties() {
         return gameServerReadService.getGameServerBuildingProperties();
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/getGameServerSoldierProperties")
-    public Flux<GameServerSoldier> getGameServerSoldierProperties() {
+    public Flux<GameServerSoldierDTO> getGameServerSoldierProperties() {
         return gameServerReadService.getGameServerSoldierProperties();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/getGameServers")
+    public Flux<GameServerIdDTO> getGameServers() {
+        return gameServerReadService.getGameServers();
     }
 }

@@ -14,8 +14,11 @@ public class RouterValidator {
             "/gameservice/getGameServerSoldierProperties"
     );
 
+    public static final String websocketPathPrefix = "/websocket/";
+
     public Predicate<ServerHttpRequest> isSecured =
             request -> openApiEndpoints
                     .stream()
-                    .noneMatch(uri -> request.getURI().getPath().contains(uri));
+                    .noneMatch(uri -> request.getURI().getPath().contains(uri)) 
+                    && !request.getURI().getPath().startsWith(websocketPathPrefix);
 }

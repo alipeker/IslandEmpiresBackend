@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class IronMineLevel extends BuildingLevel {
 
-    private Integer hourlyIronProduction;
+    private int hourlyIronProduction;
 
 }

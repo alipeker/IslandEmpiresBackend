@@ -24,5 +24,7 @@ public enum IslandBuildingEnum {
     DEFENCE_TOWER,
     WAREHOUSE,
     FOOD_WAREHOUSE1,
-    FOOD_WAREHOUSE2
+    FOOD_WAREHOUSE2,
+    COMMERCIAL_PORT,
+    SHIPYARD
 }

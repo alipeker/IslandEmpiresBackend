@@ -37,6 +37,8 @@ public class TotalAttackPointForKillSoldierMainType {
         totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.AXEMAN, BigDecimal.ZERO);
         totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.ARCHER, BigDecimal.ZERO);
         totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.SWORDSMAN, BigDecimal.ZERO);
+        totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.MISSIONARY, BigDecimal.ZERO);
+
 
         totalAttackPointForKillRifleSubTypes.put(SoldierSubTypeEnum.LIGHT_ARMED_MUSKETEER, BigDecimal.ZERO);
         totalAttackPointForKillRifleSubTypes.put(SoldierSubTypeEnum.MEDIUM_ARMED_MUSKETEER, BigDecimal.ZERO);
@@ -56,6 +58,7 @@ public class TotalAttackPointForKillSoldierMainType {
         totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.AXEMAN, totalAttackPointForKillInfantrymanSubTypes.get(SoldierSubTypeEnum.AXEMAN).divide(denominator, 10, RoundingMode.HALF_UP));
         totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.ARCHER, totalAttackPointForKillInfantrymanSubTypes.get(SoldierSubTypeEnum.ARCHER).divide(denominator, 10, RoundingMode.HALF_UP));
         totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.SWORDSMAN, totalAttackPointForKillInfantrymanSubTypes.get(SoldierSubTypeEnum.SWORDSMAN).divide(denominator, 10, RoundingMode.HALF_UP));
+        totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.MISSIONARY, totalAttackPointForKillInfantrymanSubTypes.get(SoldierSubTypeEnum.MISSIONARY).divide(denominator, 10, RoundingMode.HALF_UP));
         totalAttackPointForKillInfantryman = totalAttackPointForKillInfantryman.divide(denominator, 10, RoundingMode.HALF_UP);
 
         totalAttackPointForKillRifleSubTypes.put(SoldierSubTypeEnum.LIGHT_ARMED_MUSKETEER, totalAttackPointForKillRifleSubTypes.get(SoldierSubTypeEnum.LIGHT_ARMED_MUSKETEER).divide(denominator, 10, RoundingMode.HALF_UP));
@@ -82,6 +85,8 @@ public class TotalAttackPointForKillSoldierMainType {
         totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.ARCHER, totalAttackPointForKillInfantrymanSubTypes.get(SoldierSubTypeEnum.ARCHER)
                 .multiply(soldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint()));
         totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.SWORDSMAN, totalAttackPointForKillInfantrymanSubTypes.get(SoldierSubTypeEnum.SWORDSMAN)
+                .multiply(soldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint()));
+        totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.MISSIONARY, totalAttackPointForKillInfantrymanSubTypes.get(SoldierSubTypeEnum.MISSIONARY)
                 .multiply(soldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint()));
         totalAttackPointForKillInfantryman = totalAttackPointForKillInfantryman.multiply(soldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint());
 
@@ -111,9 +116,9 @@ public class TotalAttackPointForKillSoldierMainType {
         return this;
     }
 
-    public void calculateTotalAttackPointForKillInfantrymanSubTypes(List<Soldier> soldierAttackPoints) {
+    public void calculateTotalAttackPointForKillInfantrymanSubTypes(List<Soldier> soldierAttackPoints, double defenceMultiplier) {
         BigInteger sum = soldierAttackPoints.stream()
-                .map(Soldier::calculateTotalAttackPoint)
+                .map(soldier -> soldier.calculateTotalAttackPoint(defenceMultiplier))
                 .reduce(BigInteger.ZERO, BigInteger::add);
 
         if(sum.compareTo(BigInteger.ZERO) == 0) {
@@ -121,14 +126,14 @@ public class TotalAttackPointForKillSoldierMainType {
         }
 
         soldierAttackPoints.stream().forEach(soldier -> {
-                BigDecimal soldierTotalAttackPoint = new BigDecimal(soldier.calculateTotalAttackPoint()).divide(new BigDecimal(sum), 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillInfantryman);
+                BigDecimal soldierTotalAttackPoint = new BigDecimal(soldier.calculateTotalAttackPoint(defenceMultiplier)).divide(new BigDecimal(sum), 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillInfantryman);
                 totalAttackPointForKillInfantrymanSubTypes.put(SoldierSubTypeEnum.valueOf(soldier.getSoldierBaseInfo().getSoldierSubTypeName()), soldierTotalAttackPoint);
         });
     }
 
-    public void calculateTotalAttackPointForKillRifleSubTypes(List<Soldier> soldierAttackPoints) {
+    public void calculateTotalAttackPointForKillRifleSubTypes(List<Soldier> soldierAttackPoints, double defenceMultiplier) {
         BigInteger sum = soldierAttackPoints.stream()
-                .map(Soldier::calculateTotalAttackPoint)
+                .map(soldier -> soldier.calculateTotalAttackPoint(defenceMultiplier))
                 .reduce(BigInteger.ZERO, BigInteger::add);
 
         if(sum.compareTo(BigInteger.ZERO) == 0) {
@@ -136,14 +141,14 @@ public class TotalAttackPointForKillSoldierMainType {
         }
 
         soldierAttackPoints.stream().forEach(soldier -> {
-            BigDecimal soldierTotalAttackPoint = new BigDecimal(soldier.calculateTotalAttackPoint()).divide(new BigDecimal(sum), 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillRifle);
+            BigDecimal soldierTotalAttackPoint = new BigDecimal(soldier.calculateTotalAttackPoint(defenceMultiplier)).divide(new BigDecimal(sum), 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillRifle);
             totalAttackPointForKillRifleSubTypes.put(SoldierSubTypeEnum.valueOf(soldier.getSoldierBaseInfo().getSoldierSubTypeName()), soldierTotalAttackPoint);
         });
     }
 
-    public void calculateTotalAttackPointForKillCannonSubTypes(List<Soldier> soldierAttackPoints) {
+    public void calculateTotalAttackPointForKillCannonSubTypes(List<Soldier> soldierAttackPoints, double defenceMultiplier) {
         BigInteger sum = soldierAttackPoints.stream()
-                .map(Soldier::calculateTotalAttackPoint)
+                .map(soldier -> soldier.calculateTotalAttackPoint(defenceMultiplier))
                 .reduce(BigInteger.ZERO, BigInteger::add);
 
         if(sum.compareTo(BigInteger.ZERO) == 0) {
@@ -151,14 +156,14 @@ public class TotalAttackPointForKillSoldierMainType {
         }
 
         soldierAttackPoints.stream().forEach(soldier -> {
-            BigDecimal soldierTotalAttackPoint = new BigDecimal(soldier.calculateTotalAttackPoint()).divide(new BigDecimal(sum), 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillCannon);
+            BigDecimal soldierTotalAttackPoint = new BigDecimal(soldier.calculateTotalAttackPoint(defenceMultiplier)).divide(new BigDecimal(sum), 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillCannon);
             totalAttackPointForKillCannonSubTypes.put(SoldierSubTypeEnum.valueOf(soldier.getSoldierBaseInfo().getSoldierSubTypeName()), soldierTotalAttackPoint);
         });
     }
 
-    public void calculateTotalAttackPointForKillShipSubTypes(List<Soldier> soldierAttackPoints) {
+    public void calculateTotalAttackPointForKillShipSubTypes(List<Soldier> soldierAttackPoints, double defenceMultiplier) {
         BigInteger sum = soldierAttackPoints.stream()
-                .map(Soldier::calculateTotalAttackPoint)
+                .map(soldier -> soldier.calculateTotalAttackPoint(defenceMultiplier))
                 .reduce(BigInteger.ZERO, BigInteger::add);
 
         if(sum.compareTo(BigInteger.ZERO) == 0) {
@@ -166,7 +171,7 @@ public class TotalAttackPointForKillSoldierMainType {
         }
 
         soldierAttackPoints.stream().forEach(soldier -> {
-            BigDecimal soldierTotalAttackPoint = new BigDecimal(soldier.calculateTotalAttackPoint()).divide(new BigDecimal(sum), 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillShip);
+            BigDecimal soldierTotalAttackPoint = new BigDecimal(soldier.calculateTotalAttackPoint(defenceMultiplier)).divide(new BigDecimal(sum), 10, RoundingMode.HALF_UP).multiply(totalAttackPointForKillShip);
             totalAttackPointForKillShipSubTypes.put(SoldierSubTypeEnum.valueOf(soldier.getSoldierBaseInfo().getSoldierSubTypeName()), soldierTotalAttackPoint);
         });
     }

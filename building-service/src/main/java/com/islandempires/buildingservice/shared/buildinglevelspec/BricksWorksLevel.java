@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BricksWorksLevel extends BuildingLevel {
-    private Integer clayProductionIncreasePercentage;
+    private int clayProductionIncreasePercentage;
 }

@@ -19,4 +19,5 @@ public class InitialBuildingDTO implements Serializable {
     protected IslandBuildingEnum islandBuildingEnum;
 
     private int initialLvl = 0;
+
 }

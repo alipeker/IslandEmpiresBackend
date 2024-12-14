@@ -2,7 +2,7 @@ package com.islandempires.islandservice.service.publics.impl;
 
 
 import com.islandempires.islandservice.dto.IslandDTO;
-import com.islandempires.islandservice.dto.initial.InitialGameServerPropertiesDTO;
+import com.islandempires.islandservice.dto.IslandPopulationDTO;
 import com.islandempires.islandservice.exception.CustomRunTimeException;
 import com.islandempires.islandservice.exception.ExceptionE;
 import com.islandempires.islandservice.kafka.KafkaOutboxProducerService;
@@ -17,7 +17,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Random;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class IslandServiceImpl implements IslandQueryService, IslandModificationService {
@@ -38,11 +39,30 @@ public class IslandServiceImpl implements IslandQueryService, IslandModification
         return islandRepository.findById(islandId)
                 .switchIfEmpty(Mono.error(new CustomRunTimeException(ExceptionE.NOT_FOUND)))
                 .map(island -> {
-                    if(island.getUserId() != null && island.getUserId() != userid) {
-                       new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
+                    if(island.getUserId() != null && !island.getUserId().equals(userid)) {
+                        throw new CustomRunTimeException(ExceptionE.ISLAND_PRIVILEGES);
                     }
                     return modelMapper.map(island, IslandDTO.class);
                 });
+    }
+
+    @Override
+    public Flux<IslandDTO> getAllUserIslands(String serverId, Long userId) {
+        return gateWayClient.getPopulations(userId, serverId)
+                .collectList()
+                .flatMapMany(populations ->
+                        islandRepository.findByServerIdAndUserId(serverId, userId)
+                                .map(island -> {
+                                    IslandDTO islandDTO = modelMapper.map(island, IslandDTO.class);
+                                    populations.stream()
+                                            .filter(population -> population.getIslandId().equals(island.getId()))
+                                            .findFirst()
+                                            .ifPresent(matchedPopulation ->
+                                                    islandDTO.setPopulation(matchedPopulation.getPopulation())
+                                            );
+                                    return islandDTO;
+                                })
+                );
     }
 
     @Override

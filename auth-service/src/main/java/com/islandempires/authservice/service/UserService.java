@@ -3,6 +3,7 @@ package com.islandempires.authservice.service;
 import com.islandempires.authservice.exception.CustomException;
 import com.islandempires.authservice.exception.ExceptionE;
 import com.islandempires.authservice.model.AppUser;
+import com.islandempires.authservice.model.AppUserRole;
 import com.islandempires.authservice.repository.UserRepository;
 import com.islandempires.authservice.jwt.JwtResponse;
 import com.islandempires.authservice.jwt.JwtTokenProvider;
@@ -45,11 +46,13 @@ public class UserService implements CommandLineRunner {
         }
     }
 
-    public String signup(AppUser appUser) {
+    public JwtResponse signup(AppUser appUser) {
         if (!userRepository.existsByUsername(appUser.getUsername())) {
             appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
-            userRepository.save(appUser);
-            return jwtTokenProvider.createToken(appUser.getUsername(), appUser.getId(), appUser.getAppUserRoles());
+            appUser.setAppUserRoles(List.of(AppUserRole.ROLE_CLIENT.toString()));
+            AppUser appUserSaved = userRepository.save(appUser);
+            String jwtToken = jwtTokenProvider.createToken(appUserSaved.getUsername(), appUserSaved.getId(), appUserSaved.getAppUserRoles());
+            return new JwtResponse(jwtToken);
         } else {
             throw new CustomException(ExceptionE.BAD_USERNAME);
         }
@@ -77,6 +80,10 @@ public class UserService implements CommandLineRunner {
 
     public List<AppUser> getAllUsers() {
         return this.userRepository.findAll();
+    }
+
+    public AppUser getUserWithUserId(Long userId) {
+        return userRepository.findById(userId).orElseThrow();
     }
 
 

@@ -21,4 +21,8 @@ public class RawMaterialsDTO implements Serializable {
     @PositiveOrZero(message = "Value must be a positive or zero number")
     @NotNull
     private Integer clay;
+
+    public long getTotalMaterial() {
+        return wood + iron + clay;
+    }
 }

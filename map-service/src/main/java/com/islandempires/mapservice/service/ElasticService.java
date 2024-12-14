@@ -11,10 +11,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import org.springframework.scheduling.annotation.Scheduled;
 
 @Service
 @AllArgsConstructor
-public class ElasticService implements CommandLineRunner {
+public class ElasticService {
 
     private final GatewayWebClient gatewayWebClient;
 
@@ -48,13 +49,20 @@ public class ElasticService implements CommandLineRunner {
         }).doOnError(e -> System.out.println(e)).subscribe();
     }
 
-    public void saveIslandToElasticsearch(IslandCombined islandCombinedDTO) {
-        islandRepository.deleteAll();
-        islandRepository.save(islandCombinedDTO);
-    }
+    // public void saveIslandToElasticsearch(IslandCombined islandCombinedDTO) {
+    //     islandRepository.deleteAll();
+    //     islandRepository.save(islandCombinedDTO);
+    // }
 
-    @Override
-    public void run(String... args) throws Exception {
-        this.saveAllIslandsToElasticsearch();
+    // @Override
+    // public void run(String... args) throws Exception {
+    //      islandRepository.deleteAll();
+    //     this.saveAllIslandsToElasticsearch();
+    // }
+
+    @Scheduled(fixedRate = 60000)
+    public void performTask() {
+          islandRepository.deleteAll();
+         this.saveAllIslandsToElasticsearch();
     }
 }

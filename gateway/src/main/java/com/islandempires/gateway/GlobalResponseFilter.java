@@ -13,6 +13,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 public class GlobalResponseFilter implements GlobalFilter, Ordered {
 
     @Autowired
@@ -30,7 +32,6 @@ public class GlobalResponseFilter implements GlobalFilter, Ordered {
                 if(!isTokenValid(headers.get("Authorization").get(0))) {
                     throw new UnauthorizedException("User is not authorized to access this resource.");
                 }
-                // game session tracking
             }
         } catch (Exception E) {
             throw new UnauthorizedException("User is not authorized to access this resource.");

@@ -32,7 +32,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 
 @Entity
@@ -76,6 +75,8 @@ public class MilitaryUnits implements Cloneable {
     private GunHolk gunHolk;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Carrack carrack;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Missionary missionary;
 
     public void initializeWithInitialValues(WarMilitaryUnitRequest warMilitaryUnitRequest) {
         pikeman.setSoldierCount(warMilitaryUnitRequest.getPikeman());
@@ -91,6 +92,7 @@ public class MilitaryUnits implements Cloneable {
         holk.setSoldierCount(warMilitaryUnitRequest.getHolk());
         gunHolk.setSoldierCount(warMilitaryUnitRequest.getGunHolk());
         carrack.setSoldierCount(warMilitaryUnitRequest.getCarrack());
+        missionary.setSoldierCount(warMilitaryUnitRequest.getMissionary());
     }
 
     public void initialize(GameServerSoldier gameServerSoldier) {
@@ -123,6 +125,8 @@ public class MilitaryUnits implements Cloneable {
         this.carrack = createCarrack(
                 gameServerSoldier.getShipBaseInfoList().stream().filter(soldierBaseInfo -> soldierBaseInfo.getShipSubTypeName().equals(SoldierSubTypeEnum.CARRACK.toString())).findFirst().orElseThrow(),
                 gameServerSoldier.getSoldierBaseInfoList().stream().filter(soldierBaseInfo -> soldierBaseInfo.getSoldierSubTypeName().equals(SoldierSubTypeEnum.CARRACK.toString())).findFirst().orElseThrow());
+        this.missionary = createMissionary(
+                gameServerSoldier.getSoldierBaseInfoList().stream().filter(soldierBaseInfo -> soldierBaseInfo.getSoldierSubTypeName().equals(SoldierSubTypeEnum.MISSIONARY.toString())).findFirst().orElseThrow());
     }
 
     private Pikeman createPikeman(SoldierBaseInfo soldierBaseInfo) {
@@ -219,11 +223,19 @@ public class MilitaryUnits implements Cloneable {
         return newCarrack;
     }
 
+    private Missionary createMissionary(SoldierBaseInfo soldierBaseInfo) {
+        Missionary newMissionary = new Missionary();
+        newMissionary.setSoldierCount(BigInteger.ZERO);
+        newMissionary.setSoldierBaseInfo(soldierBaseInfo);
+        return newMissionary;
+    }
+
     public BigInteger getInfantrymanNumber() {
         return swordsman.getSoldierCount()
                 .add(pikeman.getSoldierCount())
                 .add(archers.getSoldierCount())
-                .add(axeman.getSoldierCount());
+                .add(axeman.getSoldierCount())
+                .add(missionary.getSoldierCount());
     }
 
     public BigInteger getRifleNumber() {
@@ -263,22 +275,23 @@ public class MilitaryUnits implements Cloneable {
         return prepareSoldierList().stream().filter(soldier -> soldier.getSoldierBaseInfo().getSoldierSubTypeName().equals(soldierSubTypeEnum.toString())).findFirst().orElseThrow();
     }
 
-    public SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePointPerEachSoldierType() {
+    public SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePointPerEachSoldierType(double defenseMultiplier) {
         SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePoints = new SoldierTotalDefenceAgainstSoldierType();
         List<SoldierTotalDefenceAgainstSoldierType> soldierTotalDefenceAgainstSoldierTypeList = new ArrayList<>();
-        soldierTotalDefenceAgainstSoldierTypeList.add(pikeman.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(axeman.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(archers.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(swordsman.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(lightArmedMusketeer.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(mediumArmedMusketeer.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(heavyArmedMusketeer.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(culverin.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(mortar.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(ribault.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(holk.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(gunHolk.calculateTotalDefencePoints());
-        soldierTotalDefenceAgainstSoldierTypeList.add(carrack.calculateTotalDefencePoints());
+        soldierTotalDefenceAgainstSoldierTypeList.add(pikeman.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(axeman.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(archers.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(swordsman.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(lightArmedMusketeer.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(mediumArmedMusketeer.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(heavyArmedMusketeer.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(culverin.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(mortar.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(ribault.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(holk.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(gunHolk.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(carrack.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
+        soldierTotalDefenceAgainstSoldierTypeList.add(missionary.calculateTotalDefencePointsEachSoldierType(defenseMultiplier));
         return calculateTotalDefencePoints.addListPoints(soldierTotalDefenceAgainstSoldierTypeList);
     }
 
@@ -313,63 +326,66 @@ public class MilitaryUnits implements Cloneable {
         return new SoldierRatios(infantrymanRatio, rifleRatio, cannonRatio, shipRatio);
     }
 
-    public BigDecimal calculateTotalDefencePointOfAllUnits(SoldierRatios soldierRatios) {
+    public BigDecimal calculateTotalDefencePointOfAllUnits(SoldierRatios soldierRatios, double defenseMultiplier) {
         BigDecimal totalDefencePoint = BigDecimal.ZERO;
-        totalDefencePoint = totalDefencePoint.add(pikeman.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(axeman.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(archers.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(swordsman.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(lightArmedMusketeer.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(mediumArmedMusketeer.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(heavyArmedMusketeer.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(culverin.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(mortar.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(ribault.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(holk.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(gunHolk.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
-        totalDefencePoint = totalDefencePoint.add(carrack.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios));
+        totalDefencePoint = totalDefencePoint.add(pikeman.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios,defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(axeman.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(archers.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(swordsman.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(lightArmedMusketeer.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(mediumArmedMusketeer.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(heavyArmedMusketeer.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(culverin.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(mortar.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(ribault.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(holk.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(gunHolk.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(carrack.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
+        totalDefencePoint = totalDefencePoint.add(missionary.calculateTotalDefencePointWithEnemySoldierRatios(soldierRatios, defenseMultiplier));
         return totalDefencePoint;
     }
 
-    public BigInteger calculateTotalAttackPointOfAllUnits() {
+    public BigInteger calculateTotalAttackPointOfAllUnits(double defenseMultiplier) {
         BigInteger totalAttackPoint = BigInteger.ZERO;
 
-        totalAttackPoint = totalAttackPoint.add(pikeman.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(axeman.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(archers.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(swordsman.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(lightArmedMusketeer.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(mediumArmedMusketeer.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(heavyArmedMusketeer.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(culverin.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(mortar.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(ribault.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(holk.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(gunHolk.calculateTotalAttackPoint());
-        totalAttackPoint = totalAttackPoint.add(carrack.calculateTotalAttackPoint());
-
+        totalAttackPoint = totalAttackPoint.add(pikeman.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(axeman.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(archers.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(swordsman.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(lightArmedMusketeer.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(mediumArmedMusketeer.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(heavyArmedMusketeer.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(culverin.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(mortar.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(ribault.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(holk.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(gunHolk.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(carrack.calculateTotalAttackPoint(defenseMultiplier));
+        totalAttackPoint = totalAttackPoint.add(missionary.calculateTotalAttackPoint(defenseMultiplier));
         return totalAttackPoint;
     }
 
     public TotalAttackPointForKillSoldierMainType calculateTotalAttackPointPerEachOfMainSoldierType() {
         TotalAttackPointForKillSoldierMainType totalAttackPointForKillSoldierMainType = new TotalAttackPointForKillSoldierMainType();
 
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.PIKEMAN, new BigDecimal(pikeman.calculateTotalAttackPoint()));
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.AXEMAN, new BigDecimal(axeman.calculateTotalAttackPoint()));
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.ARCHER, new BigDecimal(archers.calculateTotalAttackPoint()));
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.SWORDSMAN, new BigDecimal(swordsman.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.PIKEMAN, new BigDecimal(pikeman.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.AXEMAN, new BigDecimal(axeman.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.ARCHER, new BigDecimal(archers.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.SWORDSMAN, new BigDecimal(swordsman.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
 
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addRifleSubtype(SoldierSubTypeEnum.LIGHT_ARMED_MUSKETEER, new BigDecimal(lightArmedMusketeer.calculateTotalAttackPoint()));
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addRifleSubtype(SoldierSubTypeEnum.MEDIUM_ARMED_MUSKETEER, new BigDecimal(mediumArmedMusketeer.calculateTotalAttackPoint()));
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addRifleSubtype(SoldierSubTypeEnum.HEAVY_ARMED_MUSKETEER, new BigDecimal(heavyArmedMusketeer.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addRifleSubtype(SoldierSubTypeEnum.LIGHT_ARMED_MUSKETEER, new BigDecimal(lightArmedMusketeer.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addRifleSubtype(SoldierSubTypeEnum.MEDIUM_ARMED_MUSKETEER, new BigDecimal(mediumArmedMusketeer.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addRifleSubtype(SoldierSubTypeEnum.HEAVY_ARMED_MUSKETEER, new BigDecimal(heavyArmedMusketeer.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
 
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addCannonSubtype(SoldierSubTypeEnum.CULVERIN, new BigDecimal(culverin.calculateTotalAttackPoint()));
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addCannonSubtype(SoldierSubTypeEnum.MORTAR, new BigDecimal(mortar.calculateTotalAttackPoint()));
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addCannonSubtype(SoldierSubTypeEnum.RIBAULT, new BigDecimal(ribault.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addCannonSubtype(SoldierSubTypeEnum.CULVERIN, new BigDecimal(culverin.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addCannonSubtype(SoldierSubTypeEnum.MORTAR, new BigDecimal(mortar.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addCannonSubtype(SoldierSubTypeEnum.RIBAULT, new BigDecimal(ribault.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
 
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addShipSubtype(SoldierSubTypeEnum.HOLK, new BigDecimal(holk.calculateTotalAttackPoint()));
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addShipSubtype(SoldierSubTypeEnum.GUN_HOLK, new BigDecimal(gunHolk.calculateTotalAttackPoint()));
-        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addShipSubtype(SoldierSubTypeEnum.CARRACK, new BigDecimal(carrack.calculateTotalAttackPoint()));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addShipSubtype(SoldierSubTypeEnum.HOLK, new BigDecimal(holk.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addShipSubtype(SoldierSubTypeEnum.GUN_HOLK, new BigDecimal(gunHolk.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addShipSubtype(SoldierSubTypeEnum.CARRACK, new BigDecimal(carrack.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
+
+        totalAttackPointForKillSoldierMainType = totalAttackPointForKillSoldierMainType.addInfantryManSubtype(SoldierSubTypeEnum.MISSIONARY, new BigDecimal(missionary.calculateTotalAttackPoint(owner.getDefenceAndAttackMultiplier())));
 
         return totalAttackPointForKillSoldierMainType;
     }
@@ -443,6 +459,11 @@ public class MilitaryUnits implements Cloneable {
             throw new RuntimeException();
         }
         carrack.setSoldierCount(carrack.getSoldierCount().subtract(diminishingMilitaryUnits.getCarrack().getSoldierCount()));
+
+        if(missionary.getSoldierCount().compareTo(diminishingMilitaryUnits.getMissionary().getSoldierCount()) < 0) {
+            throw new RuntimeException();
+        }
+        missionary.setSoldierCount(missionary.getSoldierCount().subtract(diminishingMilitaryUnits.getMissionary().getSoldierCount()));
     }
 
     public void addMilitaryUnitsCount(MilitaryUnits addMilitaryUnits) {
@@ -459,6 +480,7 @@ public class MilitaryUnits implements Cloneable {
         holk.setSoldierCount(holk.getSoldierCount().add(addMilitaryUnits.getHolk().getSoldierCount()));
         gunHolk.setSoldierCount(gunHolk.getSoldierCount().add(addMilitaryUnits.getGunHolk().getSoldierCount()));
         carrack.setSoldierCount(carrack.getSoldierCount().add(addMilitaryUnits.getCarrack().getSoldierCount()));
+        missionary.setSoldierCount(missionary.getSoldierCount().add(addMilitaryUnits.getMissionary().getSoldierCount()));
     }
 
     // soldierAttackPoint * x = totalAttackPointForKillInfantrymanSubType
@@ -544,6 +566,11 @@ public class MilitaryUnits implements Cloneable {
                     ? BigInteger.ZERO
                     : carrack.getSoldierCount().add(count);
             carrack.setSoldierCount(totalSoldierCount);
+        } else if(soldierTypeEnum.equals(SoldierSubTypeEnum.MISSIONARY)) {
+            BigInteger totalSoldierCount = missionary.getSoldierCount().add(count).compareTo(BigInteger.ZERO) < 0
+                    ? BigInteger.ZERO
+                    : missionary.getSoldierCount().add(count);
+            missionary.setSoldierCount(totalSoldierCount);
         }
         return this;
     }
@@ -591,10 +618,10 @@ public class MilitaryUnits implements Cloneable {
     * */
     public MilitaryUnitsKilledMilitaryUnitCountDTO killSoldiersWithTotalStrengthDifferencePoint(SoldierTotalDefenceAgainstSoldierType enemySoldierTotalDefenceAgainstSoldierType,
                                                                                                 BigDecimal killRatio, GameServerSoldier gameServerSoldier) {
-        BigDecimal totalAttackPointForKillInfantryman = enemySoldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint().divide(killRatio);
-        BigDecimal totalAttackPointForKillRifle = enemySoldierTotalDefenceAgainstSoldierType.getRiflesDefencePoint().divide(killRatio);
-        BigDecimal totalAttackPointForKillCannon = enemySoldierTotalDefenceAgainstSoldierType.getCannonDefencePoint().divide(killRatio);
-        BigDecimal totalAttackPointForKillShip = enemySoldierTotalDefenceAgainstSoldierType.getShipDefencePoint().divide(killRatio);
+        BigDecimal totalAttackPointForKillInfantryman = enemySoldierTotalDefenceAgainstSoldierType.getInfantrymanDefencePoint().divide(killRatio,10, RoundingMode.HALF_UP);
+        BigDecimal totalAttackPointForKillRifle = enemySoldierTotalDefenceAgainstSoldierType.getRiflesDefencePoint().divide(killRatio,10, RoundingMode.HALF_UP);
+        BigDecimal totalAttackPointForKillCannon = enemySoldierTotalDefenceAgainstSoldierType.getCannonDefencePoint().divide(killRatio,10, RoundingMode.HALF_UP);
+        BigDecimal totalAttackPointForKillShip = enemySoldierTotalDefenceAgainstSoldierType.getShipDefencePoint().divide(killRatio,10, RoundingMode.HALF_UP);
 
         List<Soldier> soldiers = prepareSoldierList();
 
@@ -611,16 +638,16 @@ public class MilitaryUnits implements Cloneable {
         soldiers = soldiers.stream().filter(soldier -> soldier.getSoldierCount().compareTo(BigInteger.ZERO) > 0).toList();
 
         totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillInfantrymanSubTypes(
-                soldiers.stream().filter(soldier -> soldier instanceof Infantryman).toList());
+                soldiers.stream().filter(soldier -> soldier instanceof Infantryman).toList(), owner.getDefenceAndAttackMultiplier());
 
         totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillRifleSubTypes(
-                soldiers.stream().filter(soldier -> soldier instanceof Rifle).toList());
+                soldiers.stream().filter(soldier -> soldier instanceof Rifle).toList(), owner.getDefenceAndAttackMultiplier());
 
         totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillCannonSubTypes(
-                soldiers.stream().filter(soldier -> soldier instanceof Cannon).toList());
+                soldiers.stream().filter(soldier -> soldier instanceof Cannon).toList(), owner.getDefenceAndAttackMultiplier());
 
         totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillShipSubTypes(
-                soldiers.stream().filter(soldier -> soldier instanceof Ship).toList());
+                soldiers.stream().filter(soldier -> soldier instanceof Ship).toList(), owner.getDefenceAndAttackMultiplier());
 
         militaryUnitsKilledMilitaryUnitCountDTO = killSoldierWithAverageAttackPointOfEnemy(soldiers, militaryUnitsKilledMilitaryUnitCountDTO);
         militaryUnitsKilledMilitaryUnitCountDTO.getMilitaryUnits().setOwner(getOwner());
@@ -640,16 +667,16 @@ public class MilitaryUnits implements Cloneable {
         totalAttackPointForKillSoldierMainType.setTotalAttackPointForKillShip(totalAttackPointForKillSoldierMainType2.getTotalAttackPointForKillShip());
 
         totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillInfantrymanSubTypes(
-                soldiers.stream().filter(soldier -> soldier instanceof Infantryman).toList());
+                soldiers.stream().filter(soldier -> soldier instanceof Infantryman).toList(), owner.getDefenceAndAttackMultiplier());
 
         totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillRifleSubTypes(
-                soldiers.stream().filter(soldier -> soldier instanceof Rifle).toList());
+                soldiers.stream().filter(soldier -> soldier instanceof Rifle).toList(), owner.getDefenceAndAttackMultiplier());
 
         totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillCannonSubTypes(
-                soldiers.stream().filter(soldier -> soldier instanceof Cannon).toList());
+                soldiers.stream().filter(soldier -> soldier instanceof Cannon).toList(), owner.getDefenceAndAttackMultiplier());
 
         totalAttackPointForKillSoldierMainType.calculateTotalAttackPointForKillShipSubTypes(
-                soldiers.stream().filter(soldier -> soldier instanceof Ship).toList());
+                soldiers.stream().filter(soldier -> soldier instanceof Ship).toList(), owner.getDefenceAndAttackMultiplier());
 
         MilitaryUnits kiledMilitaryUnits = new MilitaryUnits();
         kiledMilitaryUnits.initialize(gameServerSoldier);
@@ -673,6 +700,7 @@ public class MilitaryUnits implements Cloneable {
         soldiers.add(holk);
         soldiers.add(gunHolk);
         soldiers.add(carrack);
+        soldiers.add(missionary);
         return soldiers;
     }
 
@@ -690,6 +718,7 @@ public class MilitaryUnits implements Cloneable {
         holk.setSoldierCount(BigInteger.ZERO);
         gunHolk.setSoldierCount(BigInteger.ZERO);
         carrack.setSoldierCount(BigInteger.ZERO);
+        missionary.setSoldierCount(BigInteger.ZERO);
     }
 
     public Duration findSlowerShipDuration() {

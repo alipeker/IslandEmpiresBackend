@@ -57,6 +57,24 @@ public enum ExceptionE {
             return httpStatus.toString();
         }
     },
+    SERVER_ERROR {
+        Integer status = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        @Override
+        public HttpStatus getHttpStatus() {
+            return httpStatus;
+        }
+
+        @Override
+        public Integer getStatus() {
+            return this.status;
+        }
+
+        public String toString() {
+            return httpStatus.toString();
+        }
+    },
     INSUFFICIENT_RESOURCES{
         Integer status = 1001;
         HttpStatus httpStatus = HttpStatus.NOT_ACCEPTABLE;
@@ -73,6 +91,42 @@ public enum ExceptionE {
 
         public String toString() {
             return "Insufficient resources error!";
+        }
+    },
+    CANCEL_TRANSPORT_ERROR{
+        Integer status = 1001;
+        HttpStatus httpStatus = HttpStatus.NOT_ACCEPTABLE;
+
+        @Override
+        public HttpStatus getHttpStatus() {
+            return httpStatus;
+        }
+
+        @Override
+        public Integer getStatus() {
+            return this.status;
+        }
+
+        public String toString() {
+            return "You can not cancel transport!";
+        }
+    },
+    INSUFFICIENT_SHIP_NUMBER{
+        Integer status = 1001;
+        HttpStatus httpStatus = HttpStatus.NOT_ACCEPTABLE;
+
+        @Override
+        public HttpStatus getHttpStatus() {
+            return httpStatus;
+        }
+
+        @Override
+        public Integer getStatus() {
+            return this.status;
+        }
+
+        public String toString() {
+            return "Insufficient ship number error!";
         }
     },
     ENUM_NOT_FOUND {

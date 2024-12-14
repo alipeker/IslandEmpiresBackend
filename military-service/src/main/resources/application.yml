@@ -13,8 +13,6 @@ spring:
     password: root
     driver-class-name: org.mariadb.jdbc.Driver
     testWhileIdle: true
-  config:
-      import: "optional:configserver:"
 
   jpa:
     show-sql: true

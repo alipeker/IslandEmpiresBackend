@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MillLevel extends BuildingLevel {
 
-    private Integer hourlyWheatProduction;
+    private int hourlyWheatProduction;
 
 }

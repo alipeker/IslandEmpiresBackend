@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class IslandHeadquarterLevel extends BuildingLevel {
 
-    private double timeReductionPercentage;
+    private int timeReductionPercentage;
 
 }

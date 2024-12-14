@@ -1,5 +1,6 @@
 package com.islandempires.buildingservice.shared.buildingtype;
 
+
 import com.islandempires.buildingservice.enums.IslandBuildingEnum;
 import com.islandempires.buildingservice.shared.buildinglevelspec.BuildingLevel;
 import lombok.Data;

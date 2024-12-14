@@ -21,6 +21,9 @@ public class IslandResource implements Serializable {
     @NotBlank
     private String id;
 
+    @Indexed(unique = true)
+    private String islandId;
+
     private Long userId;
 
     /*
@@ -35,11 +38,15 @@ public class IslandResource implements Serializable {
     private Double iron;
     @NotBlank
     private Integer ironHourlyProduction;
+    @NotBlank
+    private Integer ironHourlyProductionMultiply = 0;
 
     @NotBlank
     private Double clay;
     @NotBlank
     private Integer clayHourlyProduction;
+    @NotBlank
+    private Integer clayHourlyProductionMultiply = 0;
 
     @NotBlank
     private Double gold;

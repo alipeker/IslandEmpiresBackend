@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class HouseLevel extends BuildingLevel {
 
-    private Long populationGrowth;
+    private float additionalHappinessScore;
 
 }

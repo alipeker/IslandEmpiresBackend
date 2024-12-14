@@ -13,5 +13,6 @@ import java.util.List;
 public class GameServerSoldierDTO {
     private String id;
 
-    private List<SoldierBaseInfoDTO> soldierBaseInfoList;
+    private GameServerSoldierDTOList gameServerSoldier;
+
 }

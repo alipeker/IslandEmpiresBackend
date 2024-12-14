@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DefenceTowerLevel extends BuildingLevel {
 
-    private Double defenceMultiplyPercent;
+    private double defencePointPercentage;
 
 }

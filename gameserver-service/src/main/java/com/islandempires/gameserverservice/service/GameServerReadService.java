@@ -1,22 +1,25 @@
 package com.islandempires.gameserverservice.service;
 
-import com.islandempires.gameserverservice.dto.initial.InitialGameServerPropertiesDTO;
-import com.islandempires.gameserverservice.enums.IslandBuildingEnum;
+import com.islandempires.gameserverservice.dto.response.GameServerIdDTO;
+import com.islandempires.gameserverservice.dto.response.GameServerSoldierDTO;
+import com.islandempires.gameserverservice.dto.response.ServerUserRegistrationInfoDTO;
 import com.islandempires.gameserverservice.model.GameServer;
-import com.islandempires.gameserverservice.model.GameServerIslands;
+import com.islandempires.gameserverservice.model.GameServerAllBuildings;
 import com.islandempires.gameserverservice.model.GameServerSoldier;
-import com.islandempires.gameserverservice.model.building.AllBuildings;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface GameServerReadService {
     GameServer getGameServerInfo(String islandId);
 
-    InitialGameServerPropertiesDTO getGameServerInitialProperties(String serverId);
-    Flux<AllBuildings> getGameServerBuildingProperties();
-    Flux<GameServerSoldier> getGameServerSoldierProperties();
+    Mono<GameServer> getGameServerInitialProperties(String serverId);
+    Flux<GameServerAllBuildings> getGameServerBuildingProperties();
+    Flux<GameServerSoldierDTO> getGameServerSoldierProperties();
+    Flux<GameServerIdDTO> getGameServers();
 
-    GameServer getServerBuildingInfo(String serverId);
+    Mono<GameServerSoldier> getServerBuildingInfo(String serverId);
 
     Mono<GameServer> testali(String serverId);
+
+    Flux<ServerUserRegistrationInfoDTO> getUserServers(Long userId);
 }

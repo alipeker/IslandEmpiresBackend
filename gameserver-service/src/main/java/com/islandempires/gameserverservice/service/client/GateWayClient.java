@@ -33,7 +33,7 @@ public class GateWayClient {
                 .bodyValue(initialGameServerPropertiesDTO)
                 .retrieve()
                 .bodyToMono(IslandDTO.class)
-                .doOnError(e -> Mono.error(e));
+                .doOnError(Mono::error);
     }
 
 

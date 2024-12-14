@@ -23,6 +23,20 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       island-delete-topic: island-delete-topic
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 5
+          initial-interval: 1000
+          max-interval: 10000
+          multiplier: 2
+          stateless: true
 
 eureka:
   client:

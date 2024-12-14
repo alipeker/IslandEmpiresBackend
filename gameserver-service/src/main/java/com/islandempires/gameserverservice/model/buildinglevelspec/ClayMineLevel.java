@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ClayMineLevel extends BuildingLevel {
 
-    private Integer hourlyClayProduction;
+    private int hourlyClayProduction;
 
 }

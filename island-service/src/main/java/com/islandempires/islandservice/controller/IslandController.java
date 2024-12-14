@@ -7,10 +7,10 @@ import com.islandempires.islandservice.service.publics.IslandQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 
-@CrossOrigin
 @RestController
 @RequestMapping("/island/public")
 public class IslandController {
@@ -36,6 +36,12 @@ public class IslandController {
     @GetMapping("/{islandid}")
     public Mono<IslandDTO> get(@PathVariable String islandid, @RequestAttribute("userId") Long userid) {
         return islandQueryService.get(islandid, userid);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/getAllUserIslands/{serverId}")
+    public Flux<IslandDTO> getAllUserIslands(@PathVariable String serverId, @RequestAttribute("userId") Long userid) {
+        return islandQueryService.getAllUserIslands(serverId, userid);
     }
 
     @ResponseStatus(HttpStatus.OK)

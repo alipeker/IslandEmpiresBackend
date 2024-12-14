@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 
 @MappedSuperclass
@@ -34,11 +35,12 @@ public abstract class Soldier {
         this.soldierCount = BigInteger.ZERO;
     }
 
-    public BigInteger calculateTotalAttackPoint() {
-        return soldierCount.multiply(BigInteger.valueOf(soldierBaseInfo.getAttackPoint()));
+    public BigInteger calculateTotalAttackPoint(double defenseMultiplier) {
+        return BigDecimal.valueOf(defenseMultiplier)
+                .multiply(new BigDecimal(soldierCount.multiply(BigInteger.valueOf(soldierBaseInfo.getAttackPoint())))).toBigInteger();
     }
 
-    public BigDecimal calculateTotalDefencePointWithEnemySoldierRatios(SoldierRatios soldierRatios) {
+    public BigDecimal calculateTotalDefencePointWithEnemySoldierRatios(SoldierRatios soldierRatios, double defenseMultiplier) {
         Double averageInfantrymanDefencePoint = soldierRatios.getInfantrymanToTotalSoldiersRatio() * soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.INFANTRYMAN);
         Double averageRifleDefencePoint = soldierRatios.getRiflesToTotalSoldiersRatio() * soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.RIFLE);
         Double averageCannonDefencePoint = soldierRatios.getCannonToTotalSoldiersRatio() * soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.CANNON);
@@ -46,25 +48,22 @@ public abstract class Soldier {
 
         double averageDefensePoint = averageInfantrymanDefencePoint + averageRifleDefencePoint + averageCannonDefencePoint + averageShipDefencePoint;
 
-        return BigDecimal.valueOf(averageDefensePoint).multiply(new BigDecimal(soldierCount));
+        return BigDecimal.valueOf(averageDefensePoint).multiply(new BigDecimal(soldierCount)).multiply(BigDecimal.valueOf(defenseMultiplier));
     }
 
-    public SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePointsEachSoldierType() {
+    public SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePointsEachSoldierType(double defenseMultiplier) {
         return new SoldierTotalDefenceAgainstSoldierType(
-                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.INFANTRYMAN))),
-                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.RIFLE))),
-                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.CANNON))),
+                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.INFANTRYMAN)))
+                        .multiply(BigDecimal.valueOf(defenseMultiplier)),
+                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.RIFLE)))
+                        .multiply(BigDecimal.valueOf(defenseMultiplier)),
+                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.CANNON)))
+                        .multiply(BigDecimal.valueOf(defenseMultiplier)),
                 new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.SHIP)))
+                        .multiply(BigDecimal.valueOf(defenseMultiplier))
                 );
     }
 
-    public SoldierTotalDefenceAgainstSoldierType calculateTotalDefencePoints() {
-        return new SoldierTotalDefenceAgainstSoldierType(
-                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.INFANTRYMAN))),
-                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.RIFLE))),
-                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.CANNON))),
-                new BigDecimal(soldierCount).multiply(BigDecimal.valueOf(soldierBaseInfo.getDefensePoints().get(SoldierTypeEnum.SHIP))));
-    }
 
     public Soldier addSoldier(BigInteger count) {
         this.soldierCount.add(count);

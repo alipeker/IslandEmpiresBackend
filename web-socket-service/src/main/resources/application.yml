@@ -1,12 +1,25 @@
+server:
+  host: localhost
+  port: 3003
+
 spring:
   application:
     name: resources-websocket-service
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: web-socket-groupp
+      resource-sender-topic: island-resource-stream
+      clan-stream: clan-stream
+      clan-user-change-topic: clan-user-change-topic
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
   data:
     mongodb:
         host: localhost
         username: user
-        database: resources
-        port: 27017
+        database: session
+        port: 28000
     data:
       mongodb:
         connection-pool:
@@ -22,5 +35,4 @@ eureka:
       defaultZone: http://localhost:1000/eureka/
 
 urls:
-  gateway: http://localhost:9000
-
+  gateway: http://localhost:9001

@@ -4,8 +4,9 @@ import lombok.Data;
 
 @Data
 public class WebSocketMessage {
-    private String islandId;
+    private String serverId;
 
     private String jwtToken;
 
+    private Long userId;
 }

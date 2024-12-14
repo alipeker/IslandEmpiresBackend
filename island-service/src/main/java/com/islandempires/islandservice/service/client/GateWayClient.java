@@ -1,13 +1,16 @@
 package com.islandempires.islandservice.service.client;
 
+import com.islandempires.islandservice.dto.IslandPopulationDTO;
 import com.islandempires.islandservice.dto.initial.InitialAllBuildingsDTO;
 import com.islandempires.islandservice.dto.initial.InitialIslandResourceDTO;
+import com.islandempires.islandservice.dto.initial.UserClanRegisterDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -52,6 +55,22 @@ public class GateWayClient {
                 .doOnError(e -> Mono.error(e));
     }
 
+    public Flux<IslandPopulationDTO> getPopulations(Long userId, String serverId) {
+        return gatewayWebClient.get()
+                .uri("/resource/private/getPopulations/{serverId}/{userId}", serverId, userId)
+                .retrieve()
+                .bodyToFlux(IslandPopulationDTO.class)
+                .doOnError(e -> Mono.error(e));
+    }
+
+    public Mono<Void> initializeUserClan(UserClanRegisterDTO userClanRegisterDTO) {
+        return gatewayWebClient.post()
+                .uri("/clan/private/registerUser")
+                .bodyValue(userClanRegisterDTO)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .doOnError(e -> Mono.error(e));
+    }
 
 }
 

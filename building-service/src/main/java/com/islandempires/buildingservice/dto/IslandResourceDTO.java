@@ -86,4 +86,12 @@ public class IslandResourceDTO implements Serializable {
     @NotNull
     private Double additionalHappinessScore;
 
+    private long shipCapacity;
+
+    private int shipNumber;
+
+    private int usageShipNumber;
+
+    private long tradingTimeReductionPercentage;
+
 }

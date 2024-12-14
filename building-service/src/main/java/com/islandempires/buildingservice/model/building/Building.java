@@ -10,12 +10,14 @@ import org.springframework.data.annotation.Id;
 import java.io.Serializable;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 public class Building implements Serializable {
-    @Id
-    protected IslandBuildingEnum islandBuildingEnum;
 
-    private int lvl = 0;
+    @Id
+    public IslandBuildingEnum islandBuildingEnum;
+
+    private int initialLvl;
+
 }

@@ -29,6 +29,6 @@ public class WhoAmIClient {
                 .header(HttpHeaders.AUTHORIZATION, jwtToken)
                 .retrieve()
                 .bodyToMono(Long.class)
-                .doOnError(e -> Mono.error(e));
+                .doOnError(Mono::error);
     }
 }
